@@ -372,32 +372,29 @@ module TSOS {
         public shellLoad(){
         	//Cast as HTMLInputElement and then retrieve the value within the program input text area
         	var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-        	var hexChars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+        	var hexChars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F',' '];
         	//If input is empty, output no input
         	if(input == ''){
         		_StdOut.putText("No input.");
         	}else{
+        		//Loop through all possible hex characters(or spaces) and check if they match the input
         		var count = 0;
         		for(var i = 0; i < input.length; i++){
-        			var letter = input.charAt[i];
-        			for(var j = 0; i < hexChars.length; i++){
+        			var letter = input.charAt(i);
+        			for(var j = 0; j < hexChars.length; j++){
+        				//Match found in hex characters/digits
         				if(letter == hexChars[j]){
         					count++;
         				}
         			}
         		}
-        		console.log(count);
-        		if(count == input.length+1){
+        		//If each letter or digit is in the hex array(or spaces), then the length of count and the input should be the same
+        		if(count == input.length){
         			_StdOut.putText("Validated.");
         		}else{
         			_StdOut.putText("Not Validated.");
         		}
         	}
-
-        	// hexChars = ['']
-        	// for(var i = 0; i < args.length; i++){
-        	// 	if(args.charAt(i) 
-        	// }
         }
     }
 }
