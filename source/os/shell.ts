@@ -238,6 +238,9 @@ module TSOS {
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
+                    case "ver":
+                    	_StdOut.putText("Displays the current version data.");
+                    	break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }

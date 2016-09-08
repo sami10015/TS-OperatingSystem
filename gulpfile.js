@@ -13,11 +13,11 @@ var typescript = require('gulp-tsc');
 gulp.task('compile-typescript', function() {
 	var typescriptPaths = {
 		src: [
-			'source/scripts/*.ts',
-			'source/scripts/host/*.ts',
-			'source/scripts/os/*.ts'
+			'source/*.ts',
+			'source/host/*.ts',
+			'source/os/*.ts'
 		],
-		dest: 'distrib/scripts/'
+		dest: 'distrib/'
 	};
 
 	return gulp.src(typescriptPaths.src)
