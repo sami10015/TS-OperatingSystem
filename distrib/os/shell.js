@@ -49,6 +49,8 @@ var TSOS;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "Displays the current date.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -216,6 +218,9 @@ var TSOS;
                     case "prompt":
                         _StdOut.putText("<string> - Sets the prompt");
                         break;
+                    case "date":
+                        _StdOut.putText("Displays the current date");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -265,6 +270,11 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
+        };
+        Shell.prototype.shellDate = function () {
+            var date = new Date();
+            //Must add plus one to month because it starts at 0
+            _StdOut.putText(date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear());
         };
         return Shell;
     }());
