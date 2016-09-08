@@ -97,6 +97,12 @@ module TSOS {
             					  "Output random Kratos quote.");
            	this.commandList[this.commandList.length] = sc;
 
+           	// load
+           	sc = new ShellCommand(this.shellLoad,
+           						  "load",
+           						  "Validate the user code.");
+           	this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -285,6 +291,9 @@ module TSOS {
                     case "kratos":
                     	_StdOut.putText("Output random Kratos quote.");
                     	break;
+                    case "load":
+                    	_StdOut.putText("Validate the user code.");
+                    	break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -358,6 +367,37 @@ module TSOS {
         				  "Even now, as you draw your last breath, you continue to defy me?",
         				  "By the gods, what have I become?"];
         	_StdOut.putText(quotes[random]);
+        }
+
+        public shellLoad(){
+        	//Cast as HTMLInputElement and then retrieve the value within the program input text area
+        	var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+        	var hexChars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+        	//If input is empty, output no input
+        	if(input == ''){
+        		_StdOut.putText("No input.");
+        	}else{
+        		var count = 0;
+        		for(var i = 0; i < input.length; i++){
+        			var letter = input.charAt[i];
+        			for(var j = 0; i < hexChars.length; i++){
+        				if(letter == hexChars[j]){
+        					count++;
+        				}
+        			}
+        		}
+        		console.log(count);
+        		if(count == input.length+1){
+        			_StdOut.putText("Validated.");
+        		}else{
+        			_StdOut.putText("Not Validated.");
+        		}
+        	}
+
+        	// hexChars = ['']
+        	// for(var i = 0; i < args.length; i++){
+        	// 	if(args.charAt(i) 
+        	// }
         }
     }
 }
