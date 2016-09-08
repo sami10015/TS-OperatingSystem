@@ -244,6 +244,18 @@ module TSOS {
                     case "shutdown":
                     	_StdOut.putText("Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
                     	break;
+                    case "cls":
+                    	_StdOut.putText("Clears the screen and resets the cursor position.");
+                    	break;
+                    case "trace":
+                    	_StdOut.putText("<on | off> - Turns the OS trace on or off.");
+                    	break;
+                    case "rot13":
+                    	_StdOut.putText("<string> - Does rot13 obfuscation on <string>.");
+                    	break;
+                    case "prompt":
+                    	_StdOut.putText("<string> - Sets the prompt");
+                    	break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
