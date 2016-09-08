@@ -79,15 +79,23 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
+            // date
             sc = new ShellCommand(this.shellDate,
             					  "date",
             					  "Displays the current date.");
             this.commandList[this.commandList.length] = sc;
 
+            // whereami
             sc = new ShellCommand(this.shellWhereAmI,
             					  "whereami",
             					  "Displays current location.");
             this.commandList[this.commandList.length] = sc;
+
+          	// kratos
+            sc = new ShellCommand(this.shellKratos,
+            					  "kratos",
+            					  "Output random Kratos quote.");
+           	this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -242,6 +250,7 @@ module TSOS {
             _StdOut.resetXY();
         }
 
+        //Always update when creating new shell commands
         public shellMan(args) {
             if (args.length > 0) {
                 var topic = args[0];
@@ -249,7 +258,6 @@ module TSOS {
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
-                    // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     case "ver":
                     	_StdOut.putText("Displays the current version data.");
                     	break;
@@ -273,6 +281,9 @@ module TSOS {
                     	break;
                     case "whereami":
                     	_StdOut.putText("Displays current location.");
+                    	break;
+                    case "kratos":
+                    	_StdOut.putText("Output random Kratos quote.");
                     	break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -329,12 +340,24 @@ module TSOS {
         	_StdOut.putText(date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear());
         }
 
+        //Output random location
         public shellWhereAmI(){
         	//Generate random number between 0 and 2
         	var random = Math.floor((Math.random() * 3));
         	var locations = ["Not outside where you should be.", "In your basement.", "In the Hancock Center"];
+        	//Use generated random number to output a new location to the screen everytime
         	_StdOut.putText(locations[random]);
         }
 
+        //Output random Kratos quote
+        public shellKratos(){
+        	//Generate random number between 0 and 3
+        	var random = Math.floor((Math.random() * 4));
+        	var quotes = ["If all those on Olympus would deny me my vengeance, then all of Olympus will die.",
+        				  "I am what the gods have made me! ",
+        				  "Even now, as you draw your last breath, you continue to defy me?",
+        				  "By the gods, what have I become?"];
+        	_StdOut.putText(quotes[random]);
+        }
     }
 }
