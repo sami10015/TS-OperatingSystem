@@ -199,6 +199,9 @@ var TSOS;
                     case "ver":
                         _StdOut.putText("Displays the current version data.");
                         break;
+                    case "shutdown":
+                        _StdOut.putText("Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
