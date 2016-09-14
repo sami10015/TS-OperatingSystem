@@ -40,6 +40,16 @@ var TSOS;
             // Set focus on the start button.
             // Use the TypeScript cast to HTMLInputElement
             document.getElementById("btnStartOS").focus();
+            //Start time on status clock
+            function startTime() {
+                var today = new Date();
+                var h = today.getHours();
+                var m = today.getMinutes();
+                var s = today.getSeconds();
+                document.getElementById('Time').innerHTML = 'Time: ' + h + ':' + m + ':' + s;
+                var t = setTimeout(startTime, 500);
+            }
+            startTime();
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
             if (typeof Glados === "function") {

@@ -82,26 +82,32 @@ module TSOS {
             // date
             sc = new ShellCommand(this.shellDate,
             					  "date",
-            					  "Displays the current date.");
+            					  " - Displays the current date.");
             this.commandList[this.commandList.length] = sc;
 
             // whereami
             sc = new ShellCommand(this.shellWhereAmI,
             					  "whereami",
-            					  "Displays current location.");
+            					  " - Displays current location.");
             this.commandList[this.commandList.length] = sc;
 
           	// kratos
             sc = new ShellCommand(this.shellKratos,
             					  "kratos",
-            					  "Output random Kratos quote.");
+            					  " - Output random Kratos quote.");
            	this.commandList[this.commandList.length] = sc;
 
            	// load
            	sc = new ShellCommand(this.shellLoad,
            						  "load",
-           						  "Validate the user code.");
+           						  " - Validate the user code.");
            	this.commandList[this.commandList.length] = sc;
+
+            // status
+            sc = new ShellCommand(this.shellStatus,
+                                  "status",
+                                  " - Change the status.");
+            this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -294,6 +300,9 @@ module TSOS {
                     case "load":
                     	_StdOut.putText("Validate the user code.");
                     	break;
+                    case "status":
+                        _StdOut.putText("Change the status");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -369,6 +378,7 @@ module TSOS {
         	_StdOut.putText(quotes[random]);
         }
 
+        //Validates the user program input
         public shellLoad(){
         	//Cast as HTMLInputElement and then retrieve the value within the program input text area
         	var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
@@ -395,6 +405,15 @@ module TSOS {
         			_StdOut.putText("Not Validated.");
         		}
         	}
+        }
+
+        //Changes the status of the inner HTML
+        public shellStatus(params){
+            var word = '';
+            for(var i = 0; i < params.length; i++){
+                word = word + ' ' + params[i];
+            }
+            document.getElementById('Status').innerHTML = 'Status: ' + word;
         }
     }
 }

@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-   <meta name="author"             content="Alan G. Labouseur" />
+   <meta name="author"             content="Sami J. Ellougani" />
    <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
    <title>
       Krat-OS - a browser-based virtual Operating System in TypeScript
@@ -65,7 +65,10 @@
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
    </div>
-
+   <div id = "time_status_container">
+		<label id = "Time" style = "color:white"> Time: 00:00:00 AM </label>
+		<label id = "Status" style = "color:white"> Status: </label>
+   </div>
    <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
       <canvas id="display"
               width="500px"
@@ -75,7 +78,7 @@
    </div>
 
    <div id="divLog" style="margin-left:520px;">
-      <label>
+      <label style="color:white">
          Host Log
          <br>
          <textarea name="taHostLog"
@@ -87,7 +90,7 @@
    </div>
 
    <div id="divUserProgramInput" style="margin-left:520px;">
-      <label>
+      <label style="color:black">
          User Program Input
          <br>
          <textarea name="taProgramInput"
