@@ -10,17 +10,19 @@
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, imageDataArray) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, pastXPosition, buffer, imageDataArray) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
+            if (pastXPosition === void 0) { pastXPosition = 0; }
             if (buffer === void 0) { buffer = ""; }
             if (imageDataArray === void 0) { imageDataArray = []; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
+            this.pastXPosition = pastXPosition;
             this.buffer = buffer;
             this.imageDataArray = imageDataArray;
         }
@@ -47,6 +49,10 @@ var TSOS;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
+                else if (chr == String.fromCharCode(8)) {
+                    this.buffer = this.buffer.substring(0, this.buffer.length - 1);
+                    this.deleteText();
+                }
                 else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -55,6 +61,10 @@ var TSOS;
                     this.buffer += chr;
                 }
             }
+        };
+        Console.prototype.deleteText = function () {
+            _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.pastXPosition, this.currentYPosition, '');
+            this.currentXPosition = this.pastXPosition;
         };
         Console.prototype.putText = function (text) {
             // My first inclination here was to write two functions: putChar() and putString().
@@ -68,6 +78,8 @@ var TSOS;
             if (text !== "") {
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                //Save previous X position
+                this.pastXPosition = this.currentXPosition;
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 this.currentXPosition = this.currentXPosition + offset;

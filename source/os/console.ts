@@ -17,6 +17,7 @@ module TSOS {
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
+                    public pastXPosition = 0,
                     public buffer = "",
                     public imageDataArray = []) {
         }
@@ -46,6 +47,9 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
+                } else if (chr == String.fromCharCode(8)) { //backspace
+                    this.buffer = this.buffer.substring(0, this.buffer.length-1);
+                    this.deleteText();
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -55,6 +59,11 @@ module TSOS {
                 }
                 // TODO: Write a case for Ctrl-C.
             }
+        }
+
+        public deleteText(): void {
+            _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.pastXPosition, this.currentYPosition, '');
+            this.currentXPosition = this.pastXPosition;
         }
 
         public putText(text): void {
@@ -69,6 +78,8 @@ module TSOS {
             if (text !== "") {
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                //Save previous X position
+                this.pastXPosition = this.currentXPosition;
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 this.currentXPosition = this.currentXPosition + offset;
