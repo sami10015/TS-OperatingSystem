@@ -17,9 +17,9 @@ module TSOS {
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
-                    public pastXPosition = 0,
+                    public pastXPositions = [0],
                     public buffer = "",
-                    public imageDataArray = []) {
+                    public backspaceImageDataArray = []) {
         }
 
         public init(): void {
@@ -48,22 +48,20 @@ module TSOS {
                     // ... and reset our buffer.
                     this.buffer = "";
                 } else if (chr == String.fromCharCode(8)) { //backspace
-                    this.buffer = this.buffer.substring(0, this.buffer.length-1);
-                    this.deleteText();
+                    //Retrieve image data of previously drawn word
+                    _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0);
+                    this.currentXPosition = this.pastXPositions.pop(); //Retrieve last past X position 
+                    this.buffer = this.buffer.substring(0, this.buffer.length-1); //Adjust buffer for kernel purposes
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
+                    this.backspaceImageDataArray.push(_DrawingContext.getImageData(0,0,500,500));  //Save image data for backspacing purposes
                     this.putText(chr);
                     // ... and add it to our buffer.
                     this.buffer += chr;
                 }
                 // TODO: Write a case for Ctrl-C.
             }
-        }
-
-        public deleteText(): void {
-            _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.pastXPosition, this.currentYPosition, '');
-            this.currentXPosition = this.pastXPosition;
         }
 
         public putText(text): void {
@@ -78,8 +76,8 @@ module TSOS {
             if (text !== "") {
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
-                //Save previous X position
-                this.pastXPosition = this.currentXPosition;
+                //Save previous X position for backspacing purposes
+                this.pastXPositions.push(this.currentXPosition);
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 this.currentXPosition = this.currentXPosition + offset;
