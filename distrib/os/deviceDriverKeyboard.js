@@ -47,13 +47,14 @@ var TSOS;
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode);
                 }
-                // TODO: Check for caps-lock and handle as shifted if so.
+                // TODO: Check for caps-lock and handle as shifted if so. 
                 _KernelInputQueue.enqueue(chr);
             }
             else if (((keyCode >= 48) && (keyCode <= 57)) ||
                 (keyCode == 32) ||
                 (keyCode == 13)) {
                 chr = String.fromCharCode(keyCode);
+                //console.log(chr);
                 _KernelInputQueue.enqueue(chr);
             }
         };

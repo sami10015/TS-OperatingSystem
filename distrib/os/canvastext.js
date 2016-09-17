@@ -45,16 +45,16 @@ var TSOS;
             var total = 0;
             var len = str.length;
             var mag = size / 25.0;
-            ctx.save();
-            ctx.lineCap = "round";
-            ctx.lineWidth = 2.0 * mag;
-            ctx.strokeStyle = "black";
+            ctx.save(); //Saves current image
+            ctx.lineCap = "round"; //How the lines are drawn
+            ctx.lineWidth = 2.0 * mag; //Thickness of the line
+            ctx.strokeStyle = "black"; //Color of the line
             for (var i = 0; i < len; i++) {
                 var c = CanvasTextFunctions.letter(str.charAt(i));
                 if (!c) {
                     continue;
                 }
-                ctx.beginPath();
+                ctx.beginPath(); //Begins path
                 var penUp = true;
                 var needStroke = 0;
                 for (var j = 0; j < c.points.length; j++) {
@@ -64,14 +64,14 @@ var TSOS;
                         continue;
                     }
                     if (penUp) {
-                        ctx.moveTo(x + a[0] * mag, y - a[1] * mag);
+                        ctx.moveTo(x + a[0] * mag, y - a[1] * mag); //Moves the starting path to a new x,y coordinate
                         penUp = false;
                     }
                     else {
                         ctx.lineTo(x + a[0] * mag, y - a[1] * mag);
                     }
                 }
-                ctx.stroke();
+                ctx.stroke(); //Strokes the current path
                 x += c.width * mag;
             }
             ctx.restore();

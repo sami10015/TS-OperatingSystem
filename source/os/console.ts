@@ -17,7 +17,8 @@ module TSOS {
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 0,
                     public currentYPosition = _DefaultFontSize,
-                    public buffer = "") {
+                    public buffer = "",
+                    public imageDataArray = []) {
         }
 
         public init(): void {
@@ -85,7 +86,24 @@ module TSOS {
                                      _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                                      _FontHeightMargin;
 
+            // this.currentXPosition = 0;
+            // /*
+            //  * Font size measures from the baseline to the highest point in the font.
+            //  * Font descent measures from the baseline to the lowest point in the font.
+            //  * Font height margin is extra spacing between the lines.
+            //  */
+            
+            // //Y position in the canvas
+            // var moveTotal = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +_FontHeightMargin;
+            // // if(this.currentYPosition + moveTotal > 500){
+            // //     //Getting current snapshot of canvas
+            // //     this.imageDataArray.push(_DrawingContext.getImageData(0,0,500,500-moveTotal));
+                
+            // // } 
+            // this.currentYPosition += moveTotal;
+
             // TODO: Handle scrolling. (iProject 1)
+            //Save image data, paste image data onto screen of the previous image from image data array
         }
     }
  }

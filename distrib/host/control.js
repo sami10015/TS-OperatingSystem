@@ -52,12 +52,12 @@ var TSOS;
             startTime();
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
-            if (typeof Glados === "function") {
-                // function Glados() is here, so instantiate Her into
-                // the global (and properly capitalized) _GLaDOS variable.
-                _GLaDOS = new Glados();
-                _GLaDOS.init();
-            }
+            // if (typeof Glados === "function") {
+            //     // function Glados() is here, so instantiate Her into
+            //     // the global (and properly capitalized) _GLaDOS variable.
+            //     _GLaDOS = new Glados();
+            //     _GLaDOS.init();
+            // }
         };
         Control.hostLog = function (msg, source) {
             if (source === void 0) { source = "?"; }
