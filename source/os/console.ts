@@ -19,7 +19,9 @@ module TSOS {
                     public currentYPosition = _DefaultFontSize,
                     public pastXPositions = [0],
                     public buffer = "",
-                    public backspaceImageDataArray = []) {
+                    public backspaceImageDataArray = [],
+                    public commandsArray = [],
+                    public currentCommandIndex = 0) {
         }
 
         public init(): void {
@@ -45,12 +47,16 @@ module TSOS {
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
+                    this.commandsArray.push(this.buffer); //Add to commands list for up and down arrow key use(command history recall)
+                    this.currentCommandIndex = this.commandsArray.length-1; //Update the current command index to the last command in the array
                     // ... and reset our buffer.
                     this.buffer = "";
+
                 } else if (chr == String.fromCharCode(8)) { //Backspace Key
                     _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0); //Retrieve image data of previously drawn word
                     this.currentXPosition = this.pastXPositions.pop(); //Retrieve past X position for Canvas drawing, and set it to the current X position
                     this.buffer = this.buffer.substring(0, this.buffer.length-1); //Adjust buffer for kernel
+
                 } else if(chr == String.fromCharCode(9)){ //Tab key
                     //Have a command list array
                     var commandList = ["ver","help","shutdown","cls","man","trace","rot13","prompt","date","whereami","kratos","load","status"]; //Must update when adding commands
@@ -87,9 +93,29 @@ module TSOS {
                             this.putText(tabWord.charAt(i)); //Display text of each character
                             this.buffer += tabWord.charAt(i); //Add each character to the buffer
                         }
-                    }
-                    //then draw that command onto the canvas along with updating the buffer
+                    }                     
+
+                } else if(chr == String.fromCharCode(38)){ //Up Arrow
+                    var command = this.commandsArray[this.currentCommandIndex]; //Retrieve last command
+                    //IF there is something in the buffer, use backspacing techniques to clear the canvas before drawing the last command
+                    if(this.buffer != ""){
+                        for(var i = this.buffer.length - 1; i > 0; i--){
+                            this.backspaceImageDataArray.pop(); //Remove the last few saved images to arrange backspace list correctly
+                        }
+                        _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0); //Retrieve the cleared command line
+                        this.buffer = ''; //Clear the buffer
+                        this.currentXPosition = this.pastXPositions[2]; //Reset the X Position ([1] = 0, [2] = start of command)
+                    }                    
                     
+                    //Draw the previous command onto the canvas
+                    for(var i = 0; i < command.length; i++){
+                        this.backspaceImageDataArray.push(_DrawingContext.getImageData(0,0,500,500)); //Save image data for backspacing purposes
+                        this.putText(command.charAt(i)); //Display text of each character
+                        this.buffer += command.charAt(i); //Add each character to the buffer
+                    }
+                    this.currentCommandIndex -= 1; //Set the index to the next previous command placement
+                } else if(chr == String.fromCharCode(40)){ //Down Arrow
+
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...

@@ -10,7 +10,7 @@
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, pastXPositions, buffer, backspaceImageDataArray) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, pastXPositions, buffer, backspaceImageDataArray, commandsArray, currentCommandIndex) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -18,6 +18,8 @@ var TSOS;
             if (pastXPositions === void 0) { pastXPositions = [0]; }
             if (buffer === void 0) { buffer = ""; }
             if (backspaceImageDataArray === void 0) { backspaceImageDataArray = []; }
+            if (commandsArray === void 0) { commandsArray = []; }
+            if (currentCommandIndex === void 0) { currentCommandIndex = 0; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -25,6 +27,8 @@ var TSOS;
             this.pastXPositions = pastXPositions;
             this.buffer = buffer;
             this.backspaceImageDataArray = backspaceImageDataArray;
+            this.commandsArray = commandsArray;
+            this.currentCommandIndex = currentCommandIndex;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -46,6 +50,8 @@ var TSOS;
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
+                    this.commandsArray.push(this.buffer); //Add to commands list for up and down arrow key use(command history recall)
+                    this.currentCommandIndex = this.commandsArray.length - 1; //Update the current command index to the last command in the array
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
@@ -92,6 +98,27 @@ var TSOS;
                             this.buffer += tabWord.charAt(i); //Add each character to the buffer
                         }
                     }
+                }
+                else if (chr == String.fromCharCode(38)) {
+                    var command = this.commandsArray[this.currentCommandIndex]; //Retrieve last command
+                    //IF there is something in the buffer, use backspacing techniques to clear the canvas before drawing the last command
+                    if (this.buffer != "") {
+                        for (var i = this.buffer.length - 1; i > 0; i--) {
+                            this.backspaceImageDataArray.pop(); //Remove the last few saved images to arrange backspace list correctly
+                        }
+                        _DrawingContext.putImageData(this.backspaceImageDataArray.pop(), 0, 0); //Retrieve the cleared command line
+                        this.buffer = ''; //Clear the buffer
+                        this.currentXPosition = this.pastXPositions[2]; //Reset the X Position ([1] = 0, [2] = start of command)
+                    }
+                    //Draw the previous command onto the canvas
+                    for (var i = 0; i < command.length; i++) {
+                        this.backspaceImageDataArray.push(_DrawingContext.getImageData(0, 0, 500, 500)); //Save image data for backspacing purposes
+                        this.putText(command.charAt(i)); //Display text of each character
+                        this.buffer += command.charAt(i); //Add each character to the buffer
+                    }
+                    this.currentCommandIndex -= 1; //Set the index to the next previous command placement
+                }
+                else if (chr == String.fromCharCode(40)) {
                 }
                 else {
                     // This is a "normal" character, so ...
