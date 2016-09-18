@@ -47,16 +47,54 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
-                } else if (chr == String.fromCharCode(8)) { //backspace
-                    //Retrieve image data of previously drawn word
-                    _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0);
-                    this.currentXPosition = this.pastXPositions.pop(); //Retrieve last past X position 
-                    this.buffer = this.buffer.substring(0, this.buffer.length-1); //Adjust buffer for kernel purposes
+                } else if (chr == String.fromCharCode(8)) { //Backspace Key
+                    _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0); //Retrieve image data of previously drawn word
+                    this.currentXPosition = this.pastXPositions.pop(); //Retrieve past X position for Canvas drawing, and set it to the current X position
+                    this.buffer = this.buffer.substring(0, this.buffer.length-1); //Adjust buffer for kernel
+                } else if(chr == String.fromCharCode(9)){ //Tab key
+                    //Have a command list array
+                    var commandList = ["ver","help","shutdown","cls","man","trace","rot13","prompt","date","whereami","kratos","load","status"]; //Must update when adding commands
+                    //Find the closest command that relates to the buffer using temporary counter and index
+                    var count = 0;
+                    var index = 0;
+                    for(var i = 0; i < commandList.length; i++){
+                        var tempCount = 0;
+                        for(var j = 0; j < this.buffer.length; j++){
+                            if(commandList[i].charAt(j) == this.buffer.charAt(j)){
+                                tempCount++;
+                            }else{
+                                break;
+                            }
+                        }
+                        if(tempCount > count){
+                            count = tempCount;
+                            index = i;
+                        }
+                    }
+                    //There is a match for the TAB key
+                    if(count > 0){
+                        //Use backspacing techniques to clear the canvas before drawing the complete command with the TAB key
+                        for(var i = this.buffer.length - 1; i > 0; i--){
+                            this.backspaceImageDataArray.pop(); //Remove the last few saved images to arrange backspace list correctly
+                        }
+                        _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0); //Retrieve the cleared command line
+                        this.buffer = ''; //Clear the buffer
+                        this.currentXPosition = this.pastXPositions[2]; //Reset the X Position ([1] = 0, [2] = start of command)
+                        var tabWord = commandList[index]; //The word that was found 
+                        //Must print out the word, along with saving the image data for backspacing purposes
+                        for(var i = 0; i < tabWord.length; i++){
+                            this.backspaceImageDataArray.push(_DrawingContext.getImageData(0,0,500,500)); //Save image data for backspacing purposes
+                            this.putText(tabWord.charAt(i)); //Display text of each character
+                            this.buffer += tabWord.charAt(i); //Add each character to the buffer
+                        }
+                    }
+                    //then draw that command onto the canvas along with updating the buffer
+                    
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
                     this.backspaceImageDataArray.push(_DrawingContext.getImageData(0,0,500,500));  //Save image data for backspacing purposes
-                    this.putText(chr);
+                    this.putText(chr); //Display text
                     // ... and add it to our buffer.
                     this.buffer += chr;
                 }
