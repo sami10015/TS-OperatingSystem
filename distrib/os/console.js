@@ -103,13 +103,27 @@ var TSOS;
                 else if (chr == String.fromCharCode(38) || chr == String.fromCharCode(40)) {
                     var command;
                     if (chr == String.fromCharCode(38)) {
-                        command = this.commandsArray[this.currentCommandIndex];
-                        this.currentCommandIndex -= 1;
+                        if (this.currentCommandIndex != this.commandsArray.length - 1) {
+                            if (this.currentCommandIndex - 1 < 0) {
+                                command = this.commandsArray[this.currentCommandIndex];
+                                this.currentCommandIndex = 0;
+                            }
+                            else {
+                                command = this.commandsArray[this.currentCommandIndex];
+                                this.currentCommandIndex -= 1;
+                            }
+                        }
+                        else {
+                            command = this.commandsArray[this.currentCommandIndex];
+                            this.currentCommandIndex -= 1;
+                        }
+                        console.log(this.currentCommandIndex);
                     }
                     else {
                         if (this.currentCommandIndex != this.commandsArray.length - 1) {
                             command = this.commandsArray[this.currentCommandIndex + 1];
                             this.currentCommandIndex += 1;
+                            console.log(this.currentCommandIndex);
                         }
                     }
                     if (this.buffer != "") {

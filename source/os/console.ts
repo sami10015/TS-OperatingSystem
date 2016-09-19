@@ -99,12 +99,25 @@ module TSOS {
                 } else if (chr == String.fromCharCode(38) || chr == String.fromCharCode(40)){ //Up or Down Arrow
                     var command;
                     if(chr == String.fromCharCode(38)){ //Up Arrow
-                        command = this.commandsArray[this.currentCommandIndex];
-                        this.currentCommandIndex -= 1;
+                        if(this.currentCommandIndex != this.commandsArray.length-1){
+                            if(this.currentCommandIndex - 1 < 0){
+                                command = this.commandsArray[this.currentCommandIndex];
+                                this.currentCommandIndex = 0;
+                            }else{
+                                command = this.commandsArray[this.currentCommandIndex];
+                                this.currentCommandIndex -= 1;
+                            }
+                        }else{
+                            command = this.commandsArray[this.currentCommandIndex];  
+                            this.currentCommandIndex -= 1;  
+                        }
+
+                        console.log(this.currentCommandIndex);
                     }else{ //Down Arrow
                         if(this.currentCommandIndex != this.commandsArray.length-1){ //Save from index error
                             command = this.commandsArray[this.currentCommandIndex+1];
-                            this.currentCommandIndex += 1;    
+                            this.currentCommandIndex += 1;
+                            console.log(this.currentCommandIndex);    
                         }                        
                     }
                     if(this.buffer != ""){
@@ -122,50 +135,6 @@ module TSOS {
                         this.putText(command.charAt(i)); //Display text of each character
                         this.buffer += command.charAt(i); //Add each character to the buffer
                     }
-
-                // } else if(chr == String.fromCharCode(38)){ //Up Arrow
-                //     //Retrieve last command, first checking if the currentCommandIndex isnt the last command in the array
-                //     var command = this.commandsArray[this.currentCommandIndex];                 
-                //     //IF there is something in the buffer, use backspacing techniques to clear the canvas before drawing the last command
-                //     if(this.buffer != ""){
-                //         for(var i = this.buffer.length - 1; i > 0; i--){
-                //             this.backspaceImageDataArray.pop(); //Remove the last few saved images to arrange backspace list correctly
-                //         }
-                //         _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0); //Retrieve the cleared command line
-                //         this.buffer = ''; //Clear the buffer
-                //         this.currentXPosition = this.pastXPositions[2]; //Reset the X Position ([1] = 0, [2] = start of command)
-                //     }                    
-                    
-                //     //Draw the previous command onto the canvas
-                //     for(var i = 0; i < command.length; i++){
-                //         this.backspaceImageDataArray.push(_DrawingContext.getImageData(0,0,500,500)); //Save image data for backspacing purposes
-                //         this.putText(command.charAt(i)); //Display text of each character
-                //         this.buffer += command.charAt(i); //Add each character to the buffer
-                //     }
-
-                // } else if(chr == String.fromCharCode(40)){ //Down Arrow
-                //     //Checks if the index is at the end of the commands array, meaning there is no other command to look at
-                //     if(this.currentCommandIndex != this.commandsArray.length-1){
-                //         this.currentCommandIndex += 1; //Set the index to the next command
-                //         var command = this.commandsArray[this.currentCommandIndex];
-                //         //IF there is something in the buffer, use backspacing techniques to clear the canvas before drawing the last command
-                //         if(this.buffer != ""){
-                //             for(var i = this.buffer.length - 1; i > 0; i--){
-                //                 this.backspaceImageDataArray.pop(); //Remove the last few saved images to arrange backspace list correctly
-                //             }
-                //             _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0); //Retrieve the cleared command line
-                //             this.buffer = ''; //Clear the buffer
-                //             this.currentXPosition = this.pastXPositions[2]; //Reset the X Position ([1] = 0, [2] = start of command)
-                //         }                    
-                        
-                //         //Draw the previous command onto the canvas
-                //         for(var i = 0; i < command.length; i++){
-                //             this.backspaceImageDataArray.push(_DrawingContext.getImageData(0,0,500,500)); //Save image data for backspacing purposes
-                //             this.putText(command.charAt(i)); //Display text of each character
-                //             this.buffer += command.charAt(i); //Add each character to the buffer
-                //         }
-                //         console.log(this.currentCommandIndex);
-                //     }
 
                 } else {
                     // This is a "normal" character, so ...
