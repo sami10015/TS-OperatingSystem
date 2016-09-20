@@ -109,6 +109,13 @@ module TSOS {
                                   " - Change the status.");
             this.commandList[this.commandList.length] = sc;
 
+            // error 
+            sc = new ShellCommand(this.shellError,
+                                  "error",
+                                  " - Test Error.");
+            this.commandList[this.commandList.length] = sc;
+
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -303,6 +310,9 @@ module TSOS {
                     case "status":
                         _StdOut.putText("Change the status");
                         break;
+                    case "error":
+                        _StdOut.putText("Error");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -414,6 +424,11 @@ module TSOS {
                 word = word + ' ' + params[i];
             }
             document.getElementById('Status').innerHTML = 'Status: ' + word;
+        }
+
+        //Cause a test OS error
+        public shellError(){
+            _Kernel.krnTrapError("Test Error");
         }
     }
 }

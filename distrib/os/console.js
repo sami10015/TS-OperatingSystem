@@ -67,7 +67,7 @@ var TSOS;
                 }
                 else if (chr == String.fromCharCode(9)) {
                     //Have a command list array
-                    var commandList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "date", "whereami", "kratos", "load", "status"]; //Must update when adding commands
+                    var commandList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "date", "whereami", "kratos", "load", "status", "error"]; //Must update when adding commands
                     //Find the closest command that relates to the buffer using temporary counter and index
                     var count = 0;
                     var index = 0;
@@ -176,22 +176,14 @@ var TSOS;
         };
         Console.prototype.advanceLine = function () {
             this.currentXPosition = 0;
-            //console.log("Advance");
             /*
              * Font size measures from the baseline to the highest point in the font.
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
-            // this.currentYPosition += _DefaultFontSize + 
-            //                          _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-            //                          _FontHeightMargin;
-            // /*
-            //  * Font size measures from the baseline to the highest point in the font.
-            //  * Font descent measures from the baseline to the lowest point in the font.
-            //  * Font height margin is extra spacing between the lines.
-            //  */
             //Y position in the canvas
             var moveTotal = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+            //If the command is going to go off the canvas, go into this if 
             if (this.currentYPosition + moveTotal > 500) {
                 this.imageScrollArray.push(_DrawingContext.getImageData(0, 0, 500, 500)); //Getting current snapshot of canvas besides bottom line and pushing to image array
                 this.clearScreen(); //Clear the screen
@@ -199,10 +191,8 @@ var TSOS;
                 this.imageScrollIndex += 1; //Increment Scrolling Index
             }
             else {
-                this.currentYPosition += moveTotal;
+                this.currentYPosition += moveTotal; //If not increment the Y position downward
             }
-            // TODO: Handle scrolling. (iProject 1)
-            //Save image data, paste image data onto screen of the previous image from image data array
         };
         return Console;
     }());
