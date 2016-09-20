@@ -10,7 +10,7 @@
 var TSOS;
 (function (TSOS) {
     var Console = (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, pastXPositions, buffer, backspaceImageDataArray, commandsArray, currentCommandIndex) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, pastXPositions, buffer, backspaceImageDataArray, commandsArray, currentCommandIndex, imageScrollArray, imageScrollIndex) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
@@ -20,6 +20,8 @@ var TSOS;
             if (backspaceImageDataArray === void 0) { backspaceImageDataArray = []; }
             if (commandsArray === void 0) { commandsArray = []; }
             if (currentCommandIndex === void 0) { currentCommandIndex = 0; }
+            if (imageScrollArray === void 0) { imageScrollArray = []; }
+            if (imageScrollIndex === void 0) { imageScrollIndex = 0; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -29,6 +31,8 @@ var TSOS;
             this.backspaceImageDataArray = backspaceImageDataArray;
             this.commandsArray = commandsArray;
             this.currentCommandIndex = currentCommandIndex;
+            this.imageScrollArray = imageScrollArray;
+            this.imageScrollIndex = imageScrollIndex;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -172,27 +176,31 @@ var TSOS;
         };
         Console.prototype.advanceLine = function () {
             this.currentXPosition = 0;
+            //console.log("Advance");
             /*
              * Font size measures from the baseline to the highest point in the font.
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
-            this.currentYPosition += _DefaultFontSize +
-                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                _FontHeightMargin;
-            // this.currentXPosition = 0;
+            // this.currentYPosition += _DefaultFontSize + 
+            //                          _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+            //                          _FontHeightMargin;
             // /*
             //  * Font size measures from the baseline to the highest point in the font.
             //  * Font descent measures from the baseline to the lowest point in the font.
             //  * Font height margin is extra spacing between the lines.
             //  */
-            // //Y position in the canvas
-            // var moveTotal = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +_FontHeightMargin;
-            // // if(this.currentYPosition + moveTotal > 500){
-            // //     //Getting current snapshot of canvas
-            // //     this.imageDataArray.push(_DrawingContext.getImageData(0,0,500,500-moveTotal));
-            // // } 
-            // this.currentYPosition += moveTotal;
+            //Y position in the canvas
+            var moveTotal = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+            if (this.currentYPosition + moveTotal > 500) {
+                this.imageScrollArray.push(_DrawingContext.getImageData(0, 0, 500, 500)); //Getting current snapshot of canvas besides bottom line and pushing to image array
+                this.clearScreen(); //Clear the screen
+                _DrawingContext.putImageData(this.imageScrollArray[this.imageScrollIndex], 0, -(moveTotal)); //Put the image located above the canvas
+                this.imageScrollIndex += 1; //Increment Scrolling Index
+            }
+            else {
+                this.currentYPosition += moveTotal;
+            }
             // TODO: Handle scrolling. (iProject 1)
             //Save image data, paste image data onto screen of the previous image from image data array
         };

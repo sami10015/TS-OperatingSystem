@@ -21,7 +21,9 @@ module TSOS {
                     public buffer = "",
                     public backspaceImageDataArray = [],
                     public commandsArray = [],
-                    public currentCommandIndex = 0) {
+                    public currentCommandIndex = 0,
+                    public imageScrollArray = [],
+                    public imageScrollIndex = 0) {
         }
 
         public init(): void {
@@ -170,30 +172,32 @@ module TSOS {
 
         public advanceLine(): void {
             this.currentXPosition = 0;
+            //console.log("Advance");
             /*
              * Font size measures from the baseline to the highest point in the font.
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
-            this.currentYPosition += _DefaultFontSize + 
-                                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                                     _FontHeightMargin;
-
-            // this.currentXPosition = 0;
+            // this.currentYPosition += _DefaultFontSize + 
+            //                          _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+            //                          _FontHeightMargin;
             // /*
             //  * Font size measures from the baseline to the highest point in the font.
             //  * Font descent measures from the baseline to the lowest point in the font.
             //  * Font height margin is extra spacing between the lines.
             //  */
             
-            // //Y position in the canvas
-            // var moveTotal = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +_FontHeightMargin;
-            // // if(this.currentYPosition + moveTotal > 500){
-            // //     //Getting current snapshot of canvas
-            // //     this.imageDataArray.push(_DrawingContext.getImageData(0,0,500,500-moveTotal));
-                
-            // // } 
-            // this.currentYPosition += moveTotal;
+            //Y position in the canvas
+            var moveTotal = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +_FontHeightMargin;
+            
+            if(this.currentYPosition+moveTotal > 500){
+                this.imageScrollArray.push(_DrawingContext.getImageData(0,0,500,500)); //Getting current snapshot of canvas besides bottom line and pushing to image array
+                this.clearScreen(); //Clear the screen
+                _DrawingContext.putImageData(this.imageScrollArray[this.imageScrollIndex],0,-(moveTotal)); //Put the image located above the canvas
+                this.imageScrollIndex += 1; //Increment Scrolling Index
+            }else{
+                this.currentYPosition += moveTotal;
+            } 
 
             // TODO: Handle scrolling. (iProject 1)
             //Save image data, paste image data onto screen of the previous image from image data array
