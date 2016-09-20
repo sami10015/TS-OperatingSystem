@@ -51,7 +51,6 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     this.commandsArray.push(this.buffer); //Add to commands list for up and down arrow key use(command history recall)
                     this.currentCommandIndex = this.commandsArray.length-1; //Update the current command index to the last command in the array
-                    console.log(this.commandsArray);
                     // ... and reset our buffer.
                     this.buffer = "";
 
@@ -166,7 +165,6 @@ module TSOS {
                 this.pastXPositions.push(this.currentXPosition);
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                console.log(this.currentXPosition);
                 if(this.currentXPosition+offset >= 490){
                     this.currentXPosition = 0;
                     this.advanceLine();
