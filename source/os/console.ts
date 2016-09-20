@@ -23,7 +23,8 @@ module TSOS {
                     public commandsArray = [],
                     public currentCommandIndex = 0,
                     public imageScrollArray = [],
-                    public imageScrollIndex = 0) {
+                    public imageScrollIndex = 0,
+                    public backspaceAmount = 0) {
         }
 
         public init(): void {
@@ -52,11 +53,16 @@ module TSOS {
                     this.commandsArray.push(this.buffer); //Add to commands list for up and down arrow key use(command history recall)
                     this.currentCommandIndex = this.commandsArray.length-1; //Update the current command index to the last command in the array
                     // ... and reset our buffer.
-                    this.buffer = "";
+                    this.backspaceAmount = 0; //Reset the backspace amount
+                    this.buffer = ""; //Reset the buffer
 
                 } else if (chr == String.fromCharCode(8)) { //Backspace Key
-                    _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0); //Retrieve image data of previously drawn word
-                    this.currentXPosition = this.pastXPositions.pop(); //Retrieve past X position for Canvas drawing, and set it to the current X position
+                    console.log(this.backspaceAmount);
+                    if(this.backspaceAmount != 0){ //Stop the program from backspacing all the way back to any previous image
+                        _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0); //Retrieve image data of previously drawn word
+                        this.currentXPosition = this.pastXPositions.pop(); //Retrieve past X position for Canvas drawing, and set it to the current X position
+                        this.backspaceAmount -= 1; //Allow one less backspace
+                    }
                     this.buffer = this.buffer.substring(0, this.buffer.length-1); //Adjust buffer for kernel
 
                 } else if(chr == String.fromCharCode(9)){ //Tab key
@@ -143,7 +149,8 @@ module TSOS {
                     this.backspaceImageDataArray.push(_DrawingContext.getImageData(0,0,500,500));  //Save image data for backspacing purposes
                     this.putText(chr); //Display text
                     // ... and add it to our buffer.
-                    this.buffer += chr;
+                    this.backspaceAmount += 1; //Allow one more backspace
+                    this.buffer += chr; //Add to buffer
                 }
                 // TODO: Write a case for Ctrl-C.
             }
