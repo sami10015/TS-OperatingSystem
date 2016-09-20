@@ -166,7 +166,13 @@ module TSOS {
                 this.pastXPositions.push(this.currentXPosition);
                 // Move the current X position.
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset;
+                console.log(this.currentXPosition);
+                if(this.currentXPosition+offset >= 490){
+                    this.currentXPosition = 0;
+                    this.advanceLine();
+                }else{
+                    this.currentXPosition = this.currentXPosition + offset;
+                }
             }
          }
 
