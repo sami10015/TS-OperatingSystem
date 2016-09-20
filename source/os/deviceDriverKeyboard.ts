@@ -53,7 +53,49 @@ module TSOS {
                         (keyCode == 32)                     ||   // space
                         (keyCode == 13) || (keyCode == 8) || (keyCode == 9)   // enter or backspace or TAB
                         || (keyCode == 38) || (keyCode == 40)) { //Up and Down arrow
-                chr = String.fromCharCode(keyCode);
+                if(keyCode == 48){ // 0
+                    if(isShifted){
+                        chr = ')';
+                    }
+                }else if(keyCode == 49){ // 1
+                    if(isShifted){
+                        chr = '!';
+                    }
+                }else if(keyCode == 50){ // 2
+                    if(isShifted){
+                        chr = '@';
+                    }
+                }else if(keyCode == 51){ // 3
+                    if(isShifted){
+                        chr = '#';
+                    }
+                }else if(keyCode == 52){ // 4
+                    if(isShifted){
+                        chr = '$';
+                    }
+                }else if(keyCode == 53){ // 5
+                    if(isShifted){
+                        chr = '%';
+                    }
+                }else if(keyCode == 54){ // 6
+                    if(isShifted){
+                        chr = '^';
+                    }
+                }else if(keyCode == 55){ // 7
+                    if(isShifted){
+                        chr = '&';
+                    }
+                }else if(keyCode == 56){ // 8
+                    if(isShifted){
+                        chr = '*';
+                    }
+                }else if(keyCode == 57){ // 9
+                    if(isShifted){
+                        chr = '(';
+                    }
+                }else{
+                    chr = String.fromCharCode(keyCode);
+                }                
                 _KernelInputQueue.enqueue(chr);
             }
         }

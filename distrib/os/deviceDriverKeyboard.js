@@ -54,7 +54,59 @@ var TSOS;
                 (keyCode == 32) ||
                 (keyCode == 13) || (keyCode == 8) || (keyCode == 9) // enter or backspace or TAB
                 || (keyCode == 38) || (keyCode == 40)) {
-                chr = String.fromCharCode(keyCode);
+                if (keyCode == 48) {
+                    if (isShifted) {
+                        chr = ')';
+                    }
+                }
+                else if (keyCode == 49) {
+                    if (isShifted) {
+                        chr = '!';
+                    }
+                }
+                else if (keyCode == 50) {
+                    if (isShifted) {
+                        chr = '@';
+                    }
+                }
+                else if (keyCode == 51) {
+                    if (isShifted) {
+                        chr = '#';
+                    }
+                }
+                else if (keyCode == 52) {
+                    if (isShifted) {
+                        chr = '$';
+                    }
+                }
+                else if (keyCode == 53) {
+                    if (isShifted) {
+                        chr = '%';
+                    }
+                }
+                else if (keyCode == 54) {
+                    if (isShifted) {
+                        chr = '^';
+                    }
+                }
+                else if (keyCode == 55) {
+                    if (isShifted) {
+                        chr = '&';
+                    }
+                }
+                else if (keyCode == 56) {
+                    if (isShifted) {
+                        chr = '*';
+                    }
+                }
+                else if (keyCode == 57) {
+                    if (isShifted) {
+                        chr = '(';
+                    }
+                }
+                else {
+                    chr = String.fromCharCode(keyCode);
+                }
                 _KernelInputQueue.enqueue(chr);
             }
         };
