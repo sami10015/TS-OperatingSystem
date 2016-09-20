@@ -47,11 +47,12 @@ module TSOS {
                 if (isShifted) {
                     chr = String.fromCharCode(keyCode);
                 }
-                // TODO: Check for caps-lock and handle as shifted if so.
+                // TODO: Check for caps-lock and handle as shifted if so. 
                 _KernelInputQueue.enqueue(chr);
             } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
                         (keyCode == 32)                     ||   // space
-                        (keyCode == 13)) {                       // enter
+                        (keyCode == 13) || (keyCode == 8) || (keyCode == 9)   // enter or backspace or TAB
+                        || (keyCode == 38) || (keyCode == 40)) { //Up and Down arrow
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             }

@@ -55,9 +55,9 @@ module TSOS {
             _OsShell.init();
 
             // Finally, initiate student testing protocol.
-            if (_GLaDOS) {
-                _GLaDOS.afterStartup();
-            }
+            // if (_GLaDOS) {
+            //     _GLaDOS.afterStartup();
+            // }
         }
 
         public krnShutdown() {
@@ -174,6 +174,20 @@ module TSOS {
         public krnTrapError(msg) {
             Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
+            _StdOut.clearScreen(); //Clear the console
+            
+            //Turn the background to blue
+            _DrawingContext.beginPath();
+            _DrawingContext.rect(0,0,500,500);
+            _DrawingContext.fillStyle = "blue";
+            _DrawingContext.fill();
+
+            //Write BSOD message
+            _DrawingContext.fillStyle = "white";
+            _DrawingContext.font = "30px Verdana";
+            _DrawingContext.fillText("BLUE SCREEN OF DEATH",50,100);
+            _DrawingContext.font = "10px Verdana";
+            _DrawingContext.fillText("Congrats, you managed to destroy what I worked so hard on...",50,150);
             this.krnShutdown();
         }
     }

@@ -47,14 +47,25 @@ module TSOS {
             // Use the TypeScript cast to HTMLInputElement
             (<HTMLInputElement> document.getElementById("btnStartOS")).focus();
 
+            //Start time on status clock
+            function startTime(){
+                var today = new Date();
+                var h = today.getHours();
+                var m = today.getMinutes();
+                var s = today.getSeconds();
+                document.getElementById('Time').innerHTML = 'Time: ' + h + ':' + m + ':' + s;
+                var t = setTimeout(startTime, 500);
+            }
+            startTime();
+
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
-            if (typeof Glados === "function") {
-                // function Glados() is here, so instantiate Her into
-                // the global (and properly capitalized) _GLaDOS variable.
-                _GLaDOS = new Glados();
-                _GLaDOS.init();
-            }
+            // if (typeof Glados === "function") {
+            //     // function Glados() is here, so instantiate Her into
+            //     // the global (and properly capitalized) _GLaDOS variable.
+            //     _GLaDOS = new Glados();
+            //     _GLaDOS.init();
+            // }
         }
 
         public static hostLog(msg: string, source: string = "?"): void {

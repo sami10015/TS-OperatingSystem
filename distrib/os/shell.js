@@ -50,16 +50,22 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
             // date
-            sc = new TSOS.ShellCommand(this.shellDate, "date", "Displays the current date.");
+            sc = new TSOS.ShellCommand(this.shellDate, "date", " - Displays the current date.");
             this.commandList[this.commandList.length] = sc;
             // whereami
-            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "Displays current location.");
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", " - Displays current location.");
             this.commandList[this.commandList.length] = sc;
             // kratos
-            sc = new TSOS.ShellCommand(this.shellKratos, "kratos", "Output random Kratos quote.");
+            sc = new TSOS.ShellCommand(this.shellKratos, "kratos", " - Output random Kratos quote.");
             this.commandList[this.commandList.length] = sc;
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "Validate the user code.");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", " - Validate the user code.");
+            this.commandList[this.commandList.length] = sc;
+            // status
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", " - Change the status.");
+            this.commandList[this.commandList.length] = sc;
+            // error 
+            sc = new TSOS.ShellCommand(this.shellError, "error", " - Test Error.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -240,6 +246,12 @@ var TSOS;
                     case "load":
                         _StdOut.putText("Validate the user code.");
                         break;
+                    case "status":
+                        _StdOut.putText("Change the status");
+                        break;
+                    case "error":
+                        _StdOut.putText("Error");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -313,6 +325,7 @@ var TSOS;
                 "By the gods, what have I become?"];
             _StdOut.putText(quotes[random]);
         };
+        //Validates the user program input
         Shell.prototype.shellLoad = function () {
             //Cast as HTMLInputElement and then retrieve the value within the program input text area
             var input = document.getElementById("taProgramInput").value;
@@ -341,6 +354,18 @@ var TSOS;
                     _StdOut.putText("Not Validated.");
                 }
             }
+        };
+        //Changes the status of the inner HTML
+        Shell.prototype.shellStatus = function (params) {
+            var word = '';
+            for (var i = 0; i < params.length; i++) {
+                word = word + ' ' + params[i];
+            }
+            document.getElementById('Status').innerHTML = 'Status: ' + word;
+        };
+        //Cause a test OS error
+        Shell.prototype.shellError = function () {
+            _Kernel.krnTrapError("Test Error");
         };
         return Shell;
     }());
