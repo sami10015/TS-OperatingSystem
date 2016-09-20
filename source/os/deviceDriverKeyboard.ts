@@ -53,46 +53,26 @@ module TSOS {
                         (keyCode == 32)                     ||   // space
                         (keyCode == 13) || (keyCode == 8) || (keyCode == 9)   // enter or backspace or TAB
                         || (keyCode == 38) || (keyCode == 40)) { //Up and Down arrow
-                if(keyCode == 48){ // 0
-                    if(isShifted){
-                        chr = ')';
-                    }
-                }else if(keyCode == 49){ // 1
-                    if(isShifted){
-                        chr = '!';
-                    }
-                }else if(keyCode == 50){ // 2
-                    if(isShifted){
-                        chr = '@';
-                    }
-                }else if(keyCode == 51){ // 3
-                    if(isShifted){
-                        chr = '#';
-                    }
-                }else if(keyCode == 52){ // 4
-                    if(isShifted){
-                        chr = '$';
-                    }
-                }else if(keyCode == 53){ // 5
-                    if(isShifted){
-                        chr = '%';
-                    }
-                }else if(keyCode == 54){ // 6
-                    if(isShifted){
-                        chr = '^';
-                    }
-                }else if(keyCode == 55){ // 7
-                    if(isShifted){
-                        chr = '&';
-                    }
-                }else if(keyCode == 56){ // 8
-                    if(isShifted){
-                        chr = '*';
-                    }
-                }else if(keyCode == 57){ // 9
-                    if(isShifted){
-                        chr = '(';
-                    }
+                if(keyCode == 48 && isShifted){ // 0
+                    chr = ')';
+                }else if(keyCode == 49 && isShifted){ // 1
+                    chr = '!';
+                }else if(keyCode == 50 && isShifted){ // 2
+                    chr = '@';
+                }else if(keyCode == 51 && isShifted){ // 3
+                    chr = '#';
+                }else if(keyCode == 52 && isShifted){ // 4
+                    chr = '$';
+                }else if(keyCode == 53 && isShifted){ // 5
+                    chr = '%';
+                }else if(keyCode == 54 && isShifted){ // 6
+                    chr = '^';
+                }else if(keyCode == 55 && isShifted){ // 7
+                    chr = '&';
+                }else if(keyCode == 56 && isShifted){ // 8
+                    chr = '*';
+                }else if(keyCode == 57 && isShifted){ // 9
+                    chr = '(';
                 }else{
                     chr = String.fromCharCode(keyCode);
                 }                
