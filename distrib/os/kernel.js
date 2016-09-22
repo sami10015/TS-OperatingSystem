@@ -47,9 +47,9 @@ var TSOS;
             _OsShell = new TSOS.Shell();
             _OsShell.init();
             // Finally, initiate student testing protocol.
-            // if (_GLaDOS) {
-            //     _GLaDOS.afterStartup();
-            // }
+            if (_GLaDOS) {
+                _GLaDOS.afterStartup();
+            }
         };
         Kernel.prototype.krnShutdown = function () {
             this.krnTrace("begin shutdown OS");
