@@ -411,6 +411,7 @@ module TSOS {
         		//If each letter or digit is in the hex array(or spaces), then the length of count and the input should be the same
         		if(count == input.length){
         			_StdOut.putText("Validated.");
+                    _CPU.cycle(); //Temporary
         		}else{
         			_StdOut.putText("Not Validated.");
         		}

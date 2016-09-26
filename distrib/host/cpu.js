@@ -42,6 +42,14 @@ var TSOS;
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
+            var input = document.getElementById("taProgramInput").value; //Op Codes
+            this.isExecuting = true; //CPU Cycle begins
+            if (input.substring(0, 2) == 'A9') {
+                if (input.substring(4, 6) != '') {
+                    this.Acc = parseInt(input.substring(4, 6)); //Store constant in accumulator
+                    this.isExecuting = false; //CPU Cycle Done
+                }
+            }
         };
         return Cpu;
     }());
