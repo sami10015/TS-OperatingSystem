@@ -43,12 +43,14 @@ module TSOS {
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value; //Op Codes
        		this.isExecuting = true; //CPU Cycle begins
+            
             if(input.substring(0,2) == 'A9'){ //Load the accumulator op codes
             	if(input.substring(4,6) != ''){ //Check that there is a constant to save
             		this.Acc = parseInt(input.substring(4,6)); //Store constant in accumulator
             		this.isExecuting = false; //CPU Cycle Done
             	} 
             }
+            
         }
     }
 }
