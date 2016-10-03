@@ -115,6 +115,12 @@ module TSOS {
                                   " - Test Error.");
             this.commandList[this.commandList.length] = sc;
 
+            // run
+            sc = new ShellCommand(this.shellRun,
+                                  "run",
+                                   " - Load Program <PID>");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -305,13 +311,16 @@ module TSOS {
                     	_StdOut.putText("Output random Kratos quote.");
                     	break;
                     case "load":
-                    	_StdOut.putText("Validate the user code.");
+                    	_StdOut.putText("Validate the user code. Load program");
                     	break;
                     case "status":
                         _StdOut.putText("Change the status");
                         break;
                     case "error":
                         _StdOut.putText("Error");
+                        break;
+                    case "run":
+                        _StdOut.putText("Run program based on <PID>");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -388,6 +397,8 @@ module TSOS {
         	_StdOut.putText(quotes[random]);
         }
 
+
+
         //Validates the user program input
         public shellLoad(){
         	//Cast as HTMLInputElement and then retrieve the value within the program input text area
@@ -410,12 +421,30 @@ module TSOS {
         		}
         		//If each letter or digit is in the hex array(or spaces), then the length of count and the input should be the same
         		if(count == input.length){
-        			_StdOut.putText("Validated.");
-                    _CPU.cycle(); //Temporary
+                    var operation = (<HTMLInputElement>document.getElementById("taProgramInput")).value; //Op Codes
+                     _CPU.operations.push(operation); //Load OP Codes in Array
+        			_StdOut.putText("Program loaded. PID " + (_CPU.operations.length-1));
         		}else{
         			_StdOut.putText("Not Validated.");
         		}
         	}
+        }
+
+        //Runs program with PID
+        public shellRun(params){
+            var pID = '';
+            for(var i = 0; i < params.length; i++){
+                pID += params[i];
+            }
+
+            if(parseInt(pID) == NaN){ //Checks if you entered a number
+                _StdOut.putText("Please enter a numeric PID.");
+            }else if(parseInt(pID) > _CPU.operations.length-1){ //Checks if there is a program loaded under specific PID
+                _StdOut.putText("PID: " + pID + " does not exist");
+            }else{ //Run CPU if OK
+                _CPU.cycle();
+                _StdOut.putText("PID: " + pID + " done.");
+            }
         }
 
         //Changes the status of the inner HTML

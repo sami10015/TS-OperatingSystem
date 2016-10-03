@@ -24,7 +24,9 @@ module TSOS {
                     public Xreg: number = 0,
                     public Yreg: number = 0,
                     public Zflag: number = 0,
-                    public isExecuting: boolean = false) {
+                    public isExecuting: boolean = false,
+                    public operations = [],
+                    public PID: number = -1) {
 
         }
 
@@ -46,11 +48,18 @@ module TSOS {
             
             if(input.substring(0,2) == 'A9'){ //Load the accumulator op codes
             	if(input.substring(4,6) != ''){ //Check that there is a constant to save
-            		this.Acc = parseInt(input.substring(4,6)); //Store constant in accumulator
+            		//Change HTML CPU Display
+                    var table = (<HTMLInputElement>document.getElementById("cpuTable"));
+                    table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = input.substring(4,6);
+                    this.Acc = parseInt(input.substring(4,6)); //Store constant in accumulator
             		this.isExecuting = false; //CPU Cycle Done
             	} 
             }
             
+        }
+
+        public loadAccumulator(pID){
+
         }
     }
 }

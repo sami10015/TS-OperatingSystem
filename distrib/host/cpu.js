@@ -16,19 +16,23 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, operations, PID) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
             if (Yreg === void 0) { Yreg = 0; }
             if (Zflag === void 0) { Zflag = 0; }
             if (isExecuting === void 0) { isExecuting = false; }
+            if (operations === void 0) { operations = []; }
+            if (PID === void 0) { PID = -1; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
             this.Yreg = Yreg;
             this.Zflag = Zflag;
             this.isExecuting = isExecuting;
+            this.operations = operations;
+            this.PID = PID;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -46,10 +50,15 @@ var TSOS;
             this.isExecuting = true; //CPU Cycle begins
             if (input.substring(0, 2) == 'A9') {
                 if (input.substring(4, 6) != '') {
+                    //Change HTML CPU Display
+                    var table = document.getElementById("cpuTable");
+                    table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = input.substring(4, 6);
                     this.Acc = parseInt(input.substring(4, 6)); //Store constant in accumulator
                     this.isExecuting = false; //CPU Cycle Done
                 }
             }
+        };
+        Cpu.prototype.loadAccumulator = function (pID) {
         };
         return Cpu;
     }());
