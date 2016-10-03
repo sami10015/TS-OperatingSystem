@@ -437,13 +437,27 @@ module TSOS {
                 pID += params[i];
             }
 
-            if(parseInt(pID) == NaN){ //Checks if you entered a number
-                _StdOut.putText("Please enter a numeric PID.");
-            }else if(parseInt(pID) > _CPU.operations.length-1){ //Checks if there is a program loaded under specific PID
-                _StdOut.putText("PID: " + pID + " does not exist");
-            }else{ //Run CPU if OK
-                _CPU.cycle();
-                _StdOut.putText("PID: " + pID + " done.");
+            var x = true;
+
+            //Makes my life easier doing it this way
+            for(var i = 0; i < _CPU.pastPID.length; i++){ //Check if that program has been run before, if so it doesn't exist anymore
+                if(parseInt(pID) == _CPU.pastPID[i]){
+                    _StdOut.putText("PID: " + pID + " does not exist");
+                    x = false;
+                }
+            }
+            if(x){
+                if(parseInt(pID) == NaN){ //Checks if you entered a number
+                    _StdOut.putText("Please enter a numeric PID.");
+                }else if(parseInt(pID) > _CPU.operations.length-1){ //Checks if there is a program loaded under specific PID
+                    _StdOut.putText("PID: " + pID + " does not exist");
+                }else if(pID == ''){ //Check if user put in a PID
+                    _StdOut.putText("Please enter a PID along with the run command");
+                }else{ //Run CPU if OK
+                    _CPU.PID = parseInt(pID); //Change current pID
+                    _CPU.cycle(); //Run CPU 
+                    _StdOut.putText("PID: " + pID + " done.");
+                }
             }
         }
 

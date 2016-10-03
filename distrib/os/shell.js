@@ -369,15 +369,29 @@ var TSOS;
             for (var i = 0; i < params.length; i++) {
                 pID += params[i];
             }
-            if (parseInt(pID) == NaN) {
-                _StdOut.putText("Please enter a numeric PID.");
+            var x = true;
+            //Makes my life easier doing it this way
+            for (var i = 0; i < _CPU.pastPID.length; i++) {
+                if (parseInt(pID) == _CPU.pastPID[i]) {
+                    _StdOut.putText("PID: " + pID + " does not exist");
+                    x = false;
+                }
             }
-            else if (parseInt(pID) > _CPU.operations.length - 1) {
-                _StdOut.putText("PID: " + pID + " does not exist");
-            }
-            else {
-                _CPU.cycle();
-                _StdOut.putText("PID: " + pID + " done.");
+            if (x) {
+                if (parseInt(pID) == NaN) {
+                    _StdOut.putText("Please enter a numeric PID.");
+                }
+                else if (parseInt(pID) > _CPU.operations.length - 1) {
+                    _StdOut.putText("PID: " + pID + " does not exist");
+                }
+                else if (pID == '') {
+                    _StdOut.putText("Please enter a PID along with the run command");
+                }
+                else {
+                    _CPU.PID = parseInt(pID); //Change current pID
+                    _CPU.cycle(); //Run CPU 
+                    _StdOut.putText("PID: " + pID + " done.");
+                }
             }
         };
         //Changes the status of the inner HTML

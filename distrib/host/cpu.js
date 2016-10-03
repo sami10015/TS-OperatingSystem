@@ -16,7 +16,7 @@
 var TSOS;
 (function (TSOS) {
     var Cpu = (function () {
-        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, operations, PID) {
+        function Cpu(PC, Acc, Xreg, Yreg, Zflag, isExecuting, operations, PID, pastPID) {
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -25,6 +25,7 @@ var TSOS;
             if (isExecuting === void 0) { isExecuting = false; }
             if (operations === void 0) { operations = []; }
             if (PID === void 0) { PID = -1; }
+            if (pastPID === void 0) { pastPID = []; }
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
@@ -33,6 +34,7 @@ var TSOS;
             this.isExecuting = isExecuting;
             this.operations = operations;
             this.PID = PID;
+            this.pastPID = pastPID;
         }
         Cpu.prototype.init = function () {
             this.PC = 0;
@@ -47,18 +49,33 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             var input = document.getElementById("taProgramInput").value; //Op Codes
-            this.isExecuting = true; //CPU Cycle begins
-            if (input.substring(0, 2) == 'A9') {
-                if (input.substring(4, 6) != '') {
-                    //Change HTML CPU Display
-                    var table = document.getElementById("cpuTable");
-                    table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = input.substring(4, 6);
-                    this.Acc = parseInt(input.substring(4, 6)); //Store constant in accumulator
-                    this.isExecuting = false; //CPU Cycle Done
+            if (this.PID != -1) {
+                var operation = this.operations[this.PID];
+                var x = true;
+                while (x == true) {
+                    this.isExecuting = true; //CPU cycle begins
+                    if (operation.substring(0, 2) == 'A9') {
+                        this.loadAccumulator(operation.substring(4, 6));
+                        operation = operation.substring(6, operation.length);
+                    }
+                    if (operation == '') {
+                        x = false;
+                    }
                 }
+                this.isExecuting = false;
             }
+            this.pastPID.push(this.PID);
+            this.PID = -1; //Change back to normal            
         };
-        Cpu.prototype.loadAccumulator = function (pID) {
+        Cpu.prototype.loadAccumulator = function (constant) {
+            if (constant != '') {
+                //Change HTML CPU Display
+                var table = document.getElementById("cpuTable");
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = constant;
+                _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
+                this.Acc = parseInt(constant); //Store constant in accumulator
+                this.isExecuting = false; //CPU Cycle Done
+            }
         };
         return Cpu;
     }());

@@ -26,7 +26,8 @@ module TSOS {
                     public Zflag: number = 0,
                     public isExecuting: boolean = false,
                     public operations = [],
-                    public PID: number = -1) {
+                    public PID: number = -1,
+                    public pastPID = []) {
 
         }
 
@@ -44,22 +45,35 @@ module TSOS {
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value; //Op Codes
-       		this.isExecuting = true; //CPU Cycle begins
-            
-            if(input.substring(0,2) == 'A9'){ //Load the accumulator op codes
-            	if(input.substring(4,6) != ''){ //Check that there is a constant to save
-            		//Change HTML CPU Display
-                    var table = (<HTMLInputElement>document.getElementById("cpuTable"));
-                    table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = input.substring(4,6);
-                    this.Acc = parseInt(input.substring(4,6)); //Store constant in accumulator
-            		this.isExecuting = false; //CPU Cycle Done
-            	} 
+
+            if(this.PID != -1){
+                var operation = this.operations[this.PID];
+                var x = true;
+                while(x == true){ //Loop to go through each OP code in the operation
+                    this.isExecuting = true; //CPU cycle begins
+                    if(operation.substring(0,2) == 'A9'){ //Load accumulator
+                        this.loadAccumulator(operation.substring(4,6));
+                        operation = operation.substring(6, operation.length);
+                    }
+                    if(operation == ''){ //If there are no more op codes,leave loop
+                        x = false;
+                    }
+                }
+                this.isExecuting = false;
             }
-            
+            this.pastPID.push(this.PID);
+            this.PID = -1; //Change back to normal            
         }
 
-        public loadAccumulator(pID){
-
+        public loadAccumulator(constant){
+            if(constant != ''){ //Check that there is a constant to save
+                //Change HTML CPU Display
+                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = constant;
+                _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
+                this.Acc = parseInt(constant); //Store constant in accumulator
+                this.isExecuting = false; //CPU Cycle Done
+            } 
         }
     }
 }
