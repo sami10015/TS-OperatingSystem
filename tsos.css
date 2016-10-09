@@ -21,6 +21,22 @@ table, th, td{
   border-collapse: collapse;
 }
 
+#processLabel{
+  background-color: black;
+  color : red;
+  padding: 2px;
+  border: 2px solid;
+}
+
+#processMemTable{
+  position: absolute;
+  color: red;
+  background-color: black;
+  height:150px;
+  overflow-y:scroll;
+  display: block;  
+}
+
 #cpuTable{
   color: red;
   background-color: black;

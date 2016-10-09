@@ -79,7 +79,7 @@
 
    <div id="cpu" class = "cpuDisplay">
       <label id = "cpuLabel"> CPU Display </label>
-      <table id = "cpuTable">
+      <table id = "cpuTable" cellpadding="10">
       <tr>
         <th>PC</th>
         <th>AC</th>
@@ -110,6 +110,61 @@
          ></textarea>
       </label>
    </div>
+
+   <div id= "process_mem">
+    <label id ="processLabel"> Process Memory </label>
+    <table id = "processMemTable" cellpadding="10">
+    
+      <tbody id = "body">
+        <tr>
+          <td> 0x000 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+        </tr>
+      </tbody>
+    </table>
+   </div>
+
+<script>
+  var table = document.getElementById("processMemTable");
+  var j = 1;
+    for(var i = 0; i <= 760; i+=8){
+        var row = table.insertRow(j);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        var cell5 = row.insertCell(4);
+        var cell6 = row.insertCell(5);
+        var cell7 = row.insertCell(6);
+        var cell8 = row.insertCell(7);
+        var cell9 = row.insertCell(8);
+
+        cell1.innerHTML = "0x";
+        if(i < 10){
+          cell1.innerHTML += "00" + i;
+        }else if(i < 100){
+          cell1.innerHTML += "0" + i;
+        }else{
+          cell1.innerHTML += i;
+        }
+        cell2.innerHTML = "0";
+        cell3.innerHTML = "0";
+        cell4.innerHTML = "0";
+        cell5.innerHTML = "0";
+        cell6.innerHTML = "0";
+        cell7.innerHTML = "0";
+        cell8.innerHTML = "0";
+        cell9.innerHTML = "0";
+        j++;
+    }
+</script>
 
    <div id="divUserProgramInput" style="margin-left:520px;">
       <label style="color:black">
