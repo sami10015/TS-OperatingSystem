@@ -18,7 +18,7 @@
 module TSOS {
 
     export class Cpu {
-
+        //Memory is an array but only location 0000 is here, temporary...
         constructor(public PC: number = 0,
                     public Acc: number = 0,
                     public Xreg: number = 0,
@@ -27,7 +27,8 @@ module TSOS {
                     public isExecuting: boolean = false,
                     public operations = [],
                     public PID: number = -1,
-                    public pastPID = []) {
+                    public pastPID = [],
+                    public memory = [0]) {
 
         }
 
@@ -53,18 +54,35 @@ module TSOS {
                     this.isExecuting = true; //CPU cycle begins
                     if(operation.substring(0,2) == 'A9'){ //Load accumulator
                         this.loadAccumulator(operation.substring(4,6));
-                        operation = operation.substring(6, operation.length);
+                        operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
+                    }
+                    if(operation.substring(0,2) == 'A2'){ //Load X register
+                        this.loadXRegister(operation.substring(4,6));
+                        operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
+                    }
+                    if(operation.substring(0,2) == 'A0'){ //Load Y register
+                        this.loadYRegister(operation.substring(4,6));
+                        operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
+                    }
+                    if(operation.substring(0,2) == '8D'){ //Store accumulator into memory
+                        this.storeAccumulator(operation.substring(3, 8)); //Send location to function
+                        operation = operation.substring(8, operation.length); //Crop operation string to continue looping through
+                    }
+                    if(operation.substring(0,2) == 'AE'){ //Load X register from memory
+                        this.loadXRegisterMem(operation.substring(3, 8)); //Send location to function
+                        operation = operation.substring(8, operation.length);
                     }
                     if(operation == ''){ //If there are no more op codes,leave loop
                         x = false;
                     }
                 }
                 this.isExecuting = false;
+                this.pastPID.push(this.PID); //Push to past PID list so you don't run a program that has been executed already
             }
-            this.pastPID.push(this.PID);
             this.PID = -1; //Change back to normal            
         }
 
+        //Loads a constant in the accumulator(OP Code A9)
         public loadAccumulator(constant){
             if(constant != ''){ //Check that there is a constant to save
                 //Change HTML CPU Display
@@ -74,6 +92,48 @@ module TSOS {
                 this.Acc = parseInt(constant); //Store constant in accumulator
                 this.isExecuting = false; //CPU Cycle Done
             } 
+        }
+
+        //Loads a constant in X register(OP Code A2)
+        public loadXRegister(constant){
+            if(constant != ''){ //Check that there is a constant to save
+                //Change HTML CPU Display
+                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[3].innerHTML = constant;
+                _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
+                this.Xreg = parseInt(constant); //Store constant in X Register
+                this.isExecuting = false; //CPU Cycle Done
+            } 
+        }
+
+        //Loads a constant in the Y register(OP Code A0)
+        public loadYRegister(constant){
+            if(constant != ''){ //Check that there is a constant to save
+                //Change HTML CPU Display
+                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[4].innerHTML = constant;
+                _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
+                this.Xreg = parseInt(constant); //Store constant in Y Register
+                this.isExecuting = false; //CPU Cycle Done
+            } 
+        }
+
+        //Store accumulator into specific memory location(OP Code 8D)
+        public storeAccumulator(location){
+            if(location != ''){//Check that there is a location to store the accumulator in
+                if(location == '00 00'){ //0000 Memory Location(First in Matrix)
+                    this.memory[0] = this.Acc;
+                }
+            }
+        }
+
+        //Loads X register from memory(OP Code AE)
+        public loadXRegisterMem(location){
+            if(location != ''){
+                if(location == '00 00'){
+                    this.loadXRegister(this.memory[0]); //Load the X Register from the memory
+                }
+            }
         }
     }
 }
