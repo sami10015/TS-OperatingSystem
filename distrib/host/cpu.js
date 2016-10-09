@@ -61,23 +61,30 @@ var TSOS;
                         this.loadAccumulator(operation.substring(4, 6));
                         operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
                     }
-                    if (operation.substring(0, 2) == 'A2') {
+                    else if (operation.substring(0, 2) == 'A2') {
                         this.loadXRegister(operation.substring(4, 6));
                         operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
                     }
-                    if (operation.substring(0, 2) == 'A0') {
+                    else if (operation.substring(0, 2) == 'A0') {
                         this.loadYRegister(operation.substring(4, 6));
                         operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
                     }
-                    if (operation.substring(0, 2) == '8D') {
+                    else if (operation.substring(0, 2) == '8D') {
                         this.storeAccumulator(operation.substring(3, 8)); //Send location to function
-                        operation = operation.substring(8, operation.length); //Crop operation string to continue looping through
+                        operation = operation.substring(9, operation.length); //Crop operation string to continue looping through
                     }
-                    if (operation.substring(0, 2) == 'AE') {
+                    else if (operation.substring(0, 2) == 'AE') {
                         this.loadXRegisterMem(operation.substring(3, 8)); //Send location to function
-                        operation = operation.substring(8, operation.length);
+                        operation = operation.substring(9, operation.length);
                     }
-                    if (operation == '') {
+                    else if (operation.substring(0, 2) == 'AC') {
+                        this.loadYRegisterMem(operation.substring(3, 8)); //Send location to function
+                        operation = operation.substring(9, operation.length);
+                    }
+                    else {
+                        var table = document.getElementById("cpuTable");
+                        table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
+                        console.log(this.memory[0]);
                         x = false;
                     }
                 }
@@ -91,7 +98,8 @@ var TSOS;
             if (constant != '') {
                 //Change HTML CPU Display
                 var table = document.getElementById("cpuTable");
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = constant;
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'A9'; //IR
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = constant; //Acc
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
                 this.Acc = parseInt(constant); //Store constant in accumulator
                 this.isExecuting = false; //CPU Cycle Done
@@ -102,6 +110,7 @@ var TSOS;
             if (constant != '') {
                 //Change HTML CPU Display
                 var table = document.getElementById("cpuTable");
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'A2'; //IR
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[3].innerHTML = constant;
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
                 this.Xreg = parseInt(constant); //Store constant in X Register
@@ -113,6 +122,7 @@ var TSOS;
             if (constant != '') {
                 //Change HTML CPU Display
                 var table = document.getElementById("cpuTable");
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'A0'; //IR
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[4].innerHTML = constant;
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
                 this.Xreg = parseInt(constant); //Store constant in Y Register
@@ -122,6 +132,8 @@ var TSOS;
         //Store accumulator into specific memory location(OP Code 8D)
         Cpu.prototype.storeAccumulator = function (location) {
             if (location != '') {
+                var table = document.getElementById("cpuTable");
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '8D'; //IR
                 if (location == '00 00') {
                     this.memory[0] = this.Acc;
                 }
@@ -130,8 +142,20 @@ var TSOS;
         //Loads X register from memory(OP Code AE)
         Cpu.prototype.loadXRegisterMem = function (location) {
             if (location != '') {
+                var table = document.getElementById("cpuTable");
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'AE'; //IR
                 if (location == '00 00') {
                     this.loadXRegister(this.memory[0]); //Load the X Register from the memory
+                }
+            }
+        };
+        //Loads Y register from memory(OP Code AC)
+        Cpu.prototype.loadYRegisterMem = function (location) {
+            if (location != '') {
+                var table = document.getElementById("cpuTable");
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'AC'; //IR
+                if (location == '00 00') {
+                    this.loadYRegister(this.memory[0]); //Load the Y Register from the memory
                 }
             }
         };
