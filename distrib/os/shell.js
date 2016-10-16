@@ -355,6 +355,9 @@ var TSOS;
                 //If each letter or digit is in the hex array(or spaces), then the length of count and the input should be the same
                 if (count == input.length) {
                     var operation = document.getElementById("taProgramInput").value; //Op Codes
+                    //Change process memory table
+                    var table = document.getElementById("processMemTable");
+                    var HTMLOperation = operation;
                     _CPU.operations.push(operation); //Load OP Codes in Array
                     _StdOut.putText("Program loaded. PID " + (_CPU.operations.length - 1));
                 }
@@ -389,6 +392,7 @@ var TSOS;
                 }
                 else {
                     _CPU.PID = parseInt(pID); //Change current pID
+                    _CPU.programCounter = 0; //Start program counter from 0
                     _CPU.cycle(); //Run CPU 
                     _StdOut.putText("PID: " + pID + " done.");
                 }
