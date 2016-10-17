@@ -18,6 +18,7 @@
 module TSOS {
 
     export class Cpu {
+        //memorySpace is an array to indicate which 255 spots of memory are free
         //Memory is an array but only location 0000 is here, temporary...
         constructor(public PC: number = 0,
                     public Acc: number = 0,
@@ -28,8 +29,8 @@ module TSOS {
                     public operations = [],
                     public PID: number = -1,
                     public pastPID = [],
-                    public memory = [0],
-                    public programCounter = 0) {
+                    public memorySpace = [0,0,0],
+                    public PID_Memory_Loc = [-1,-1,-1]) {
 
         }
 
@@ -75,8 +76,7 @@ module TSOS {
                         var table = (<HTMLInputElement>document.getElementById("cpuTable"));
                         table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
                         x = false;
-                    }
-                    
+                    }                    
                 }
                 this.isExecuting = false;
                 this.pastPID.push(this.PID); //Push to past PID list so you don't run a program that has been executed already
@@ -87,12 +87,12 @@ module TSOS {
         //Loads a constant in the accumulator(OP Code A9)
         public loadAccumulator(constant){
             if(constant != ''){ //Check that there is a constant to save
-                this.programCounter += 2; //Add to program counter
+                this.PC += 2; //Add to program counter
                 //Change HTML CPU Display
                 var table = (<HTMLInputElement>document.getElementById("cpuTable"));
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'A9'; //IR
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = constant; //Acc
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.programCounter + ''; //PC
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
                 this.Acc = parseInt(constant); //Store constant in accumulator
                 this.isExecuting = false; //CPU Cycle Done
@@ -103,12 +103,12 @@ module TSOS {
         //Loads a constant in X register(OP Code A2)
         public loadXRegister(constant){
             if(constant != ''){ //Check that there is a constant to save
-                this.programCounter += 2; //Add to program counter
+                this.PC += 2; //Add to program counter
                 //Change HTML CPU Display
                 var table = (<HTMLInputElement>document.getElementById("cpuTable"));
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'A2'; //IR
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[3].innerHTML = constant; //ACC
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.programCounter + ''; //PC
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
                 this.Xreg = parseInt(constant); //Store constant in X Register
                 this.isExecuting = false; //CPU Cycle Done
@@ -118,12 +118,12 @@ module TSOS {
         //Loads a constant in the Y register(OP Code A0)
         public loadYRegister(constant){
             if(constant != ''){ //Check that there is a constant to save
-                this.programCounter += 2; //Add to program counter
+                this.PC += 2; //Add to program counter
                 //Change HTML CPU Display
                 var table = (<HTMLInputElement>document.getElementById("cpuTable"));
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'A0'; //IR
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[4].innerHTML = constant; //ACC
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.programCounter + ''; //PC
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
                 this.Xreg = parseInt(constant); //Store constant in Y Register
                 this.isExecuting = false; //CPU Cycle Done
@@ -133,40 +133,40 @@ module TSOS {
         //Store accumulator into specific memory location(OP Code 8D)
         public storeAccumulator(location){
             if(location != ''){//Check that there is a location to store the accumulator in
-                this.programCounter += 3; //Add to program counter
+                this.PC += 3; //Add to program counter
                 //Change HTML CPU Display
                 var table = (<HTMLInputElement>document.getElementById("cpuTable"));
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '8D'; //IR
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.programCounter + ''; //PC
-                if(location == '00 00'){ //0000 Memory Location(First in Matrix)
-                    this.memory[0] = this.Acc;
-                }
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
+                // if(location == '00 00'){ //0000 Memory Location(First in Matrix)
+                //     this.memory[0] = this.Acc;
+                // }
             }
         }
 
         //Loads X register from memory(OP Code AE)
         public loadXRegisterMem(location){
             if(location != ''){
-                this.programCounter += 3; //Add to program counter
+                this.PC += 3; //Add to program counter
                 var table = (<HTMLInputElement>document.getElementById("cpuTable"));
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'AE'; //IR
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.programCounter + ''; //PC
-                if(location == '00 00'){
-                    this.loadXRegister(this.memory[0]); //Load the X Register from the memory
-                }
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
+                // if(location == '00 00'){
+                //     this.loadXRegister(this.memory[0]); //Load the X Register from the memory
+                // }
             }
         }
 
         //Loads Y register from memory(OP Code AC)
         public loadYRegisterMem(location){
             if(location != ''){
-                this.programCounter += 3; //Add to program counter
+                this.PC += 3; //Add to program counter
                 var table = (<HTMLInputElement>document.getElementById("cpuTable"));
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'AC'; //IR
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.programCounter + ''; //PC
-                if(location == '00 00'){
-                    this.loadYRegister(this.memory[0]); //Load the Y Register from the memory
-                }
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
+                // if(location == '00 00'){
+                //     this.loadYRegister(this.memory[0]); //Load the Y Register from the memory
+                // }
             }
         }
     }
