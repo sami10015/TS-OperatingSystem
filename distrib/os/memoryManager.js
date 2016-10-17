@@ -12,7 +12,6 @@ var TSOS;
             this.PIDList = PIDList;
             this.executedPID = executedPID;
         }
-        MemoryManager.prototype.init = function () { };
         MemoryManager.prototype.clearAll = function () {
             this.memorySpace = [0, 0, 0];
             this.PID_Memory_Loc = [-1, -1, -1];
@@ -138,7 +137,7 @@ var TSOS;
                 }
             }
         };
-        //Increment and return correct PID
+        //Increment correct PID
         MemoryManager.prototype.pIDReturn = function () {
             if (this.PIDList[0] == null) {
                 console.log("Here");

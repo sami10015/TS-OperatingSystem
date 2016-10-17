@@ -94,6 +94,7 @@ var TSOS;
             _Memory = new TSOS.Memory();
             _Memory.init();
             _MemoryManager = new TSOS.MemoryManager();
+            _PCB = new TSOS.PCB();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");

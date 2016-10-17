@@ -43,6 +43,8 @@ var _OsShell;
 // Memory
 var _Memory;
 var _MemoryManager;
+// PCB
+var _PCB;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12

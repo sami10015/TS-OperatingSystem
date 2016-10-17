@@ -11,6 +11,7 @@ var TSOS;
                 this.memory.push(0);
             }
         };
+        //Reads and return op codes(array) located in specific memory slot
         Memory.prototype.read = function (memorySlotIndex) {
             var operationArray = [];
             if (memorySlotIndex == 0) {
@@ -45,6 +46,7 @@ var TSOS;
             }
             return operationArray;
         };
+        //Writes op codes into specific memory slot
         Memory.prototype.write = function (memorySlotIndex, operation) {
             var opCount = 0;
             if (memorySlotIndex == 0) {
@@ -75,9 +77,11 @@ var TSOS;
                 }
             }
         };
+        //Erase everything
         Memory.prototype.eraseAll = function () {
             this.init();
         };
+        //Erases a specific block of memory's op codes
         Memory.prototype.eraseBlock = function (memorySlotIndex) {
             if (memorySlotIndex == 0) {
                 for (var i = 0; i < 256; i++) {

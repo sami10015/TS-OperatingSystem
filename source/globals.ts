@@ -57,6 +57,9 @@ var _OsShell: TSOS.Shell;
 var _Memory: TSOS.Memory;
 var _MemoryManager: TSOS.MemoryManager;
 
+// PCB
+var _PCB: TSOS.PCB;
+
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;
 

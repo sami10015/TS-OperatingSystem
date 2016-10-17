@@ -113,6 +113,8 @@ module TSOS {
             _Memory = new Memory();
             _Memory.init();
             _MemoryManager = new MemoryManager();
+
+            _PCB = new PCB();
         }
 
         public static hostBtnHaltOS_click(btn): void {

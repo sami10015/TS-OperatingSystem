@@ -9,8 +9,6 @@ module TSOS{
 					public PIDList = [],
 					public executedPID = []){}
 
-		public init(): void{}
-
 		public clearAll(){
 			this.memorySpace = [0,0,0];
 			this.PID_Memory_Loc = [-1,-1,-1];
@@ -135,7 +133,7 @@ module TSOS{
 			}
 		}
 
-		//Increment and return correct PID
+		//Increment correct PID
 		public pIDReturn(){
 			if(this.PIDList[0] == null){
 				console.log("Here");

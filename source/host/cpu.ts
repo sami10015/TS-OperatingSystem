@@ -26,11 +26,7 @@ module TSOS {
                     public Yreg: number = 0,
                     public Zflag: number = 0,
                     public isExecuting: boolean = false,
-                    public operations = [],
-                    public PID: number = -1,
-                    public pastPID = [-1],
-                    public memorySpace = [0,0,0],
-                    public PID_Memory_Loc = [-1,-1,-1]) {
+                    public PID: number = -1) {
 
         }
 
@@ -70,37 +66,11 @@ module TSOS {
                     }else if(operation[i] == 'AC'){ //Load Y register from memory
 
                     }
+                    _PCB.displayPCB('Running');
                 }
-                // var operation = this.operations[this.PID];
-                // var x = true;
-                // while(x == true){ //Loop to go through each OP code in the operation
-                //     this.isExecuting = true; //CPU cycle begins
-                //     if(operation.substring(0,2) == 'A9'){ //Load accumulator
-                //         this.loadAccumulator(operation.substring(4,6));
-                //         operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
-                //     }else if(operation.substring(0,2) == 'A2'){ //Load X register
-                //         this.loadXRegister(operation.substring(4,6));
-                //         operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
-                //     }else if(operation.substring(0,2) == 'A0'){ //Load Y register
-                //         this.loadYRegister(operation.substring(4,6));
-                //         operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
-                //     }else if(operation.substring(0,2) == '8D'){ //Store accumulator into memory
-                //         this.storeAccumulator(operation.substring(3, 8)); //Send location to function
-                //         operation = operation.substring(9, operation.length); //Crop operation string to continue looping through
-                //     }else if(operation.substring(0,2) == 'AE'){ //Load X register from memory
-                //         this.loadXRegisterMem(operation.substring(3, 8)); //Send location to function
-                //         operation = operation.substring(9, operation.length);
-                //     }else if(operation.substring(0,2) == 'AC'){ //Load Y register from memory
-                //         this.loadYRegisterMem(operation.substring(3, 8)); //Send location to function
-                //         operation = operation.substring(9, operation.length);
-                //     }else{ //If there are no more op codes, reset IR, and leave loop
-                //         var table = (<HTMLInputElement>document.getElementById("cpuTable"));
-                //         table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
-                //         x = false;
-                //     }                    
-                // }
+                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
+                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
                 this.isExecuting = false;
-                this.pastPID.push(this.PID); //Push to past PID list so you don't run a program that has been executed already
             }
             this.PID = -1; //Change back to normal            
         }

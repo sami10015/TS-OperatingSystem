@@ -12,6 +12,7 @@ module TSOS{
 			}
 		}
 
+		//Reads and return op codes(array) located in specific memory slot
 		public read(memorySlotIndex): any{
 			var operationArray = [];
 			if(memorySlotIndex == 0){
@@ -42,6 +43,7 @@ module TSOS{
 			return operationArray;
 		}
 		
+		//Writes op codes into specific memory slot
 		public write(memorySlotIndex, operation){
 			var opCount = 0;
 			if(memorySlotIndex == 0){
@@ -71,10 +73,12 @@ module TSOS{
 			}
 		}
 
+		//Erase everything
 		public eraseAll(){
 			this.init();
 		}
 
+		//Erases a specific block of memory's op codes
 		public eraseBlock(memorySlotIndex){
 			if(memorySlotIndex == 0){
 				for(var i = 0; i < 256; i++){
