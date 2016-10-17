@@ -5,14 +5,20 @@ module TSOS{
 	export class MemoryManager{
 
 		constructor(public memorySpace = [0,0,0],
-					public PID_Memory_Loc = [-1,-1,-1]){}
+					public PID_Memory_Loc = [-1,-1,-1],
+					public PIDList = [],
+					public executedPID = []){}
 
 		public init(): void{}
 
 		public clearAll(){
-
+			this.memorySpace = [0,0,0];
+			this.PID_Memory_Loc = [-1,-1,-1];
+			_Memory.eraseAll();
+			//Clear display
 		}
 
+		//Displays the memory block
 		public displayBlock(operation): number{
 			//Change process memory table
 	        var table = (<HTMLInputElement>document.getElementById("processMemTable"));
@@ -77,7 +83,7 @@ module TSOS{
 		}
 
 	
-
+		//Clears the memory block
 		public clearBlock(pID){
 			for(var i = 0; i < this.PID_Memory_Loc.length; i++){
                 if(this.PID_Memory_Loc[i] == pID){
@@ -115,8 +121,28 @@ module TSOS{
             }
 		}
 
-		public hexToDec(input){
+		//Easy hex to decimal translation
+		public hexToDec(input): number{
+			return parseInt(input, 16);
+		}
 
+		//Return correct index for memory block
+		public memoryIndex(PID): number{
+			for(var i = 0; i < this.PID_Memory_Loc.length; i++){
+				if(this.PID_Memory_Loc[i] == PID){
+					return i;
+				}
+			}
+		}
+
+		//Increment and return correct PID
+		public pIDReturn(){
+			if(this.PIDList[0] == null){
+				console.log("Here");
+				this.PIDList.push(0);
+			}else{
+				this.PIDList.push(this.PIDList[this.PIDList.length-1]+1);
+			}
 		}
 	}
 }

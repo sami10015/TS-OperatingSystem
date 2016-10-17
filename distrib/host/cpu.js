@@ -27,7 +27,7 @@ var TSOS;
             if (isExecuting === void 0) { isExecuting = false; }
             if (operations === void 0) { operations = []; }
             if (PID === void 0) { PID = -1; }
-            if (pastPID === void 0) { pastPID = []; }
+            if (pastPID === void 0) { pastPID = [-1]; }
             if (memorySpace === void 0) { memorySpace = [0, 0, 0]; }
             if (PID_Memory_Loc === void 0) { PID_Memory_Loc = [-1, -1, -1]; }
             this.PC = PC;
@@ -55,41 +55,58 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             var input = document.getElementById("taProgramInput").value; //Op Codes
+            var index = _MemoryManager.memoryIndex(this.PID); //Get memory block location for operation
+            var operation = _Memory.read(index); //Array of op codes
             if (this.PID != -1) {
-                var operation = this.operations[this.PID];
-                var x = true;
-                while (x == true) {
-                    this.isExecuting = true; //CPU cycle begins
-                    if (operation.substring(0, 2) == 'A9') {
-                        this.loadAccumulator(operation.substring(4, 6));
-                        operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
+                this.isExecuting = true;
+                for (var i = 0; i < operation.length; i++) {
+                    if (operation[i] == 'A9') {
+                        this.loadAccumulator(operation[i + 1]);
+                        i + 1;
                     }
-                    else if (operation.substring(0, 2) == 'A2') {
-                        this.loadXRegister(operation.substring(4, 6));
-                        operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
+                    else if (operation[i] == 'A2') {
+                        this.loadXRegister(operation[i + 1]);
+                        i + 1;
                     }
-                    else if (operation.substring(0, 2) == 'A0') {
-                        this.loadYRegister(operation.substring(4, 6));
-                        operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
+                    else if (operation[i] == 'A0') {
+                        this.loadYRegister(operation[i + 1]);
+                        i + 1;
                     }
-                    else if (operation.substring(0, 2) == '8D') {
-                        this.storeAccumulator(operation.substring(3, 8)); //Send location to function
-                        operation = operation.substring(9, operation.length); //Crop operation string to continue looping through
+                    else if (operation[i] == '8D') {
                     }
-                    else if (operation.substring(0, 2) == 'AE') {
-                        this.loadXRegisterMem(operation.substring(3, 8)); //Send location to function
-                        operation = operation.substring(9, operation.length);
+                    else if (operation[i] == 'AE') {
                     }
-                    else if (operation.substring(0, 2) == 'AC') {
-                        this.loadYRegisterMem(operation.substring(3, 8)); //Send location to function
-                        operation = operation.substring(9, operation.length);
-                    }
-                    else {
-                        var table = document.getElementById("cpuTable");
-                        table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
-                        x = false;
+                    else if (operation[i] == 'AC') {
                     }
                 }
+                // var operation = this.operations[this.PID];
+                // var x = true;
+                // while(x == true){ //Loop to go through each OP code in the operation
+                //     this.isExecuting = true; //CPU cycle begins
+                //     if(operation.substring(0,2) == 'A9'){ //Load accumulator
+                //         this.loadAccumulator(operation.substring(4,6));
+                //         operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
+                //     }else if(operation.substring(0,2) == 'A2'){ //Load X register
+                //         this.loadXRegister(operation.substring(4,6));
+                //         operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
+                //     }else if(operation.substring(0,2) == 'A0'){ //Load Y register
+                //         this.loadYRegister(operation.substring(4,6));
+                //         operation = operation.substring(6, operation.length); //Crop operation string to continue looping through
+                //     }else if(operation.substring(0,2) == '8D'){ //Store accumulator into memory
+                //         this.storeAccumulator(operation.substring(3, 8)); //Send location to function
+                //         operation = operation.substring(9, operation.length); //Crop operation string to continue looping through
+                //     }else if(operation.substring(0,2) == 'AE'){ //Load X register from memory
+                //         this.loadXRegisterMem(operation.substring(3, 8)); //Send location to function
+                //         operation = operation.substring(9, operation.length);
+                //     }else if(operation.substring(0,2) == 'AC'){ //Load Y register from memory
+                //         this.loadYRegisterMem(operation.substring(3, 8)); //Send location to function
+                //         operation = operation.substring(9, operation.length);
+                //     }else{ //If there are no more op codes, reset IR, and leave loop
+                //         var table = (<HTMLInputElement>document.getElementById("cpuTable"));
+                //         table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
+                //         x = false;
+                //     }                    
+                // }
                 this.isExecuting = false;
                 this.pastPID.push(this.PID); //Push to past PID list so you don't run a program that has been executed already
             }

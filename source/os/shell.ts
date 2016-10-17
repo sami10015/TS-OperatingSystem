@@ -428,10 +428,10 @@ module TSOS {
                     if(index == -1){
                         _StdOut.putText("Format!");
                     }else{
-                        _CPU.operations.push(operation); //Load OP Codes in Array
-                        //_Memory.write(index); Write to memory
-                        _MemoryManager.PID_Memory_Loc[index] = _CPU.operations.length-1; //Display purposes
-                        _StdOut.putText("Program loaded. PID " + (_CPU.operations.length-1));
+                        _Memory.write(index, operation); //Write to memory
+                        _MemoryManager.pIDReturn(); //Increment PID
+                        _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length-1]; //Display purposes
+                        _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]));
                     }
         		}else{
         			_StdOut.putText("Not Validated.");
@@ -449,8 +449,8 @@ module TSOS {
             var x = true;
 
             //Makes my life easier doing it this way
-            for(var i = 0; i < _CPU.pastPID.length; i++){ //Check if that program has been run before, if so it doesn't exist anymore
-                if(parseInt(pID) == _CPU.pastPID[i]){
+            for(var i = 0; i < _MemoryManager.executedPID.length; i++){ //Check if that program has been run before, if so it doesn't exist anymore
+                if(parseInt(pID) == _MemoryManager.executedPID[i]){
                     _StdOut.putText("PID: " + pID + " does not exist");
                     x = false;
                 }
@@ -458,7 +458,7 @@ module TSOS {
             if(x){
                 if(parseInt(pID) == NaN){ //Checks if you entered a number
                     _StdOut.putText("Please enter a numeric PID.");
-                }else if(parseInt(pID) > _CPU.operations.length-1){ //Checks if there is a program loaded under specific PID
+                }else if(parseInt(pID) > _MemoryManager.PIDList.length-1){ //Checks if there is a program loaded under specific PID
                     _StdOut.putText("PID: " + pID + " does not exist");
                 }else if(pID == ''){ //Check if user put in a PID
                     _StdOut.putText("Please enter a PID along with the run command");
@@ -469,6 +469,7 @@ module TSOS {
 
                     //Clear specific memory location
                     _MemoryManager.clearBlock(parseInt(pID));
+                    _MemoryManager.executedPID.push(parseInt(pID));
                     _StdOut.putText("PID: " + pID + " done.");
                 }
             }

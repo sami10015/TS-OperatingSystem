@@ -2,15 +2,24 @@
 var TSOS;
 (function (TSOS) {
     var MemoryManager = (function () {
-        function MemoryManager(memorySpace, PID_Memory_Loc) {
+        function MemoryManager(memorySpace, PID_Memory_Loc, PIDList, executedPID) {
             if (memorySpace === void 0) { memorySpace = [0, 0, 0]; }
             if (PID_Memory_Loc === void 0) { PID_Memory_Loc = [-1, -1, -1]; }
+            if (PIDList === void 0) { PIDList = []; }
+            if (executedPID === void 0) { executedPID = []; }
             this.memorySpace = memorySpace;
             this.PID_Memory_Loc = PID_Memory_Loc;
+            this.PIDList = PIDList;
+            this.executedPID = executedPID;
         }
         MemoryManager.prototype.init = function () { };
         MemoryManager.prototype.clearAll = function () {
+            this.memorySpace = [0, 0, 0];
+            this.PID_Memory_Loc = [-1, -1, -1];
+            _Memory.eraseAll();
+            //Clear display
         };
+        //Displays the memory block
         MemoryManager.prototype.displayBlock = function (operation) {
             //Change process memory table
             var table = document.getElementById("processMemTable");
@@ -78,6 +87,7 @@ var TSOS;
             }
             return index;
         };
+        //Clears the memory block
         MemoryManager.prototype.clearBlock = function (pID) {
             for (var i = 0; i < this.PID_Memory_Loc.length; i++) {
                 if (this.PID_Memory_Loc[i] == pID) {
@@ -116,7 +126,27 @@ var TSOS;
                 }
             }
         };
+        //Easy hex to decimal translation
         MemoryManager.prototype.hexToDec = function (input) {
+            return parseInt(input, 16);
+        };
+        //Return correct index for memory block
+        MemoryManager.prototype.memoryIndex = function (PID) {
+            for (var i = 0; i < this.PID_Memory_Loc.length; i++) {
+                if (this.PID_Memory_Loc[i] == PID) {
+                    return i;
+                }
+            }
+        };
+        //Increment and return correct PID
+        MemoryManager.prototype.pIDReturn = function () {
+            if (this.PIDList[0] == null) {
+                console.log("Here");
+                this.PIDList.push(0);
+            }
+            else {
+                this.PIDList.push(this.PIDList[this.PIDList.length - 1] + 1);
+            }
         };
         return MemoryManager;
     }());
