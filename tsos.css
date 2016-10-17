@@ -37,6 +37,19 @@ table, th, td{
   display: block;  
 }
 
+#PCB_Label{
+  background-color: black;
+  color : red;
+  padding: 2px;
+  border: 2px solid;
+}
+
+#PCB_Table{
+  position: absolute;
+  color: red;
+  background-color: black;
+}
+
 #cpuTable{
   color: red;
   background-color: black;

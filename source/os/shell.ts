@@ -528,7 +528,6 @@ module TSOS {
                     //Clear specific memory location
                     for(var i = 0; i < _CPU.PID_Memory_Loc.length; i++){
                         if(_CPU.PID_Memory_Loc[i] == parseInt(pID)){
-                            console.log(_CPU.PID_Memory_Loc);
                             var table = (<HTMLInputElement>document.getElementById("processMemTable"));
                             if(i == 0){
                                 _CPU.PID_Memory_Loc[0] = -1; //Free that space
@@ -558,11 +557,9 @@ module TSOS {
                                     }
                                 }
                             }
-                            console.log(_CPU.PID_Memory_Loc);
                             break;
                         }
                     }
-
                     _StdOut.putText("PID: " + pID + " done.");
                 }
             }
