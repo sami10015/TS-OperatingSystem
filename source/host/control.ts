@@ -109,6 +109,10 @@ module TSOS {
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
+
+            _Memory = new Memory();
+            _Memory.init();
+            _MemoryManager = new MemoryManager();
         }
 
         public static hostBtnHaltOS_click(btn): void {

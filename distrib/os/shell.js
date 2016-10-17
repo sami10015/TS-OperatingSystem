@@ -355,78 +355,15 @@ var TSOS;
                 //If each letter or digit is in the hex array(or spaces), then the length of count and the input should be the same
                 if (count == input.length) {
                     var operation = document.getElementById("taProgramInput").value; //Op Codes
-                    //Change process memory table
-                    var table = document.getElementById("processMemTable");
-                    var HTMLOperation = operation;
-                    var fullCount = 0; //If this reaches three, you can't load anymore
-                    var index = -1; //Variable to keep track of where PID is being loaded into 
-                    //Fill process memory table, if space allows
-                    for (var i = 0; i < _CPU.memorySpace.length; i++) {
-                        if (_CPU.memorySpace[i] == 0) {
-                            if (i == 0) {
-                                index = i;
-                                var opCount = 0; //Variable to hold operation substring position
-                                for (var i = 0; i <= 32; i++) {
-                                    var row = table.getElementsByTagName("tr")[i];
-                                    for (var j = 1; j < 9; j++) {
-                                        if (opCount + 2 > operation.length) {
-                                            row.getElementsByTagName("td")[j].innerHTML = '0';
-                                        }
-                                        else {
-                                            row.getElementsByTagName("td")[j].innerHTML = operation.substring(opCount, opCount + 2);
-                                            opCount += 3;
-                                        }
-                                    }
-                                }
-                                _CPU.memorySpace[0] = 1; //Memory space is used
-                            }
-                            else if (i == 1) {
-                                index = i;
-                                var opCount = 0; //Variable to hold operation substring position
-                                for (var i = 33; i <= 64; i++) {
-                                    var row = table.getElementsByTagName("tr")[i];
-                                    for (var j = 1; j < 9; j++) {
-                                        if (opCount + 2 > operation.length) {
-                                            row.getElementsByTagName("td")[j].innerHTML = '0';
-                                        }
-                                        else {
-                                            row.getElementsByTagName("td")[j].innerHTML = operation.substring(opCount, opCount + 2);
-                                            opCount += 3;
-                                        }
-                                    }
-                                }
-                                _CPU.memorySpace[1] = 1; //Memory space is used(2nd block)
-                            }
-                            else if (i == 2) {
-                                index = i;
-                                var opCount = 0; //Variable to hold operation substring position
-                                for (var i = 65; i <= 96; i++) {
-                                    var row = table.getElementsByTagName("tr")[i];
-                                    for (var j = 1; j < 9; j++) {
-                                        if (opCount + 2 > operation.length) {
-                                            row.getElementsByTagName("td")[j].innerHTML = '0';
-                                        }
-                                        else {
-                                            row.getElementsByTagName("td")[j].innerHTML = operation.substring(opCount, opCount + 2);
-                                            opCount += 3;
-                                        }
-                                    }
-                                }
-                                _CPU.memorySpace[2] = 1; //Memory space is used(3rd block)
-                            }
-                            break; //Leave loop
-                        }
-                        else {
-                            fullCount += 1;
-                        }
-                    }
+                    var index = _MemoryManager.displayBlock(operation);
                     //If all memory spaces are full then they must format 
-                    if (fullCount == 3) {
+                    if (index == -1) {
                         _StdOut.putText("Format!");
                     }
                     else {
                         _CPU.operations.push(operation); //Load OP Codes in Array
-                        _CPU.PID_Memory_Loc[index] = _CPU.operations.length - 1;
+                        //_Memory.write(index); Write to memory
+                        _MemoryManager.PID_Memory_Loc[index] = _CPU.operations.length - 1; //Display purposes
                         _StdOut.putText("Program loaded. PID " + (_CPU.operations.length - 1));
                     }
                 }
@@ -464,42 +401,7 @@ var TSOS;
                     _CPU.PC = 0; //Start program counter from 0
                     _CPU.cycle(); //Run CPU
                     //Clear specific memory location
-                    for (var i = 0; i < _CPU.PID_Memory_Loc.length; i++) {
-                        if (_CPU.PID_Memory_Loc[i] == parseInt(pID)) {
-                            var table = document.getElementById("processMemTable");
-                            if (i == 0) {
-                                _CPU.PID_Memory_Loc[0] = -1; //Free that space
-                                _CPU.memorySpace[0] = 0; //Free that space
-                                for (var i = 0; i <= 32; i++) {
-                                    var row = table.getElementsByTagName("tr")[i];
-                                    for (var j = 1; j < 9; j++) {
-                                        row.getElementsByTagName("td")[j].innerHTML = '0';
-                                    }
-                                }
-                            }
-                            else if (i == 1) {
-                                _CPU.PID_Memory_Loc[1] = -1; //Free that space
-                                _CPU.memorySpace[1] = 0; //Free that space
-                                for (var i = 33; i <= 64; i++) {
-                                    var row = table.getElementsByTagName("tr")[i];
-                                    for (var j = 1; j < 9; j++) {
-                                        row.getElementsByTagName("td")[j].innerHTML = '0';
-                                    }
-                                }
-                            }
-                            else if (i == 2) {
-                                _CPU.PID_Memory_Loc[2] = -1; //Free that space
-                                _CPU.memorySpace[2] = 0; //Free that space
-                                for (var i = 65; i <= 96; i++) {
-                                    var row = table.getElementsByTagName("tr")[i];
-                                    for (var j = 1; j < 9; j++) {
-                                        row.getElementsByTagName("td")[j].innerHTML = '0';
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                    }
+                    _MemoryManager.clearBlock(parseInt(pID));
                     _StdOut.putText("PID: " + pID + " done.");
                 }
             }
