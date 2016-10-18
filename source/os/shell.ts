@@ -465,12 +465,12 @@ module TSOS {
                 }else{ //Run CPU if OK
                     _CPU.PID = parseInt(pID); //Change current pID
                     _CPU.PC = 0; //Start program counter from 0
-                    _CPU.cycle(); //Run CPU
+                    _CPU.isExecuting = true; //Run CPU
 
-                    //Clear specific memory location
-                    _MemoryManager.clearBlock(parseInt(pID));
-                    _MemoryManager.executedPID.push(parseInt(pID));
-                    _StdOut.putText("PID: " + pID + " done.");
+                    // //Clear specific memory location
+                    // _MemoryManager.clearBlock(parseInt(pID));
+                    // _MemoryManager.executedPID.push(parseInt(pID));
+                    // _StdOut.putText("PID: " + pID + " done.");
                 }
             }
         }

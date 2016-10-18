@@ -2,15 +2,17 @@
 var TSOS;
 (function (TSOS) {
     var MemoryManager = (function () {
-        function MemoryManager(memorySpace, PID_Memory_Loc, PIDList, executedPID) {
+        function MemoryManager(memorySpace, PID_Memory_Loc, PIDList, executedPID, operationIndex) {
             if (memorySpace === void 0) { memorySpace = [0, 0, 0]; }
             if (PID_Memory_Loc === void 0) { PID_Memory_Loc = [-1, -1, -1]; }
             if (PIDList === void 0) { PIDList = []; }
             if (executedPID === void 0) { executedPID = []; }
+            if (operationIndex === void 0) { operationIndex = 0; }
             this.memorySpace = memorySpace;
             this.PID_Memory_Loc = PID_Memory_Loc;
             this.PIDList = PIDList;
             this.executedPID = executedPID;
+            this.operationIndex = operationIndex;
         }
         MemoryManager.prototype.clearAll = function () {
             this.memorySpace = [0, 0, 0];

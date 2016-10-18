@@ -7,7 +7,8 @@ module TSOS{
 		constructor(public memorySpace = [0,0,0],
 					public PID_Memory_Loc = [-1,-1,-1],
 					public PIDList = [],
-					public executedPID = []){}
+					public executedPID = [],
+					public operationIndex = 0){}
 
 		public clearAll(){
 			this.memorySpace = [0,0,0];
