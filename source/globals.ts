@@ -66,6 +66,9 @@ var _SarcasticMode: boolean = false;
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
 
+// Control
+var _Control: TSOS.Control;
+
 var _hardwareClockID: number = null;
 
 // For testing (and enrichment)...

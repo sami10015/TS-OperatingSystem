@@ -55,8 +55,8 @@ module TSOS{
 		}
 
 		public getYReg(): number{
-			this.Y = _CPU.YReg;
-			return _CPU.YReg;
+			this.Y = _CPU.Yreg;
+			return _CPU.Yreg;
 		}
 
 		public getZFlag(): number{

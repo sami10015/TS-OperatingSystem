@@ -83,12 +83,14 @@ module TSOS{
 	
 		//Clears the memory block
 		public clearBlock(pID){
+			var index = -1; //Index for block to clear
 			for(var i = 0; i < this.PID_Memory_Loc.length; i++){
                 if(this.PID_Memory_Loc[i] == pID){
                     var table = (<HTMLInputElement>document.getElementById("processMemTable"));
                     if(i == 0){
                         this.PID_Memory_Loc[0] = -1; //Free that space
                         this.memorySpace[0] = 0; //Free that space
+                        index = 0; //Block to clear
                         for(var i = 0; i <= 32; i++){
                             var row = table.getElementsByTagName("tr")[i];
                             for(var j = 1; j < 9; j++){
@@ -98,6 +100,7 @@ module TSOS{
                     }else if(i == 1){
                         this.PID_Memory_Loc[1] = -1; //Free that space
                         this.memorySpace[1] = 0; //Free that space
+                        index = 1; //Block to clear
                         for(var i = 33; i <= 64; i++){
                             var row = table.getElementsByTagName("tr")[i];
                             for(var j = 1; j < 9; j++){
@@ -107,6 +110,7 @@ module TSOS{
                     }else if(i == 2){
                         this.PID_Memory_Loc[2] = -1; //Free that space
                         this.memorySpace[2] = 0; //Free that space
+                        index = 2; //Block to clear
                         for(var i = 65; i <= 96; i++){
                             var row = table.getElementsByTagName("tr")[i];
                             for(var j = 1; j < 9; j++){
@@ -117,6 +121,7 @@ module TSOS{
                     break;
                 }
             }
+            _Memory.eraseBlock(index); //Erase memory
 		}
 
 		//Easy hex to decimal translation
@@ -131,6 +136,30 @@ module TSOS{
 					return i;
 				}
 			}
+		}
+
+		public getVariable(location){
+			return _Memory.memory[location];
+		}
+
+		//Get OP Codes from Memory
+		public getOperation(index): any{
+			return _Memory.read(index);
+		}
+
+		//Write OP Code into Memory Address
+		public  writeOPCode(constant,address){
+			_Memory.memory[address] = constant;
+		}
+
+		//Little Endian Address
+		public littleEndianAddress(addressBase, addressEnd){
+			var address = 0;
+			var str = '';
+			str += addressEnd;
+			str += addressBase;
+			address = this.hexToDec(parseInt(str));
+			return address;
 		}
 
 		//Increment correct PID

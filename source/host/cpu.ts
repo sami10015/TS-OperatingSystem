@@ -26,7 +26,8 @@ module TSOS {
                     public Yreg: number = 0,
                     public Zflag: number = 0,
                     public isExecuting: boolean = false,
-                    public PID: number = -1) {
+                    public PID: number = -1,
+                    public IR: string = '') {
 
         }
 
@@ -45,32 +46,46 @@ module TSOS {
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             var input = (<HTMLInputElement>document.getElementById("taProgramInput")).value; //Op Codes
             var index = _MemoryManager.memoryIndex(this.PID); //Get memory block location for operation
-            var operation = _Memory.read(index); //Array of op codes
+            var operation = _MemoryManager.getOperation(index); //Array of op codes
 
             if(this.PID != -1){
                 this.isExecuting = true;
                 for(var i = 0; i < operation.length; i++){
                     if(operation[i] == 'A9'){ //Load Accumulator
                         this.loadAccumulator(operation[i+1]);
-                        i+1;
+                        i+=1;
                     }else if(operation[i] == 'A2'){ //Load X Register
                         this.loadXRegister(operation[i+1]);
-                        i+1;
+                        i+=1;
                     }else if(operation[i] == 'A0'){ //Load Y Register
                         this.loadYRegister(operation[i+1]);
-                        i+1;
+                        i+=1;
                     }else if(operation[i] == '8D'){ //Store accumulator into memory
-
+                        this.storeAccumulator(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                        i+=2;
                     }else if(operation[i] == 'AE'){ //Load X register from memory
-
+                        this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                        i+=2;
                     }else if(operation[i] == 'AC'){ //Load Y register from memory
-
+                        this.loadYRegisterMem(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                        i+=2;
+                    }else if(operation[i] == '6D'){ //Add carry to accumulator
+                        this.addCarry(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                        i+=2;
+                    }else if(operation[i] == '00'){ //Break
+                        console.log("Here");
+                        break;
                     }
-                    _PCB.displayPCB('Running');
+                    _PCB.setIR(operation[i]); //Change IR in PCB
+                    _PCB.displayPCB('Running'); //Change State in PCB
+                    this.updateCpuTable(); //Update CPU Table
                 }
                 var table = (<HTMLInputElement>document.getElementById("cpuTable"));
                 table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
-                this.isExecuting = false;
+                this.isExecuting = false; //Stop Executing
+                console.log(_Memory.memory);
+                _MemoryManager.clearBlock(this.PID); //Clear the block of memory
+                console.log(_Memory.memory);
             }
             this.PID = -1; //Change back to normal            
         }
@@ -79,13 +94,8 @@ module TSOS {
         public loadAccumulator(constant){
             if(constant != ''){ //Check that there is a constant to save
                 this.PC += 2; //Add to program counter
-                //Change HTML CPU Display
-                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'A9'; //IR
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[1].innerHTML = constant; //Acc
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
-                this.Acc = parseInt(constant); //Store constant in accumulator
+                this.Acc = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in accumulator(Hex)
                 this.isExecuting = false; //CPU Cycle Done
                 
             } 
@@ -95,13 +105,8 @@ module TSOS {
         public loadXRegister(constant){
             if(constant != ''){ //Check that there is a constant to save
                 this.PC += 2; //Add to program counter
-                //Change HTML CPU Display
-                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'A2'; //IR
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[3].innerHTML = constant; //ACC
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
-                this.Xreg = parseInt(constant); //Store constant in X Register
+                this.Xreg = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in X Register(Hex)
                 this.isExecuting = false; //CPU Cycle Done
             } 
         }
@@ -110,28 +115,17 @@ module TSOS {
         public loadYRegister(constant){
             if(constant != ''){ //Check that there is a constant to save
                 this.PC += 2; //Add to program counter
-                //Change HTML CPU Display
-                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'A0'; //IR
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[4].innerHTML = constant; //ACC
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
-                this.Xreg = parseInt(constant); //Store constant in Y Register
+                this.Yreg = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in Y Register(Hex)
                 this.isExecuting = false; //CPU Cycle Done
             } 
         }
 
-        //Store accumulator into specific memory location(OP Code 8D)
+        //Store accumulator into specific little endian memory location(OP Code 8D)
         public storeAccumulator(location){
             if(location != ''){//Check that there is a location to store the accumulator in
                 this.PC += 3; //Add to program counter
-                //Change HTML CPU Display
-                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '8D'; //IR
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
-                // if(location == '00 00'){ //0000 Memory Location(First in Matrix)
-                //     this.memory[0] = this.Acc;
-                // }
+                _MemoryManager.writeOPCode(this.Acc, location); //Write Op code into location
             }
         }
 
@@ -139,12 +133,7 @@ module TSOS {
         public loadXRegisterMem(location){
             if(location != ''){
                 this.PC += 3; //Add to program counter
-                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'AE'; //IR
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
-                // if(location == '00 00'){
-                //     this.loadXRegister(this.memory[0]); //Load the X Register from the memory
-                // }
+                this.Xreg = _MemoryManager.getVariable(location); //Get variable from that memory address
             }
         }
 
@@ -152,13 +141,27 @@ module TSOS {
         public loadYRegisterMem(location){
             if(location != ''){
                 this.PC += 3; //Add to program counter
-                var table = (<HTMLInputElement>document.getElementById("cpuTable"));
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = 'AC'; //IR
-                table.getElementsByTagName("tr")[1].getElementsByTagName("td")[0].innerHTML = this.PC + ''; //PC
-                // if(location == '00 00'){
-                //     this.loadYRegister(this.memory[0]); //Load the Y Register from the memory
-                // }
+                this.Yreg = _MemoryManager.getVariable(location); //Get variable from that memory address
             }
+        }
+
+        //Adds contents of an address to the accumulator
+        public addCarry(location){
+            if(location != ''){
+                this.PC += 3; //Add to program counter
+                this.Acc += _MemoryManager.getVariable(location);
+            }
+        }
+
+        public updateCpuTable(){
+            var table = "";
+            table += "<td>" + _CPU.PC + "</td>";
+            table += "<td>" + _CPU.Acc + "</td>";
+            table += "<td>" + _CPU.IR + "</td>";
+            table += "<td>" + _CPU.Xreg + "</td>";
+            table += "<td>" + _CPU.Yreg + "</td>";
+            table += "<td>" + _CPU.Zflag + "</td>";
+            document.getElementById("cpuTableBody").innerHTML = table;
         }
     }
 }

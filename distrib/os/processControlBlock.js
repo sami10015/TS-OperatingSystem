@@ -61,8 +61,8 @@ var TSOS;
             return _CPU.Xreg;
         };
         PCB.prototype.getYReg = function () {
-            this.Y = _CPU.YReg;
-            return _CPU.YReg;
+            this.Y = _CPU.Yreg;
+            return _CPU.Yreg;
         };
         PCB.prototype.getZFlag = function () {
             this.Z = _CPU.Zflag;

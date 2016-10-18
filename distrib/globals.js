@@ -49,6 +49,8 @@ var _PCB;
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+// Control
+var _Control;
 var _hardwareClockID = null;
 // For testing (and enrichment)...
 // var Glados: any = null;  // This is the function Glados() in glados.js on Labouseur.com.

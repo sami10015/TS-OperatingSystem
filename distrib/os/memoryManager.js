@@ -88,12 +88,14 @@ var TSOS;
         };
         //Clears the memory block
         MemoryManager.prototype.clearBlock = function (pID) {
+            var index = -1; //Index for block to clear
             for (var i = 0; i < this.PID_Memory_Loc.length; i++) {
                 if (this.PID_Memory_Loc[i] == pID) {
                     var table = document.getElementById("processMemTable");
                     if (i == 0) {
                         this.PID_Memory_Loc[0] = -1; //Free that space
                         this.memorySpace[0] = 0; //Free that space
+                        index = 0; //Block to clear
                         for (var i = 0; i <= 32; i++) {
                             var row = table.getElementsByTagName("tr")[i];
                             for (var j = 1; j < 9; j++) {
@@ -104,6 +106,7 @@ var TSOS;
                     else if (i == 1) {
                         this.PID_Memory_Loc[1] = -1; //Free that space
                         this.memorySpace[1] = 0; //Free that space
+                        index = 1; //Block to clear
                         for (var i = 33; i <= 64; i++) {
                             var row = table.getElementsByTagName("tr")[i];
                             for (var j = 1; j < 9; j++) {
@@ -114,6 +117,7 @@ var TSOS;
                     else if (i == 2) {
                         this.PID_Memory_Loc[2] = -1; //Free that space
                         this.memorySpace[2] = 0; //Free that space
+                        index = 2; //Block to clear
                         for (var i = 65; i <= 96; i++) {
                             var row = table.getElementsByTagName("tr")[i];
                             for (var j = 1; j < 9; j++) {
@@ -124,6 +128,7 @@ var TSOS;
                     break;
                 }
             }
+            _Memory.eraseBlock(index); //Erase memory
         };
         //Easy hex to decimal translation
         MemoryManager.prototype.hexToDec = function (input) {
@@ -136,6 +141,26 @@ var TSOS;
                     return i;
                 }
             }
+        };
+        MemoryManager.prototype.getVariable = function (location) {
+            return _Memory.memory[location];
+        };
+        //Get OP Codes from Memory
+        MemoryManager.prototype.getOperation = function (index) {
+            return _Memory.read(index);
+        };
+        //Write OP Code into Memory Address
+        MemoryManager.prototype.writeOPCode = function (constant, address) {
+            _Memory.memory[address] = constant;
+        };
+        //Little Endian Address
+        MemoryManager.prototype.littleEndianAddress = function (addressBase, addressEnd) {
+            var address = 0;
+            var str = '';
+            str += addressEnd;
+            str += addressBase;
+            address = this.hexToDec(parseInt(str));
+            return address;
         };
         //Increment correct PID
         MemoryManager.prototype.pIDReturn = function () {

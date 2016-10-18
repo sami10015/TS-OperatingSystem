@@ -17,7 +17,7 @@ module TSOS{
 			var operationArray = [];
 			if(memorySlotIndex == 0){
 				for(var i = 0; i < 256; i++){
-					if(this.memory[i] != 0){
+					if(this.memory[i] != -1){ //End of OP Code
 						operationArray.push(this.memory[i]);
 					}else{
 						break;
@@ -25,7 +25,7 @@ module TSOS{
 				}
 			}else if(memorySlotIndex == 1){
 				for(var i = 256; i < 512; i++){	
-					if(this.memory[i] != 0){
+					if(this.memory[i] != -1){ //End of OP Code
 						operationArray.push(this.memory[i]);
 					}else{
 						break;
@@ -33,7 +33,7 @@ module TSOS{
 				}
 			}else if(memorySlotIndex == 2){
 				for(var i = 512; i < 768; i++){	
-					if(this.memory[i] != 0){
+					if(this.memory[i] != -1){ //End of OP Code
 						operationArray.push(this.memory[i]);
 					}else{
 						break;
@@ -49,6 +49,7 @@ module TSOS{
 			if(memorySlotIndex == 0){
 				for(var i = 0; i < 256; i++){
 					if(opCount+2 > operation.length){
+						this.memory[i] = -1; //End of OP Code
 						break;
 					}
 					this.memory[i] = operation.substring(opCount, opCount+2); //Set Memory
@@ -57,6 +58,7 @@ module TSOS{
 			}else if(memorySlotIndex == 1){
 				for(var i = 256; i < 512; i++){
 					if(opCount+2 > operation.length){
+						this.memory[i] = -1; //End of OP Code
 						break;
 					}
 					this.memory[i] = operation.substring(opCount, opCount+2); //Set Memory
@@ -65,6 +67,7 @@ module TSOS{
 			}else if(memorySlotIndex == 2){
 				for(var i = 512; i < 768; i++){
 					if(opCount+2 > operation.length){
+						this.memory[i] = -1; //End of OP Code
 						break;
 					}
 					this.memory[i] = operation.substring(opCount, opCount+2); //Set Memory
