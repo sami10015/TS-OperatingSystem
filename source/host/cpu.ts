@@ -83,8 +83,7 @@ module TSOS {
                     this.branchIfNotEqual(operation[i+1],_PCB.getLimit(this.PID));
                     _MemoryManager.operationIndex += 1;
                 }else if(operation[i] == 'FF'){ //System Call
-                    _KernelInterruptQueue.enqueue(new Interrupt(SYSTEM_CALL_IRQ, ''));
-                    //this.SystemCall();
+                    _KernelInterruptQueue.enqueue(new Interrupt(SYSTEM_CALL_IRQ, '')); //Call An Interrupt
                     _MemoryManager.operationIndex += 1;
                 }else if(operation[i] == 'EE'){ //Increment a value of a byte
                     this.incrementByteValue(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
@@ -202,15 +201,20 @@ module TSOS {
                 console.log(distance);
                 console.log(limit);
                 if(this.Zflag == 0){
-                    if(this.PC + distance > limit){
-                        var newIndex = this.PC+distance-limit; //Subtract one for index
-                        console.log(newIndex);
-                        _MemoryManager.operationIndex = newIndex;
-                        this.PC = newIndex+1;
+                    if(this.PC + distance > limit){ //Causes loop to start from behind
+                        var index = this.PC + distance;
+                        index = index - limit;
+                        this.PC = index;
+                        _MemoryManager.operationIndex = index + 1;
+                    }else{ //Branch
+                        this.PC += 2 + distance;
+                        this.IR = 'D0';
+                        _MemoryManager.operationIndex += distance+1; //Indexing reasons, must add one
                     }
                 }else{
                     this.PC += 2;
-                    this.IR = 'D0'
+                    this.IR = 'D0';
+                    _MemoryManager.operationIndex += 1;
                 }
             }
         }
@@ -222,12 +226,16 @@ module TSOS {
                 this.IR = 'FF';
                 _StdOut.putText(this.Yreg + "");
             }
+            // }else if(this.Xreg == 2){ //Print out 00 terminated string located at address stored in Y reg
+            //     var location = 
+            // }
         }
 
         //Increment value of a byte in location(Op Code EE)
         public incrementByteValue(location){
             if(location != ''){
                 this.PC += 3;
+                this.IR = 'EE';
                 var byte = _MemoryManager.getVariable(location);
                 _MemoryManager.writeOPCode(_MemoryManager.hexToDec(byte+1), location);
             }

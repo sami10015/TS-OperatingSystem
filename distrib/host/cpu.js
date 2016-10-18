@@ -96,8 +96,7 @@ var TSOS;
                     _MemoryManager.operationIndex += 1;
                 }
                 else if (operation[i] == 'FF') {
-                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SYSTEM_CALL_IRQ, ''));
-                    //this.SystemCall();
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SYSTEM_CALL_IRQ, '')); //Call An Interrupt
                     _MemoryManager.operationIndex += 1;
                 }
                 else if (operation[i] == 'EE') {
@@ -209,15 +208,21 @@ var TSOS;
                 console.log(limit);
                 if (this.Zflag == 0) {
                     if (this.PC + distance > limit) {
-                        var newIndex = this.PC + distance - limit; //Subtract one for index
-                        console.log(newIndex);
-                        _MemoryManager.operationIndex = newIndex;
-                        this.PC = newIndex + 1;
+                        var index = this.PC + distance;
+                        index = index - limit;
+                        this.PC = index;
+                        _MemoryManager.operationIndex = index + 1;
+                    }
+                    else {
+                        this.PC += 2 + distance;
+                        this.IR = 'D0';
+                        _MemoryManager.operationIndex += distance + 1; //Indexing reasons, must add one
                     }
                 }
                 else {
                     this.PC += 2;
                     this.IR = 'D0';
+                    _MemoryManager.operationIndex += 1;
                 }
             }
         };
@@ -228,11 +233,15 @@ var TSOS;
                 this.IR = 'FF';
                 _StdOut.putText(this.Yreg + "");
             }
+            // }else if(this.Xreg == 2){ //Print out 00 terminated string located at address stored in Y reg
+            //     var location = 
+            // }
         };
         //Increment value of a byte in location(Op Code EE)
         Cpu.prototype.incrementByteValue = function (location) {
             if (location != '') {
                 this.PC += 3;
+                this.IR = 'EE';
                 var byte = _MemoryManager.getVariable(location);
                 _MemoryManager.writeOPCode(_MemoryManager.hexToDec(byte + 1), location);
             }
