@@ -130,6 +130,8 @@ module TSOS {
                     break;
                 case STEP_IRQ: //Step Interrupt
                     break;
+                case STEP_TOGGLE_IRQ: //Step Toggle Interrupt
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

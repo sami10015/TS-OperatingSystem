@@ -132,6 +132,38 @@ var TSOS;
             }
             _Memory.eraseBlock(index); //Erase memory
         };
+        MemoryManager.prototype.updateBlock = function (PID) {
+            var memoryIndex = this.memoryIndex(PID); //1st block, 2nd block, 3rd block
+            var opIndex = 0; //0 - 256, 256 - 512, etc
+            var table = document.getElementById("processMemTable");
+            if (memoryIndex == 0) {
+                for (var i = 0; i < 32; i++) {
+                    var row = table.getElementsByTagName("tr")[i];
+                    for (var j = 1; j < 9; j++) {
+                        row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
+                        opIndex++;
+                    }
+                }
+            }
+            else if (memoryIndex == 1) {
+                for (var i = 33; i < 64; i++) {
+                    var row = table.getElementsByTagName("tr")[i];
+                    for (var j = 1; j < 9; j++) {
+                        row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
+                        opIndex++;
+                    }
+                }
+            }
+            else if (memoryIndex == 3) {
+                for (var i = 65; i < 96; i++) {
+                    var row = table.getElementsByTagName("tr")[i];
+                    for (var j = 1; j < 9; j++) {
+                        row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
+                        opIndex++;
+                    }
+                }
+            }
+        };
         //Easy hex to decimal translation
         MemoryManager.prototype.hexToDec = function (input) {
             return parseInt(input, 16);

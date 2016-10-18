@@ -92,8 +92,9 @@ module TSOS {
                 }else if(operation[i] == '00'){ //Break
                     this.endProgram();
                 }
+                _MemoryManager.updateBlock(this.PID);
                 _PCB.setIR(operation[i]); //Change IR in PCB
-                _PCB.displayPCB('Running'); //Change State in PCB and Update
+                _PCB.displayPCB('Running');
                 this.updateCpuTable(); //Update CPU Table
             }
         }
