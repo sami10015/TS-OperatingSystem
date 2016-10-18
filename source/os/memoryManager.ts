@@ -166,7 +166,6 @@ module TSOS{
 		//Increment correct PID
 		public pIDReturn(){
 			if(this.PIDList[0] == null){
-				console.log("Here");
 				this.PIDList.push(0);
 			}else{
 				this.PIDList.push(this.PIDList[this.PIDList.length-1]+1);

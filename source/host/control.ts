@@ -139,12 +139,12 @@ module TSOS {
         }
 
         public static hostBtnSingleStepToggle_click(btn): void {
-            if(!_SingleStepMode){
+            if(!_SingleStepMode){ //Turn Single Step On if it is not ON
                 btn.value = "Single Step: On";
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = false;
                 Control.hostLog("Single Step Mode On", "host");
                 _SingleStepMode = true;
-            }else{
+            }else{ //Turn Single Step Off if it is ON
                 btn.value = "Single Step: Off";
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
                 Control.hostLog("Single Step Mode Off", "host");

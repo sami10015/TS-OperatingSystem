@@ -100,8 +100,6 @@ var TSOS;
             }
         };
         Cpu.prototype.endProgram = function () {
-            //End CPU Cycle here, clear everything
-            this.isExecuting = false;
             _MemoryManager.operationIndex = 0;
             //Clear CPU Table
             var table = document.getElementById("cpuTable");
@@ -110,19 +108,22 @@ var TSOS;
             _MemoryManager.clearBlock(this.PID); //Clear the block of memory
             _MemoryManager.executedPID.push(this.PID); //Past PID's
             _StdOut.putText("PID: " + this.PID + " done.");
+            ;
             //Clear PCB
             _PCB.clearPCB();
             this.PID = -1; //Change back to normal
             //Turn Single Step Off if On
             document.getElementById("btnSingleStepToggle").value = "Single Step: Off";
             document.getElementById("btnStep").disabled = true;
-            _Control.hostLog("Single Step Mode Off", "host");
             _SingleStepMode = false;
+            //End CPU Cycle here
+            this.isExecuting = false;
         };
         //Loads a constant in the accumulator(OP Code A9)
         Cpu.prototype.loadAccumulator = function (constant) {
             if (constant != '') {
                 this.PC += 2; //Add to program counter
+                this.IR = 'A9'; //Change IR
                 this.Acc = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in accumulator(Hex)                
             }
         };
@@ -130,7 +131,7 @@ var TSOS;
         Cpu.prototype.loadXRegister = function (constant) {
             if (constant != '') {
                 this.PC += 2; //Add to program counter
-                _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
+                this.IR = 'A2'; //Change IR
                 this.Xreg = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in X Register(Hex)
             }
         };
@@ -138,7 +139,7 @@ var TSOS;
         Cpu.prototype.loadYRegister = function (constant) {
             if (constant != '') {
                 this.PC += 2; //Add to program counter
-                _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
+                this.IR = 'A0'; //Change IR
                 this.Yreg = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in Y Register(Hex)
             }
         };
@@ -146,6 +147,7 @@ var TSOS;
         Cpu.prototype.storeAccumulator = function (location) {
             if (location != '') {
                 this.PC += 3; //Add to program counter
+                this.IR = '8D'; //Change IR
                 _MemoryManager.writeOPCode(this.Acc, location); //Write Op code into location
             }
         };
@@ -153,6 +155,7 @@ var TSOS;
         Cpu.prototype.loadXRegisterMem = function (location) {
             if (location != '') {
                 this.PC += 3; //Add to program counter
+                this.IR = 'AE'; //Change IR
                 this.Xreg = _MemoryManager.getVariable(location); //Get variable from that memory address
             }
         };
@@ -160,13 +163,15 @@ var TSOS;
         Cpu.prototype.loadYRegisterMem = function (location) {
             if (location != '') {
                 this.PC += 3; //Add to program counter
+                this.IR = 'AC'; //Change IR
                 this.Yreg = _MemoryManager.getVariable(location); //Get variable from that memory address
             }
         };
-        //Adds contents of an address to the accumulator
+        //Adds contents of an address to the accumulator(OP Code 6D)
         Cpu.prototype.addCarry = function (location) {
             if (location != '') {
                 this.PC += 3; //Add to program counter
+                this.IR = '6D'; //Change IR
                 this.Acc += _MemoryManager.getVariable(location);
             }
         };
@@ -174,9 +179,8 @@ var TSOS;
         Cpu.prototype.compareByte = function (location) {
             if (location != '') {
                 this.PC += 3; //Add to program counter
-                console.log(location);
+                this.IR = 'EC'; //Change IR
                 var byte = _MemoryManager.getVariable(location); //Byte in memory
-                console.log(byte);
                 if (parseInt(byte) == this.Xreg) {
                     this.Zflag = 1; //Change z flag if equal
                 }

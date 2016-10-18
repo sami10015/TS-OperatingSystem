@@ -167,7 +167,6 @@ var TSOS;
         //Increment correct PID
         MemoryManager.prototype.pIDReturn = function () {
             if (this.PIDList[0] == null) {
-                console.log("Here");
                 this.PIDList.push(0);
             }
             else {

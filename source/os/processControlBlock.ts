@@ -96,7 +96,6 @@ module TSOS{
 
 		public getBase(PID): number{
 			var index = _MemoryManager.memoryIndex(PID);
-			console.log(index == 0);
 			if(index == 0){
 				this.Base = 0;
 				return 0;

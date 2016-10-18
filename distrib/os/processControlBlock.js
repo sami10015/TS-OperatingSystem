@@ -98,7 +98,6 @@ var TSOS;
         };
         PCB.prototype.getBase = function (PID) {
             var index = _MemoryManager.memoryIndex(PID);
-            console.log(index == 0);
             if (index == 0) {
                 this.Base = 0;
                 return 0;
