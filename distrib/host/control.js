@@ -128,10 +128,12 @@ var TSOS;
                 Control.hostLog("Single Step Mode Off", "host");
                 _SingleStepMode = false;
             }
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(STEP_TOGGLE_IRQ, '')); //Call An Interrupt
         };
         Control.hostBtnStep = function (btn) {
             if (_CPU.isExecuting) {
                 _CPU.cycle();
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(STEP_IRQ, '')); //Call An Interrupt
             }
         };
         return Control;

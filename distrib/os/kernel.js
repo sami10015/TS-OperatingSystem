@@ -112,7 +112,8 @@ var TSOS;
                     _StdIn.handleInput();
                     break;
                 case SYSTEM_CALL_IRQ:
-                    _CPU.SystemCall();
+                    break;
+                case STEP_IRQ:
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

@@ -127,7 +127,8 @@ module TSOS {
                     _StdIn.handleInput();
                     break;
                 case SYSTEM_CALL_IRQ: // System Call Interrupt
-                    _CPU.SystemCall();
+                    break;
+                case STEP_IRQ: //Step Interrupt
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

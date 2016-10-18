@@ -84,6 +84,7 @@ module TSOS {
                     _MemoryManager.operationIndex += 1;
                 }else if(operation[i] == 'FF'){ //System Call
                     _KernelInterruptQueue.enqueue(new Interrupt(SYSTEM_CALL_IRQ, '')); //Call An Interrupt
+                    this.SystemCall();
                     _MemoryManager.operationIndex += 1;
                 }else if(operation[i] == 'EE'){ //Increment a value of a byte
                     this.incrementByteValue(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));

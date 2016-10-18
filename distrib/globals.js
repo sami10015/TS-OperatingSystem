@@ -17,6 +17,8 @@ var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt prior
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
 var SYSTEM_CALL_IRQ = 2;
+var STEP_IRQ = 3;
+var STEP_TOGGLE_IRQ = 4;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

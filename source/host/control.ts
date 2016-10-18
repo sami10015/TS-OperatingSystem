@@ -150,11 +150,13 @@ module TSOS {
                 Control.hostLog("Single Step Mode Off", "host");
                 _SingleStepMode = false;
             }
+            _KernelInterruptQueue.enqueue(new Interrupt(STEP_TOGGLE_IRQ, '')); //Call An Interrupt
         }
 
         public static hostBtnStep(btn): void{
             if(_CPU.isExecuting){
                 _CPU.cycle();
+                _KernelInterruptQueue.enqueue(new Interrupt(STEP_IRQ, '')); //Call An Interrupt
             }
         }
     }
