@@ -157,6 +157,9 @@ var TSOS;
         };
         //Little Endian Address
         MemoryManager.prototype.littleEndianAddress = function (addressBase, addressEnd) {
+            if (addressBase == '00' && addressEnd == '00') {
+                return 0;
+            }
             var address = 0;
             var str = '';
             str += addressEnd;

@@ -54,6 +54,7 @@ module TSOS {
                 this.endProgram();
             }else{
                 var i = _MemoryManager.operationIndex;
+                console.log(operation[i]);
                 if(operation[i] == 'A9'){ //Load Accumulator
                     this.loadAccumulator(operation[i+1]);
                     _MemoryManager.operationIndex+=2;
@@ -76,14 +77,23 @@ module TSOS {
                     this.addCarry(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
                     _MemoryManager.operationIndex+=3;
                 }else if(operation[i] == 'EC'){ //Compare a byte to X reg, set flag if equal
-                    console.log(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
                     this.compareByte(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
                     _MemoryManager.operationIndex+=3;
+                }else if(operation[i] == 'D0'){ //Branch n bytes if Z flag is 0
+                    this.branchIfNotEqual(operation[i+1],_PCB.getLimit(this.PID));
+                    _MemoryManager.operationIndex += 1;
+                }else if(operation[i] == 'FF'){ //System Call
+                    _KernelInterruptQueue.enqueue(new Interrupt(SYSTEM_CALL_IRQ, ''));
+                    //this.SystemCall();
+                    _MemoryManager.operationIndex += 1;
+                }else if(operation[i] == 'EE'){ //Increment a value of a byte
+                    this.incrementByteValue(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                    _MemoryManager.operationIndex += 3;
                 }else if(operation[i] == '00'){ //Break
                     this.endProgram();
                 }
                 _PCB.setIR(operation[i]); //Change IR in PCB
-                _PCB.displayPCB('Running'); //Change State in PCB
+                _PCB.displayPCB('Running'); //Change State in PCB and Update
                 this.updateCpuTable(); //Update CPU Table
             }
         }
@@ -96,7 +106,7 @@ module TSOS {
             //Clear specific memory location  
             _MemoryManager.clearBlock(this.PID); //Clear the block of memory
             _MemoryManager.executedPID.push(this.PID); //Past PID's
-            _StdOut.putText("PID: " + this.PID + " done."); ; 
+            _StdOut.putText("PID: " + this.PID + " done."); 
             //Clear PCB
             _PCB.clearPCB();              
             this.PID = -1; //Change back to normal
@@ -177,20 +187,61 @@ module TSOS {
                 this.PC += 3; //Add to program counter
                 this.IR = 'EC' //Change IR
                 var byte = _MemoryManager.getVariable(location); //Byte in memory
-                if(parseInt(byte) == this.Xreg){
-                    this.Zflag = 1; //Change z flag if equal
+                if(parseInt(byte) != this.Xreg){
+                    this.Zflag = 0; //Change z flag if not equal
+                }else{ //Change z flag if equal
+                    this.Zflag = 1;
                 }
             }
         }
 
+        //Branch n bytes if Z flag = 0(Op Code D0)
+        public branchIfNotEqual(distance, limit){
+            if(distance != ''){
+                var distance = _MemoryManager.hexToDec(distance);
+                console.log(distance);
+                console.log(limit);
+                if(this.Zflag == 0){
+                    if(this.PC + distance > limit){
+                        var newIndex = this.PC+distance-limit; //Subtract one for index
+                        console.log(newIndex);
+                        _MemoryManager.operationIndex = newIndex;
+                        this.PC = newIndex+1;
+                    }
+                }else{
+                    this.PC += 2;
+                    this.IR = 'D0'
+                }
+            }
+        }
+
+        //System Call(Op Code FF)
+        public SystemCall(){
+            if(this.Xreg == 1){ //Print Y Reg if X reg is 1
+                this.PC += 1;
+                this.IR = 'FF';
+                _StdOut.putText(this.Yreg + "");
+            }
+        }
+
+        //Increment value of a byte in location(Op Code EE)
+        public incrementByteValue(location){
+            if(location != ''){
+                this.PC += 3;
+                var byte = _MemoryManager.getVariable(location);
+                _MemoryManager.writeOPCode(_MemoryManager.hexToDec(byte+1), location);
+            }
+        }
+
+        //Update CPU Table
         public updateCpuTable(){
             var table = "";
-            table += "<td>" + _CPU.PC + "</td>";
-            table += "<td>" + _CPU.Acc + "</td>";
-            table += "<td>" + _CPU.IR + "</td>";
-            table += "<td>" + _CPU.Xreg + "</td>";
-            table += "<td>" + _CPU.Yreg + "</td>";
-            table += "<td>" + _CPU.Zflag + "</td>";
+            table += "<td>" + this.PC + "</td>";
+            table += "<td>" + this.Acc + "</td>";
+            table += "<td>" + this.IR + "</td>";
+            table += "<td>" + this.Xreg + "</td>";
+            table += "<td>" + this.Yreg + "</td>";
+            table += "<td>" + this.Zflag + "</td>";
             document.getElementById("cpuTableBody").innerHTML = table;
         }
     }

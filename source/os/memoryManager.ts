@@ -126,7 +126,7 @@ module TSOS{
 		}
 
 		//Easy hex to decimal translation
-		public hexToDec(input): number{
+		public hexToDec(input): any{
 			return parseInt(input, 16);
 		}
 
@@ -155,6 +155,9 @@ module TSOS{
 
 		//Little Endian Address
 		public littleEndianAddress(addressBase, addressEnd){
+			if(addressBase == '00' && addressEnd == '00'){
+				return 0;
+			}
 			var address = 0;
 			var str = '';
 			str += addressEnd;
