@@ -20,7 +20,6 @@ const TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (inte
                               // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 const KEYBOARD_IRQ: number = 1;
 
-
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -70,6 +69,9 @@ var _krnKeyboardDriver; //  = null;
 var _Control: TSOS.Control;
 
 var _hardwareClockID: number = null;
+
+// Single Step Mode
+var _SingleStepMode: boolean = false;
 
 // For testing (and enrichment)...
 // var Glados: any = null;  // This is the function Glados() in glados.js on Labouseur.com.

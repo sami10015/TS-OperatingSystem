@@ -112,7 +112,12 @@ var TSOS;
             _StdOut.putText("PID: " + this.PID + " done.");
             //Clear PCB
             _PCB.clearPCB();
-            this.PID = -1; //Change back to normal 
+            this.PID = -1; //Change back to normal
+            //Turn Single Step Off if On
+            document.getElementById("btnSingleStepToggle").value = "Single Step: Off";
+            document.getElementById("btnStep").disabled = true;
+            _Control.hostLog("Single Step Mode Off", "host");
+            _SingleStepMode = false;
         };
         //Loads a constant in the accumulator(OP Code A9)
         Cpu.prototype.loadAccumulator = function (constant) {

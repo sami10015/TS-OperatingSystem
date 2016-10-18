@@ -42,7 +42,7 @@
 
 <div id="divMain" style="width:100%;">
 
-   <div id="divButtonBar" style="margin:4px;">
+   <div id="divButtonBar" style="margin:5px;">
       <input type="button"
              id = "btnStartOS"
              name="brnStartOS"
@@ -68,6 +68,25 @@
              value="Reset"
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
+
+      <input type="button"
+             id = "btnSingleStepToggle"
+             name="btnSingleStepToggle"
+             class="normal_button"
+             disabled="disabled"
+             value="Single Step: Off"
+             tabindex="4"
+             onclick="TSOS.Control.hostBtnSingleStepToggle_click(this);">
+
+      <input type="button"
+             id = "btnStep"
+             name="btnStep"
+             class="normal_button"
+             disabled="disabled"
+             value=">"
+             tabindex="3"
+             style="padding:0px;"
+             onclick="TSOS.Control.hostBtnStep(this);">
    </div>
    <div id = "time_status_container">
 		<label id = "Time" style = "color:white"> Time: 00:00:00 AM </label>

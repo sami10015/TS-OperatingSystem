@@ -52,6 +52,8 @@ var _krnKeyboardDriver; //  = null;
 // Control
 var _Control;
 var _hardwareClockID = null;
+// Single Step Mode
+var _SingleStepMode = false;
 // For testing (and enrichment)...
 // var Glados: any = null;  // This is the function Glados() in glados.js on Labouseur.com.
 // var _GLaDOS: any = null; // If the above is linked in, this is the instantiated instance of Glados.
