@@ -49,98 +49,55 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             var index = _MemoryManager.memoryIndex(this.PID); //Get memory block location for operation
-            var operation = _MemoryManager.getOperation(index); //Array of op codes
-            console.log(_MemoryManager.operationIndex);
+            var operation = _MemoryManager.getOperation(index); //Array of op codes;
             this.executeCode(operation);
-            // if(this.PID != -1){
-            //     this.isExecuting = true;
-            //     for(var i = 0; i < operation.length; i++){
-            //         if(operation[i] == 'A9'){ //Load Accumulator
-            //             this.loadAccumulator(operation[i+1]);
-            //             i+=1;
-            //         }else if(operation[i] == 'A2'){ //Load X Register
-            //             this.loadXRegister(operation[i+1]);
-            //             i+=1;
-            //         }else if(operation[i] == 'A0'){ //Load Y Register
-            //             this.loadYRegister(operation[i+1]);
-            //             i+=1;
-            //         }else if(operation[i] == '8D'){ //Store accumulator into memory
-            //             this.storeAccumulator(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
-            //             i+=2;
-            //         }else if(operation[i] == 'AE'){ //Load X register from memory
-            //             this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
-            //             i+=2;
-            //         }else if(operation[i] == 'AC'){ //Load Y register from memory
-            //             this.loadYRegisterMem(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
-            //             i+=2;
-            //         }else if(operation[i] == '6D'){ //Add carry to accumulator
-            //             this.addCarry(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
-            //             i+=2;
-            //         }else if(operation[i] == 'EC'){ //Compare a byte to X reg, set flag if equal
-            //             console.log(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
-            //             this.compareByte(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
-            //             i+=2;
-            //         }else if(operation[i] == '00'){ //Break
-            //             break;
-            //         }
-            //         _PCB.setIR(operation[i]); //Change IR in PCB
-            //         _PCB.displayPCB('Running'); //Change State in PCB
-            //         //this.updateCpuTable(); //Update CPU Table
-            //     }
-            //     var table = (<HTMLInputElement>document.getElementById("cpuTable"));
-            //     table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
-            //     this.isExecuting = false; //Stop Executing
-            //     console.log(_Memory.memory);
-            //     _MemoryManager.clearBlock(this.PID); //Clear the block of memory
-            //     console.log(_Memory.memory);
-            // }
-            // this.PID = -1; //Change back to normal            
         };
         Cpu.prototype.executeCode = function (operation) {
             if (_MemoryManager.operationIndex + 1 >= operation.length) {
                 this.endProgram();
             }
-            var i = _MemoryManager.operationIndex;
-            if (operation[i] == 'A9') {
-                this.loadAccumulator(operation[i + 1]);
-                _MemoryManager.operationIndex += 2;
-                console.log("Here");
+            else {
+                var i = _MemoryManager.operationIndex;
+                if (operation[i] == 'A9') {
+                    this.loadAccumulator(operation[i + 1]);
+                    _MemoryManager.operationIndex += 2;
+                }
+                else if (operation[i] == 'A2') {
+                    this.loadXRegister(operation[i + 1]);
+                    _MemoryManager.operationIndex += 2;
+                }
+                else if (operation[i] == 'A0') {
+                    this.loadYRegister(operation[i + 1]);
+                    _MemoryManager.operationIndex += 2;
+                }
+                else if (operation[i] == '8D') {
+                    this.storeAccumulator(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    _MemoryManager.operationIndex += 3;
+                }
+                else if (operation[i] == 'AE') {
+                    this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    _MemoryManager.operationIndex += 3;
+                }
+                else if (operation[i] == 'AC') {
+                    this.loadYRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    _MemoryManager.operationIndex += 3;
+                }
+                else if (operation[i] == '6D') {
+                    this.addCarry(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    _MemoryManager.operationIndex += 3;
+                }
+                else if (operation[i] == 'EC') {
+                    console.log(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    this.compareByte(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    _MemoryManager.operationIndex += 3;
+                }
+                else if (operation[i] == '00') {
+                    this.endProgram();
+                }
+                _PCB.setIR(operation[i]); //Change IR in PCB
+                _PCB.displayPCB('Running'); //Change State in PCB
+                this.updateCpuTable(); //Update CPU Table
             }
-            else if (operation[i] == 'A2') {
-                this.loadXRegister(operation[i + 1]);
-                _MemoryManager.operationIndex += 2;
-            }
-            else if (operation[i] == 'A0') {
-                this.loadYRegister(operation[i + 1]);
-                _MemoryManager.operationIndex += 2;
-            }
-            else if (operation[i] == '8D') {
-                this.storeAccumulator(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                _MemoryManager.operationIndex += 3;
-            }
-            else if (operation[i] == 'AE') {
-                this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                _MemoryManager.operationIndex += 3;
-            }
-            else if (operation[i] == 'AC') {
-                this.loadYRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                _MemoryManager.operationIndex += 3;
-            }
-            else if (operation[i] == '6D') {
-                this.addCarry(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                _MemoryManager.operationIndex += 3;
-            }
-            else if (operation[i] == 'EC') {
-                console.log(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                this.compareByte(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                _MemoryManager.operationIndex += 3;
-            }
-            else if (operation[i] == '00') {
-                this.endProgram();
-            }
-            _PCB.setIR(operation[i]); //Change IR in PCB
-            _PCB.displayPCB('Running'); //Change State in PCB
-            this.updateCpuTable(); //Update CPU Table
         };
         Cpu.prototype.endProgram = function () {
             //End CPU Cycle here, clear everything
@@ -153,14 +110,15 @@ var TSOS;
             _MemoryManager.clearBlock(this.PID); //Clear the block of memory
             _MemoryManager.executedPID.push(this.PID); //Past PID's
             _StdOut.putText("PID: " + this.PID + " done.");
+            //Clear PCB
+            _PCB.clearPCB();
             this.PID = -1; //Change back to normal 
         };
         //Loads a constant in the accumulator(OP Code A9)
         Cpu.prototype.loadAccumulator = function (constant) {
             if (constant != '') {
                 this.PC += 2; //Add to program counter
-                _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
-                this.Acc = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in accumulator(Hex)
+                this.Acc = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in accumulator(Hex)                
             }
         };
         //Loads a constant in X register(OP Code A2)
@@ -169,7 +127,6 @@ var TSOS;
                 this.PC += 2; //Add to program counter
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
                 this.Xreg = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in X Register(Hex)
-                this.isExecuting = false; //CPU Cycle Done
             }
         };
         //Loads a constant in the Y register(OP Code A0)
@@ -178,7 +135,6 @@ var TSOS;
                 this.PC += 2; //Add to program counter
                 _Kernel.krnTrace('CPU cycle'); //Run CPU Cycle
                 this.Yreg = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in Y Register(Hex)
-                this.isExecuting = false; //CPU Cycle Done
             }
         };
         //Store accumulator into specific little endian memory location(OP Code 8D)

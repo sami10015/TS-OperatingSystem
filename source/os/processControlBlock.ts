@@ -26,8 +26,38 @@ module TSOS{
 			row.getElementsByTagName("td")[6].innerHTML = this.getYReg() + '';
 			row.getElementsByTagName("td")[7].innerHTML = this.getZFlag() + '';
 			row.getElementsByTagName("td")[8].innerHTML = this.getBase(this.PID) + '';
-			row.getElementsByTagName("td")[8].innerHTML = this.getLimit(this.PID) + '';
-			row.getElementsByTagName("td")[9].innerHTML = this.getPart(this.PID) + '';
+			row.getElementsByTagName("td")[9].innerHTML = this.getLimit(this.PID) + '';
+			row.getElementsByTagName("td")[10].innerHTML = this.getPart(this.PID) + '';
+		}
+
+		public clearPCB(){
+			//Empty Values
+			this.PID = -1;
+			this.State = '';
+			this.PC = 0;
+			this.AC = 0;
+			this.IR = '';
+			this.X = 0;
+			this.Y = 0;
+			this.Z = 0;
+			this.Base = 0;
+			this.Limit = 0;
+			this.Part = 0;
+
+			//Clear Display
+			var table = (<HTMLInputElement>document.getElementById("PCB_Table"));
+			var row = table.getElementsByTagName("tr")[1];
+			row.getElementsByTagName("td")[0].innerHTML = '';
+			row.getElementsByTagName("td")[1].innerHTML = '';
+			row.getElementsByTagName("td")[2].innerHTML = '';
+			row.getElementsByTagName("td")[3].innerHTML = '';
+			row.getElementsByTagName("td")[4].innerHTML = '';
+			row.getElementsByTagName("td")[5].innerHTML = '';
+			row.getElementsByTagName("td")[6].innerHTML = '';
+			row.getElementsByTagName("td")[7].innerHTML = '';
+			row.getElementsByTagName("td")[8].innerHTML = '';
+			row.getElementsByTagName("td")[9].innerHTML = '';
+			row.getElementsByTagName("td")[10].innerHTML = '';
 		}
 
 		public getPID(): number{
@@ -66,6 +96,7 @@ module TSOS{
 
 		public getBase(PID): number{
 			var index = _MemoryManager.memoryIndex(PID);
+			console.log(index == 0);
 			if(index == 0){
 				this.Base = 0;
 				return 0;
