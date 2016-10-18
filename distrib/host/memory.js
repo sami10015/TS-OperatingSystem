@@ -20,6 +20,7 @@ var TSOS;
                         operationArray.push(this.memory[i]);
                     }
                     else {
+                        this.memory[i] = 0;
                         break;
                     }
                 }
@@ -30,6 +31,7 @@ var TSOS;
                         operationArray.push(this.memory[i]);
                     }
                     else {
+                        this.memory[i] = 0;
                         break;
                     }
                 }
@@ -40,6 +42,7 @@ var TSOS;
                         operationArray.push(this.memory[i]);
                     }
                     else {
+                        this.memory[i] = 0;
                         break;
                     }
                 }

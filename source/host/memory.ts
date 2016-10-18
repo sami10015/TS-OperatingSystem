@@ -20,6 +20,7 @@ module TSOS{
 					if(this.memory[i] != -1){ //End of OP Code
 						operationArray.push(this.memory[i]);
 					}else{
+						this.memory[i] = 0;
 						break;
 					}
 				}
@@ -28,6 +29,7 @@ module TSOS{
 					if(this.memory[i] != -1){ //End of OP Code
 						operationArray.push(this.memory[i]);
 					}else{
+						this.memory[i] = 0;
 						break;
 					}
 				}
@@ -36,6 +38,7 @@ module TSOS{
 					if(this.memory[i] != -1){ //End of OP Code
 						operationArray.push(this.memory[i]);
 					}else{
+						this.memory[i] = 0;
 						break;
 					}
 				}

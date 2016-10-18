@@ -89,12 +89,17 @@ module TSOS {
                 }else if(operation[i] == 'EE'){ //Increment a value of a byte
                     this.incrementByteValue(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
                     _MemoryManager.operationIndex += 3;
-                }else if(operation[i] == '00'){ //Break
-                    this.endProgram();
+                }else if(operation[i] == '00'){ //Break 
+                    this.endProgram();  
+                }
+
+                if(operation[i] == '00' || operation[i] == operation[operation.length-1]){
+                    _PCB.clearPCB();
+                }else{
+                    _PCB.displayPCB('Running');
                 }
                 _MemoryManager.updateBlock(this.PID);
                 _PCB.setIR(operation[i]); //Change IR in PCB
-                _PCB.displayPCB('Running');
                 this.updateCpuTable(); //Update CPU Table
             }
         }
@@ -107,10 +112,10 @@ module TSOS {
             //Clear specific memory location  
             _MemoryManager.clearBlock(this.PID); //Clear the block of memory
             _MemoryManager.executedPID.push(this.PID); //Past PID's
-            _StdOut.putText("PID: " + this.PID + " done."); 
+            _StdOut.putText("PID: " + this.PID + " done.");
+            this.PID = -1; //Change back to normal 
             //Clear PCB
             _PCB.clearPCB();              
-            this.PID = -1; //Change back to normal
             //Turn Single Step Off if On
             (<HTMLButtonElement>document.getElementById("btnSingleStepToggle")).value = "Single Step: Off";
             (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;

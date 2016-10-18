@@ -107,9 +107,14 @@ var TSOS;
                 else if (operation[i] == '00') {
                     this.endProgram();
                 }
+                if (operation[i] == '00' || operation[i] == operation[operation.length - 1]) {
+                    _PCB.clearPCB();
+                }
+                else {
+                    _PCB.displayPCB('Running');
+                }
                 _MemoryManager.updateBlock(this.PID);
                 _PCB.setIR(operation[i]); //Change IR in PCB
-                _PCB.displayPCB('Running');
                 this.updateCpuTable(); //Update CPU Table
             }
         };
@@ -122,9 +127,9 @@ var TSOS;
             _MemoryManager.clearBlock(this.PID); //Clear the block of memory
             _MemoryManager.executedPID.push(this.PID); //Past PID's
             _StdOut.putText("PID: " + this.PID + " done.");
+            this.PID = -1; //Change back to normal 
             //Clear PCB
             _PCB.clearPCB();
-            this.PID = -1; //Change back to normal
             //Turn Single Step Off if On
             document.getElementById("btnSingleStepToggle").value = "Single Step: Off";
             document.getElementById("btnStep").disabled = true;
