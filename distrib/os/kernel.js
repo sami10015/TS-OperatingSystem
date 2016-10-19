@@ -75,7 +75,7 @@ var TSOS;
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
-            else if (_CPU.isExecuting) {
+            else if (_CPU.isExecuting && _SingleStepMode == false) {
                 _CPU.cycle();
             }
             else {
@@ -110,6 +110,12 @@ var TSOS;
                 case KEYBOARD_IRQ:
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
+                    break;
+                case SYSTEM_CALL_IRQ:
+                    break;
+                case STEP_IRQ:
+                    break;
+                case STEP_TOGGLE_IRQ:
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

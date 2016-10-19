@@ -93,9 +93,10 @@ module TSOS {
             // Disable the (passed-in) start button...
             btn.disabled = true;
 
-            // .. enable the Halt and Reset buttons ...
+            // .. enable the Halt and Reset and Single Step buttons ...
             (<HTMLButtonElement>document.getElementById("btnHaltOS")).disabled = false;
             (<HTMLButtonElement>document.getElementById("btnReset")).disabled = false;
+            (<HTMLButtonElement>document.getElementById("btnSingleStepToggle")).disabled = false;
 
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
@@ -109,6 +110,12 @@ module TSOS {
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new Kernel();
             _Kernel.krnBootstrap();  // _GLaDOS.afterStartup() will get called in there, if configured.
+
+            _Memory = new Memory();
+            _Memory.init();
+            _MemoryManager = new MemoryManager();
+
+            _PCB = new PCB();
         }
 
         public static hostBtnHaltOS_click(btn): void {
@@ -119,6 +126,8 @@ module TSOS {
             // Stop the interval that's simulating our clock pulse.
             clearInterval(_hardwareClockID);
             // TODO: Is there anything else we need to do here?
+            (<HTMLButtonElement>document.getElementById("btnSingleStepToggle")).disabled = true;
+            (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
         }
 
         public static hostBtnReset_click(btn): void {
@@ -127,6 +136,28 @@ module TSOS {
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        }
+
+        public static hostBtnSingleStepToggle_click(btn): void {
+            if(!_SingleStepMode){ //Turn Single Step On if it is not ON
+                btn.value = "Single Step: On";
+                (<HTMLButtonElement>document.getElementById("btnStep")).disabled = false;
+                Control.hostLog("Single Step Mode On", "host");
+                _SingleStepMode = true;
+            }else{ //Turn Single Step Off if it is ON
+                btn.value = "Single Step: Off";
+                (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
+                Control.hostLog("Single Step Mode Off", "host");
+                _SingleStepMode = false;
+            }
+            _KernelInterruptQueue.enqueue(new Interrupt(STEP_TOGGLE_IRQ, '')); //Call An Interrupt
+        }
+
+        public static hostBtnStep(btn): void{
+            if(_CPU.isExecuting){
+                _CPU.cycle();
+                _KernelInterruptQueue.enqueue(new Interrupt(STEP_IRQ, '')); //Call An Interrupt
+            }
         }
     }
 }
