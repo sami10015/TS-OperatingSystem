@@ -201,7 +201,6 @@ var TSOS;
                 str += addressEnd;
                 str += addressBase;
             }
-            console.log(str);
             address = this.hexToDec(str);
             return address;
         };
@@ -213,6 +212,10 @@ var TSOS;
             else {
                 this.PIDList.push(this.PIDList[this.PIDList.length - 1] + 1);
             }
+        };
+        //Write to memory from memory manager
+        MemoryManager.prototype.writeToMemory = function (index, operation) {
+            _Memory.write(index, operation);
         };
         return MemoryManager;
     }());

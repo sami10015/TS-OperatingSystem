@@ -54,7 +54,6 @@ module TSOS {
                 this.endProgram();
             }else{
                 var i = this.PC;
-                console.log(operation[i]);
                 if(operation[i] == 'A9'){ //Load Accumulator
                     this.loadAccumulator(operation[i+1]);
                 }else if(operation[i] == 'A2'){ //Load X Register
@@ -63,7 +62,6 @@ module TSOS {
                     this.loadYRegister(operation[i+1]);
                 }else if(operation[i] == '8D'){ //Store accumulator into memory
                     var location2 = _MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]);
-                    console.log(location2);
                     this.storeAccumulator(location2);
                 }else if(operation[i] == 'AE'){ //Load X register from memory
                     this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
@@ -95,6 +93,7 @@ module TSOS {
             }
         }
 
+        //End the program
         public endProgram(){
             //Clear CPU Table
             var table = (<HTMLInputElement>document.getElementById("cpuTable"));
@@ -178,8 +177,6 @@ module TSOS {
         //Branch n bytes if Z flag = 0(Op Code D0)
         public branchIfNotEqual(distance, limit, operation){
             var distance = _MemoryManager.hexToDec(distance);
-            console.log(distance);
-            console.log(limit);
             if(this.Zflag == 0){
                 if(this.PC + distance > limit){ //Causes loop to start from behind
                     this.PC = (this.PC+distance) - limit + 2;
@@ -203,10 +200,8 @@ module TSOS {
             }else if(this.Xreg == 2){ //Print out 00 terminated string located at address stored in Y reg
                 var terminated = false;
                 var location = this.Yreg;
-                console.log(location);
                 while(!terminated){
                     var charNum = _MemoryManager.getVariable(location);
-                    console.log(charNum);
                     if(charNum == 0){
                         terminated = true;
                         break

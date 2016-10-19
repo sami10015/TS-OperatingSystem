@@ -196,8 +196,7 @@ module TSOS{
 			}else{
 				str += addressEnd;
 				str += addressBase;
-			}
-			console.log(str);			
+			}			
 			address = this.hexToDec(str);
 			return address;
 		}
@@ -209,6 +208,11 @@ module TSOS{
 			}else{
 				this.PIDList.push(this.PIDList[this.PIDList.length-1]+1);
 			}
+		}
+
+		//Write to memory from memory manager
+		public writeToMemory(index, operation){
+			_Memory.write(index, operation);
 		}
 	}
 }

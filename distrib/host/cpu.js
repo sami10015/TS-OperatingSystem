@@ -58,7 +58,6 @@ var TSOS;
             }
             else {
                 var i = this.PC;
-                console.log(operation[i]);
                 if (operation[i] == 'A9') {
                     this.loadAccumulator(operation[i + 1]);
                 }
@@ -70,7 +69,6 @@ var TSOS;
                 }
                 else if (operation[i] == '8D') {
                     var location2 = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
-                    console.log(location2);
                     this.storeAccumulator(location2);
                 }
                 else if (operation[i] == 'AE') {
@@ -109,6 +107,7 @@ var TSOS;
                 this.updateCpuTable(); //Update CPU Table
             }
         };
+        //End the program
         Cpu.prototype.endProgram = function () {
             //Clear CPU Table
             var table = document.getElementById("cpuTable");
@@ -184,8 +183,6 @@ var TSOS;
         //Branch n bytes if Z flag = 0(Op Code D0)
         Cpu.prototype.branchIfNotEqual = function (distance, limit, operation) {
             var distance = _MemoryManager.hexToDec(distance);
-            console.log(distance);
-            console.log(limit);
             if (this.Zflag == 0) {
                 if (this.PC + distance > limit) {
                     this.PC = (this.PC + distance) - limit + 2;
@@ -211,10 +208,8 @@ var TSOS;
             else if (this.Xreg == 2) {
                 var terminated = false;
                 var location = this.Yreg;
-                console.log(location);
                 while (!terminated) {
                     var charNum = _MemoryManager.getVariable(location);
-                    console.log(charNum);
                     if (charNum == 0) {
                         terminated = true;
                         break;

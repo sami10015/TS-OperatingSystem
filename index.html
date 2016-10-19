@@ -174,23 +174,29 @@
         var cell8 = row.insertCell(7);
         var cell9 = row.insertCell(8);
 
-        cell1.innerHTML = "0x";
-        if(i < 10){
-          cell1.innerHTML += "00" + i;
-        }else if(i < 100){
-          cell1.innerHTML += "0" + i;
-        }else{
-          cell1.innerHTML += i;
+        var hexRow = i.toString(16);
+
+        if(i != 0){
+          cell1.innerHTML = "0x";
+          if(hexRow.length == 1){
+            cell1.innerHTML += "00" + hexRow;
+          }else if(hexRow.length == 2){
+            cell1.innerHTML += "0" + hexRow;
+          }else{
+            cell1.innerHTML += hexRow;
+          }
+          cell2.innerHTML = "0";
+          cell3.innerHTML = "0";
+          cell4.innerHTML = "0";
+          cell5.innerHTML = "0";
+          cell6.innerHTML = "0";
+          cell7.innerHTML = "0";
+          cell8.innerHTML = "0";
+          cell9.innerHTML = "0";
+          j++;
         }
-        cell2.innerHTML = "0";
-        cell3.innerHTML = "0";
-        cell4.innerHTML = "0";
-        cell5.innerHTML = "0";
-        cell6.innerHTML = "0";
-        cell7.innerHTML = "0";
-        cell8.innerHTML = "0";
-        cell9.innerHTML = "0";
-        j++;
+        
+        
     }
 </script>
   
@@ -204,7 +210,7 @@
                    id  ="taProgramInput"
                    rows="8"
                    cols="48"
-         ></textarea>
+         >A9 00 8D 00 00 A9 00 8D 4B 00 A9 00 8D 4B 00 A2 03 EC 4B 00 D0 07 A2 01 EC 00 00 D0 05 A2 00 EC 00 00 D0 26 A0 4C A2 02 FF AC 4B 00 A2 01 FF A9 01 6D 4B 00 8D 4B 00 A2 02 EC 4B 00 D0 05 A0 55 A2 02 FF A2 01 EC 00 00 D0 C5 00 00 63 6F 75 6E 74 69 6E 67 00 68 65 6C 6C 6F 20 77 6F 72 6C 64 00</textarea>
       </label>
    </div>
 </div>

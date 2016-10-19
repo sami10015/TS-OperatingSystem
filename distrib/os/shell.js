@@ -361,7 +361,7 @@ var TSOS;
                         _StdOut.putText("Format!");
                     }
                     else {
-                        _Memory.write(index, operation); //Write to memory
+                        _MemoryManager.writeToMemory(index, operation); //Write to memory
                         _MemoryManager.pIDReturn(); //Increment PID
                         _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
                         _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
