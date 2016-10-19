@@ -57,52 +57,41 @@ var TSOS;
                 this.endProgram();
             }
             else {
-                var i = _MemoryManager.operationIndex;
+                var i = this.PC;
                 console.log(operation[i]);
                 if (operation[i] == 'A9') {
                     this.loadAccumulator(operation[i + 1]);
-                    _MemoryManager.operationIndex += 2;
                 }
                 else if (operation[i] == 'A2') {
                     this.loadXRegister(operation[i + 1]);
-                    _MemoryManager.operationIndex += 2;
                 }
                 else if (operation[i] == 'A0') {
                     this.loadYRegister(operation[i + 1]);
-                    _MemoryManager.operationIndex += 2;
                 }
                 else if (operation[i] == '8D') {
                     this.storeAccumulator(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                    _MemoryManager.operationIndex += 3;
                 }
                 else if (operation[i] == 'AE') {
                     this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                    _MemoryManager.operationIndex += 3;
                 }
                 else if (operation[i] == 'AC') {
                     this.loadYRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                    _MemoryManager.operationIndex += 3;
                 }
                 else if (operation[i] == '6D') {
                     this.addCarry(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                    _MemoryManager.operationIndex += 3;
                 }
                 else if (operation[i] == 'EC') {
                     this.compareByte(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                    _MemoryManager.operationIndex += 3;
                 }
                 else if (operation[i] == 'D0') {
                     this.branchIfNotEqual(operation[i + 1], _PCB.getLimit(this.PID));
-                    _MemoryManager.operationIndex += 1;
                 }
                 else if (operation[i] == 'FF') {
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SYSTEM_CALL_IRQ, '')); //Call An Interrupt
                     this.SystemCall();
-                    _MemoryManager.operationIndex += 1;
                 }
                 else if (operation[i] == 'EE') {
                     this.incrementByteValue(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
-                    _MemoryManager.operationIndex += 3;
                 }
                 else if (operation[i] == '00') {
                     this.endProgram();
@@ -119,7 +108,6 @@ var TSOS;
             }
         };
         Cpu.prototype.endProgram = function () {
-            _MemoryManager.operationIndex = 0;
             //Clear CPU Table
             var table = document.getElementById("cpuTable");
             table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
@@ -193,7 +181,7 @@ var TSOS;
                 this.Acc += _MemoryManager.getVariable(location);
             }
         };
-        //Compare a byte in memory to the X reg
+        //Compare a byte in memory to the X reg(Op Code EC)
         Cpu.prototype.compareByte = function (location) {
             if (location != '') {
                 this.PC += 3; //Add to program counter
@@ -215,21 +203,13 @@ var TSOS;
                 console.log(limit);
                 if (this.Zflag == 0) {
                     if (this.PC + distance > limit) {
-                        var index = this.PC + distance;
-                        index = index - limit;
-                        this.PC = index;
-                        _MemoryManager.operationIndex = index + 1;
                     }
                     else {
-                        this.PC += 2 + distance;
-                        this.IR = 'D0';
-                        _MemoryManager.operationIndex += distance + 1; //Indexing reasons, must add one
                     }
                 }
                 else {
                     this.PC += 2;
                     this.IR = 'D0';
-                    _MemoryManager.operationIndex += 1;
                 }
             }
         };
@@ -240,9 +220,20 @@ var TSOS;
                 this.IR = 'FF';
                 _StdOut.putText(this.Yreg + "");
             }
-            // }else if(this.Xreg == 2){ //Print out 00 terminated string located at address stored in Y reg
-            //     var location = 
-            // }
+            else if (this.Xreg == 2) {
+                var terminated = false;
+                while (!terminated) {
+                    var location = _MemoryManager.hexToDec(this.Yreg);
+                    if (location != 0) {
+                        var charNum = _MemoryManager.getVariable(location);
+                        var newChar = String.fromCharCode(charNum);
+                        _StdOut.putText(newChar);
+                    }
+                    else {
+                        terminated = true;
+                    }
+                }
+            }
         };
         //Increment value of a byte in location(Op Code EE)
         Cpu.prototype.incrementByteValue = function (location) {
