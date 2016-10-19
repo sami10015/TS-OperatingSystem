@@ -53,7 +53,7 @@ var TSOS;
             this.executeCode(operation);
         };
         Cpu.prototype.executeCode = function (operation) {
-            if (_MemoryManager.operationIndex + 1 >= operation.length) {
+            if (this.PC + 1 >= operation.length) {
                 this.endProgram();
             }
             else {
@@ -69,7 +69,9 @@ var TSOS;
                     this.loadYRegister(operation[i + 1]);
                 }
                 else if (operation[i] == '8D') {
-                    this.storeAccumulator(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location2 = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    console.log(location2);
+                    this.storeAccumulator(location2);
                 }
                 else if (operation[i] == 'AE') {
                     this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
@@ -84,7 +86,7 @@ var TSOS;
                     this.compareByte(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
                 }
                 else if (operation[i] == 'D0') {
-                    this.branchIfNotEqual(operation[i + 1], _PCB.getLimit(this.PID));
+                    this.branchIfNotEqual(operation[i + 1], _PCB.getLimit(this.PID), operation);
                 }
                 else if (operation[i] == 'FF') {
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SYSTEM_CALL_IRQ, '')); //Call An Interrupt
@@ -127,90 +129,76 @@ var TSOS;
         };
         //Loads a constant in the accumulator(OP Code A9)
         Cpu.prototype.loadAccumulator = function (constant) {
-            if (constant != '') {
-                this.PC += 2; //Add to program counter
-                this.IR = 'A9'; //Change IR
-                this.Acc = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in accumulator(Hex)                
-            }
+            this.PC += 2; //Add to program counter
+            this.IR = 'A9'; //Change IR
+            this.Acc = _MemoryManager.hexToDec(constant); //Store constant in accumulator(Hex)                
         };
         //Loads a constant in X register(OP Code A2)
         Cpu.prototype.loadXRegister = function (constant) {
-            if (constant != '') {
-                this.PC += 2; //Add to program counter
-                this.IR = 'A2'; //Change IR
-                this.Xreg = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in X Register(Hex)
-            }
+            this.PC += 2; //Add to program counter
+            this.IR = 'A2'; //Change IR
+            this.Xreg = _MemoryManager.hexToDec(constant); //Store constant in X Register(Hex)
         };
         //Loads a constant in the Y register(OP Code A0)
         Cpu.prototype.loadYRegister = function (constant) {
-            if (constant != '') {
-                this.PC += 2; //Add to program counter
-                this.IR = 'A0'; //Change IR
-                this.Yreg = _MemoryManager.hexToDec(parseInt(constant)); //Store constant in Y Register(Hex)
-            }
+            this.PC += 2; //Add to program counter
+            this.IR = 'A0'; //Change IR
+            this.Yreg = _MemoryManager.hexToDec(constant); //Store constant in Y Register(Hex)
         };
         //Store accumulator into specific little endian memory location(OP Code 8D)
-        Cpu.prototype.storeAccumulator = function (location) {
-            if (location != '') {
-                this.PC += 3; //Add to program counter
-                this.IR = '8D'; //Change IR
-                _MemoryManager.writeOPCode(this.Acc, location); //Write Op code into location
-            }
+        Cpu.prototype.storeAccumulator = function (memoryLoc) {
+            this.PC += 3; //Add to program counter
+            this.IR = '8D'; //Change IR
+            _MemoryManager.writeOPCode(this.Acc, memoryLoc); //Write Op code into location
         };
         //Loads X register from memory(OP Code AE)
         Cpu.prototype.loadXRegisterMem = function (location) {
-            if (location != '') {
-                this.PC += 3; //Add to program counter
-                this.IR = 'AE'; //Change IR
-                this.Xreg = _MemoryManager.getVariable(location); //Get variable from that memory address
-            }
+            this.PC += 3; //Add to program counter
+            this.IR = 'AE'; //Change IR
+            this.Xreg = _MemoryManager.getVariable(location); //Get variable from that memory address
         };
         //Loads Y register from memory(OP Code AC)
         Cpu.prototype.loadYRegisterMem = function (location) {
-            if (location != '') {
-                this.PC += 3; //Add to program counter
-                this.IR = 'AC'; //Change IR
-                this.Yreg = _MemoryManager.getVariable(location); //Get variable from that memory address
-            }
+            this.PC += 3; //Add to program counter
+            this.IR = 'AC'; //Change IR
+            this.Yreg = _MemoryManager.getVariable(location); //Get variable from that memory address
         };
         //Adds contents of an address to the accumulator(OP Code 6D)
         Cpu.prototype.addCarry = function (location) {
-            if (location != '') {
-                this.PC += 3; //Add to program counter
-                this.IR = '6D'; //Change IR
-                this.Acc += _MemoryManager.getVariable(location);
-            }
+            this.PC += 3; //Add to program counter
+            this.IR = '6D'; //Change IR
+            this.Acc += _MemoryManager.getVariable(location);
         };
         //Compare a byte in memory to the X reg(Op Code EC)
         Cpu.prototype.compareByte = function (location) {
-            if (location != '') {
-                this.PC += 3; //Add to program counter
-                this.IR = 'EC'; //Change IR
-                var byte = _MemoryManager.getVariable(location); //Byte in memory
-                if (parseInt(byte) != this.Xreg) {
-                    this.Zflag = 0; //Change z flag if not equal
-                }
-                else {
-                    this.Zflag = 1;
-                }
+            this.PC += 3; //Add to program counter
+            this.IR = 'EC'; //Change IR
+            var byte = _MemoryManager.getVariable(location); //Byte in memory
+            if (parseInt(byte) != this.Xreg) {
+                this.Zflag = 0; //Change z flag if not equal
+            }
+            else {
+                this.Zflag = 1;
             }
         };
         //Branch n bytes if Z flag = 0(Op Code D0)
-        Cpu.prototype.branchIfNotEqual = function (distance, limit) {
-            if (distance != '') {
-                var distance = _MemoryManager.hexToDec(distance);
-                console.log(distance);
-                console.log(limit);
-                if (this.Zflag == 0) {
-                    if (this.PC + distance > limit) {
-                    }
-                    else {
-                    }
+        Cpu.prototype.branchIfNotEqual = function (distance, limit, operation) {
+            var distance = _MemoryManager.hexToDec(distance);
+            console.log(distance);
+            console.log(limit);
+            if (this.Zflag == 0) {
+                if (this.PC + distance > limit) {
+                    this.PC = (this.PC + distance) - limit + 2;
+                    this.IR = operation[this.PC];
                 }
                 else {
-                    this.PC += 2;
-                    this.IR = 'D0';
+                    this.PC = this.PC + distance + 2; //Increment to branch
+                    this.IR = operation[this.PC]; //Change IR
                 }
+            }
+            else {
+                this.PC += 2;
+                this.IR = 'D0';
             }
         };
         //System Call(Op Code FF)
@@ -222,27 +210,31 @@ var TSOS;
             }
             else if (this.Xreg == 2) {
                 var terminated = false;
+                var location = this.Yreg;
+                console.log(location);
                 while (!terminated) {
-                    var location = _MemoryManager.hexToDec(this.Yreg);
-                    if (location != 0) {
-                        var charNum = _MemoryManager.getVariable(location);
-                        var newChar = String.fromCharCode(charNum);
-                        _StdOut.putText(newChar);
+                    var charNum = _MemoryManager.getVariable(location);
+                    console.log(charNum);
+                    if (charNum == 0) {
+                        terminated = true;
+                        break;
                     }
                     else {
-                        terminated = true;
+                        var newChar = String.fromCharCode(_MemoryManager.hexToDec(charNum));
+                        _StdOut.putText(newChar);
+                        location++;
                     }
                 }
+                this.PC += 1;
+                this.IR = 'FF';
             }
         };
         //Increment value of a byte in location(Op Code EE)
         Cpu.prototype.incrementByteValue = function (location) {
-            if (location != '') {
-                this.PC += 3;
-                this.IR = 'EE';
-                var byte = _MemoryManager.getVariable(location);
-                _MemoryManager.writeOPCode(_MemoryManager.hexToDec(byte + 1), location);
-            }
+            this.PC += 3;
+            this.IR = 'EE';
+            var byte = _MemoryManager.getVariable(location);
+            _MemoryManager.writeOPCode(_MemoryManager.hexToDec(byte + 1), location);
         };
         //Update CPU Table
         Cpu.prototype.updateCpuTable = function () {

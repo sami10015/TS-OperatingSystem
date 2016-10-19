@@ -194,9 +194,15 @@ var TSOS;
             }
             var address = 0;
             var str = '';
-            str += addressEnd;
-            str += addressBase;
-            address = this.hexToDec(parseInt(str));
+            if (addressEnd == '00' && addressBase != '00') {
+                str += addressBase;
+            }
+            else {
+                str += addressEnd;
+                str += addressBase;
+            }
+            console.log(str);
+            address = this.hexToDec(str);
             return address;
         };
         //Increment correct PID

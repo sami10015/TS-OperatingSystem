@@ -180,7 +180,7 @@ module TSOS{
 		}
 
 		//Write OP Code into Memory Address
-		public  writeOPCode(constant,address){
+		public  writeOPCode(constant, address){
 			_Memory.memory[address] = constant;
 		}
 
@@ -191,9 +191,14 @@ module TSOS{
 			}
 			var address = 0;
 			var str = '';
-			str += addressEnd;
-			str += addressBase;
-			address = this.hexToDec(parseInt(str));
+			if(addressEnd == '00' && addressBase != '00'){
+				str += addressBase;
+			}else{
+				str += addressEnd;
+				str += addressBase;
+			}
+			console.log(str);			
+			address = this.hexToDec(str);
 			return address;
 		}
 
