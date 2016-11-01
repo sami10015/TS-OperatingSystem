@@ -14,13 +14,27 @@ var TSOS;
             this.executedPID = executedPID;
             this.operationIndex = operationIndex;
         }
+        //Clear all memory and display
         MemoryManager.prototype.clearAll = function () {
             this.memorySpace = [0, 0, 0];
             this.PID_Memory_Loc = [-1, -1, -1];
             _Memory.eraseAll();
-            //Clear display
+            this.clearDisplay();
+            //Add all unexecuted PIDs to executed PIDs list
+            for (var i = 0; i < this.PIDList.length; i++) {
+                var pid = this.PIDList[i]; //Comparison PID
+                var counter = 0; //Use this counter to check if it has been executed or not
+                for (var j = 0; j < this.executedPID.length; j++) {
+                    if (pid != this.executedPID[i]) {
+                        counter++;
+                    }
+                }
+                if (counter == this.executedPID.length) {
+                    this.executedPID.push(pid);
+                }
+            }
         };
-        //Displays the memory block
+        //Displays the memory block and checks if the memory blocks are full
         MemoryManager.prototype.displayBlock = function (operation) {
             //Change process memory table
             var table = document.getElementById("processMemTable");
@@ -132,6 +146,7 @@ var TSOS;
             }
             _Memory.eraseBlock(index); //Erase memory
         };
+        //Updates the memory display as the program runs
         MemoryManager.prototype.updateBlock = function (PID) {
             var memoryIndex = this.memoryIndex(PID); //1st block, 2nd block, 3rd block
             var opIndex = 0; //0 - 256, 256 - 512, etc
@@ -164,6 +179,16 @@ var TSOS;
                 }
             }
         };
+        //Clears all memory blocks display
+        MemoryManager.prototype.clearDisplay = function () {
+            var table = document.getElementById("processMemTable");
+            for (var i = 0; i < 96; i++) {
+                var row = table.getElementsByTagName("tr")[i];
+                for (var j = 1; j < 9; j++) {
+                    row.getElementsByTagName("td")[j].innerHTML = '00';
+                }
+            }
+        };
         //Easy hex to decimal translation
         MemoryManager.prototype.hexToDec = function (input) {
             return parseInt(input, 16);
@@ -176,6 +201,7 @@ var TSOS;
                 }
             }
         };
+        //Get whatever variable is located at the location in memory
         MemoryManager.prototype.getVariable = function (location) {
             return _Memory.memory[location];
         };

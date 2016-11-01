@@ -177,9 +177,10 @@ module TSOS {
         //Branch n bytes if Z flag = 0(Op Code D0)
         public branchIfNotEqual(distance, limit, operation){
             var distance = _MemoryManager.hexToDec(distance);
+            var base = _PCB.Base;
             if(this.Zflag == 0){
-                if(this.PC + distance > limit){ //Causes loop to start from behind
-                    this.PC = (this.PC+distance) - limit + 2;
+                if(this.PC + distance + base > limit){ //Causes loop to start from behind
+                    this.PC = (this.PC+distance+base) - limit + 2;
                     this.IR = operation[this.PC];
                 }else{ //Branch
                     this.PC = this.PC + distance + 2; //Increment to branch
@@ -192,7 +193,7 @@ module TSOS {
         }
 
         //System Call(Op Code FF)
-        public SystemCall(){
+        public SystemCall(){ 
             if(this.Xreg == 1){ //Print Y Reg if X reg is 1
                 this.PC += 1;
                 this.IR = 'FF';
@@ -204,8 +205,9 @@ module TSOS {
                     var charNum = _MemoryManager.getVariable(location);
                     if(charNum == 0){
                         terminated = true;
-                        break
+                        break;
                     }else{
+                        console.log(_MemoryManager.hexToDec(charNum));
                         var newChar = String.fromCharCode(_MemoryManager.hexToDec(charNum));
                         _StdOut.putText(newChar);
                         location++;

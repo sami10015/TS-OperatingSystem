@@ -10,14 +10,28 @@ module TSOS{
 					public executedPID = [],
 					public operationIndex = 0){}
 
+		//Clear all memory and display
 		public clearAll(){
 			this.memorySpace = [0,0,0];
 			this.PID_Memory_Loc = [-1,-1,-1];
 			_Memory.eraseAll();
-			//Clear display
+			this.clearDisplay();
+			//Add all unexecuted PIDs to executed PIDs list
+			for(var i = 0; i < this.PIDList.length; i++){
+				var pid = this.PIDList[i]; //Comparison PID
+				var counter = 0; //Use this counter to check if it has been executed or not
+				for(var j = 0; j < this.executedPID.length; j++){
+					if(pid != this.executedPID[i]){
+						counter++;
+					}
+				}
+				if(counter == this.executedPID.length){
+					this.executedPID.push(pid);
+				}
+			}
 		}
 
-		//Displays the memory block
+		//Displays the memory block and checks if the memory blocks are full
 		public displayBlock(operation): number{
 			//Change process memory table
 	        var table = (<HTMLInputElement>document.getElementById("processMemTable"));
@@ -125,6 +139,7 @@ module TSOS{
             _Memory.eraseBlock(index); //Erase memory
 		}
 
+		//Updates the memory display as the program runs
 		public updateBlock(PID){
 			var memoryIndex = this.memoryIndex(PID); //1st block, 2nd block, 3rd block
 			var opIndex = 0; //0 - 256, 256 - 512, etc
@@ -156,6 +171,17 @@ module TSOS{
 			}
 		}
 
+		//Clears all memory blocks display
+		public clearDisplay(){
+			var table = (<HTMLInputElement>document.getElementById("processMemTable"));
+			for(var i = 0; i < 96; i++){
+				var row = table.getElementsByTagName("tr")[i];
+				for(var j = 1; j < 9; j++){
+					row.getElementsByTagName("td")[j].innerHTML = '00';
+				}
+			}
+		}
+
 		//Easy hex to decimal translation
 		public hexToDec(input): any{
 			return parseInt(input, 16);
@@ -170,6 +196,7 @@ module TSOS{
 			}
 		}
 
+		//Get whatever variable is located at the location in memory
 		public getVariable(location){
 			return _Memory.memory[location];
 		}

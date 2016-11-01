@@ -121,6 +121,12 @@ module TSOS {
                                    " - Load Program <PID>");
             this.commandList[this.commandList.length] = sc;
 
+            // clearmem
+            sc = new ShellCommand(this.clearMem,
+                                   "clearmem",
+                                   " - Clear all memory allocation");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -322,6 +328,9 @@ module TSOS {
                     case "run":
                         _StdOut.putText("Run program based on <PID>");
                         break;
+                    case "clearmem":
+                        _StdOut.putText("Clear all memory allocation");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -482,6 +491,11 @@ module TSOS {
         //Cause a test OS error
         public shellError(){
             _Kernel.krnTrapError("Test Error");
+        }
+
+        //Clears all memory allocation
+        public clearMem(){
+            _MemoryManager.clearAll();
         }
     }
 }

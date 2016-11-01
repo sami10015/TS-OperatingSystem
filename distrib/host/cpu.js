@@ -183,9 +183,10 @@ var TSOS;
         //Branch n bytes if Z flag = 0(Op Code D0)
         Cpu.prototype.branchIfNotEqual = function (distance, limit, operation) {
             var distance = _MemoryManager.hexToDec(distance);
+            var base = _PCB.Base;
             if (this.Zflag == 0) {
-                if (this.PC + distance > limit) {
-                    this.PC = (this.PC + distance) - limit + 2;
+                if (this.PC + distance + base > limit) {
+                    this.PC = (this.PC + distance + base) - limit + 2;
                     this.IR = operation[this.PC];
                 }
                 else {
@@ -215,6 +216,7 @@ var TSOS;
                         break;
                     }
                     else {
+                        console.log(_MemoryManager.hexToDec(charNum));
                         var newChar = String.fromCharCode(_MemoryManager.hexToDec(charNum));
                         _StdOut.putText(newChar);
                         location++;
