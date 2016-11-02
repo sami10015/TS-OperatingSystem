@@ -112,7 +112,7 @@ var TSOS;
                         this.PID_Memory_Loc[0] = -1; //Free that space
                         this.memorySpace[0] = 0; //Free that space
                         index = 0; //Block to clear
-                        for (var i = 0; i <= 32; i++) {
+                        for (var i = 0; i < 32; i++) {
                             var row = table.getElementsByTagName("tr")[i];
                             for (var j = 1; j < 9; j++) {
                                 row.getElementsByTagName("td")[j].innerHTML = '0';
@@ -123,7 +123,7 @@ var TSOS;
                         this.PID_Memory_Loc[1] = -1; //Free that space
                         this.memorySpace[1] = 0; //Free that space
                         index = 1; //Block to clear
-                        for (var i = 33; i <= 64; i++) {
+                        for (var i = 32; i < 64; i++) {
                             var row = table.getElementsByTagName("tr")[i];
                             for (var j = 1; j < 9; j++) {
                                 row.getElementsByTagName("td")[j].innerHTML = '0';
@@ -134,7 +134,7 @@ var TSOS;
                         this.PID_Memory_Loc[2] = -1; //Free that space
                         this.memorySpace[2] = 0; //Free that space
                         index = 2; //Block to clear
-                        for (var i = 65; i <= 96; i++) {
+                        for (var i = 64; i < 96; i++) {
                             var row = table.getElementsByTagName("tr")[i];
                             for (var j = 1; j < 9; j++) {
                                 row.getElementsByTagName("td")[j].innerHTML = '0';
@@ -149,6 +149,7 @@ var TSOS;
         //Updates the memory display as the program runs
         MemoryManager.prototype.updateBlock = function (PID) {
             var memoryIndex = this.memoryIndex(PID); //1st block, 2nd block, 3rd block
+            console.log(memoryIndex);
             var opIndex = 0; //0 - 256, 256 - 512, etc
             var table = document.getElementById("processMemTable");
             if (memoryIndex == 0) {
@@ -161,16 +162,19 @@ var TSOS;
                 }
             }
             else if (memoryIndex == 1) {
-                for (var i = 33; i < 64; i++) {
+                opIndex += 256;
+                for (var i = 32; i < 64; i++) {
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
+                        console.log(this.getVariable(opIndex));
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
                     }
                 }
             }
-            else if (memoryIndex == 3) {
-                for (var i = 65; i < 96; i++) {
+            else if (memoryIndex == 2) {
+                opIndex += 512;
+                for (var i = 64; i < 96; i++) {
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';

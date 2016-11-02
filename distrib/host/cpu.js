@@ -113,7 +113,7 @@ var TSOS;
                 else {
                     _PCB.displayPCB('Running');
                 }
-                _MemoryManager.updateBlock(this.PID);
+                _MemoryManager.updateBlock(this.PID); //Update Memory Table
                 _PCB.setIR(operation[i]); //Change IR in PCB
                 this.updateCpuTable(); //Update CPU Table
             }
@@ -248,7 +248,7 @@ var TSOS;
         //Update CPU Table
         Cpu.prototype.updateCpuTable = function () {
             var table = "";
-            table += "<td>" + this.PC + "</td>";
+            table += "<td>" + (this.PC + _PCB.Base) + "</td>";
             table += "<td>" + this.Acc + "</td>";
             table += "<td>" + this.IR + "</td>";
             table += "<td>" + this.Xreg + "</td>";
