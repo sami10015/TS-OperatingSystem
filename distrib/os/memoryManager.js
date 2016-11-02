@@ -207,7 +207,12 @@ var TSOS;
         };
         //Get whatever variable is located at the location in memory
         MemoryManager.prototype.getVariable = function (location) {
-            return _Memory.memory[location];
+            if ((location > _PCB.Limit || location < _PCB.Base) && _PCB.Limit != 0) {
+                _StdOut.putText("Memory Access Violation!");
+            }
+            else {
+                return _Memory.memory[location];
+            }
         };
         //Get OP Codes from Memory
         MemoryManager.prototype.getOperation = function (index) {
@@ -215,7 +220,12 @@ var TSOS;
         };
         //Write OP Code into Memory Address
         MemoryManager.prototype.writeOPCode = function (constant, address) {
-            _Memory.memory[address] = constant;
+            if (address > _PCB.Limit || address < _PCB.Base) {
+                _StdOut.putText("Memory Access Violation!");
+            }
+            else {
+                _Memory.memory[address] = constant;
+            }
         };
         //Little Endian Address
         MemoryManager.prototype.littleEndianAddress = function (addressBase, addressEnd) {

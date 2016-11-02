@@ -202,7 +202,12 @@ module TSOS{
 
 		//Get whatever variable is located at the location in memory
 		public getVariable(location){
-			return _Memory.memory[location];
+			if((location > _PCB.Limit || location < _PCB.Base) && _PCB.Limit != 0){ //This runs after the PCB is cleared, this saves from error
+				_StdOut.putText("Memory Access Violation!");
+				//Finish this part to kill the process
+			}else{
+				return _Memory.memory[location];
+			}
 		}
 
 		//Get OP Codes from Memory
@@ -212,7 +217,12 @@ module TSOS{
 
 		//Write OP Code into Memory Address
 		public  writeOPCode(constant, address){
-			_Memory.memory[address] = constant;
+			if(address > _PCB.Limit || address < _PCB.Base){
+				_StdOut.putText("Memory Access Violation!");
+				//Finish this part to kill the process
+			}else{
+				_Memory.memory[address] = constant;
+			}
 		}
 
 		//Little Endian Address
