@@ -371,6 +371,7 @@ var TSOS;
                         _MemoryManager.pIDReturn(); //Increment PID
                         _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
                         _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
+                        console.log(_Memory.memory);
                     }
                 }
                 else {

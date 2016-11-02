@@ -157,6 +157,7 @@ module TSOS {
             if(_CPU.isExecuting){
                 _CPU.cycle();
                 _KernelInterruptQueue.enqueue(new Interrupt(STEP_IRQ, '')); //Call An Interrupt
+                console.log(_Memory.memory);
             }
         }
     }

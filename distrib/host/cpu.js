@@ -68,20 +68,29 @@ var TSOS;
                     this.loadYRegister(operation[i + 1]);
                 }
                 else if (operation[i] == '8D') {
-                    var location2 = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
-                    this.storeAccumulator(location2);
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.storeAccumulator(location);
                 }
                 else if (operation[i] == 'AE') {
-                    this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.loadXRegisterMem(location);
                 }
                 else if (operation[i] == 'AC') {
-                    this.loadYRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.loadYRegisterMem(location);
                 }
                 else if (operation[i] == '6D') {
-                    this.addCarry(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.addCarry(location);
                 }
                 else if (operation[i] == 'EC') {
-                    this.compareByte(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.compareByte(location);
                 }
                 else if (operation[i] == 'D0') {
                     this.branchIfNotEqual(operation[i + 1], _PCB.getLimit(this.PID), operation);
@@ -91,7 +100,9 @@ var TSOS;
                     this.SystemCall();
                 }
                 else if (operation[i] == 'EE') {
-                    this.incrementByteValue(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.incrementByteValue(location);
                 }
                 else if (operation[i] == '00') {
                     this.endProgram();
@@ -123,6 +134,7 @@ var TSOS;
             document.getElementById("btnSingleStepToggle").value = "Single Step: Off";
             document.getElementById("btnStep").disabled = true;
             _SingleStepMode = false;
+            console.log(_Memory.memory);
             //End CPU Cycle here
             this.isExecuting = false;
         };
@@ -208,7 +220,8 @@ var TSOS;
             }
             else if (this.Xreg == 2) {
                 var terminated = false;
-                var location = this.Yreg;
+                var location = this.Yreg + _PCB.Base;
+                var str = "";
                 while (!terminated) {
                     var charNum = _MemoryManager.getVariable(location);
                     if (charNum == 0) {
@@ -216,12 +229,11 @@ var TSOS;
                         break;
                     }
                     else {
-                        console.log(_MemoryManager.hexToDec(charNum));
-                        var newChar = String.fromCharCode(_MemoryManager.hexToDec(charNum));
-                        _StdOut.putText(newChar);
+                        str += String.fromCharCode(_MemoryManager.hexToDec(charNum));
                         location++;
                     }
                 }
+                _StdOut.putText(str);
                 this.PC += 1;
                 this.IR = 'FF';
             }

@@ -432,7 +432,6 @@ module TSOS {
         		if(count == input.length){
                     var operation = (<HTMLInputElement>document.getElementById("taProgramInput")).value; //Op Codes
                     var index = _MemoryManager.displayBlock(operation);
-
                     //If all memory spaces are full then they must format 
                     if(index == -1){
                         _StdOut.putText("Format!");
@@ -441,6 +440,7 @@ module TSOS {
                         _MemoryManager.pIDReturn(); //Increment PID
                         _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length-1]; //Display purposes
                         _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]));
+                        console.log(_Memory.memory);
                     }
         		}else{
         			_StdOut.putText("Not Validated.");

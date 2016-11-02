@@ -61,23 +61,34 @@ module TSOS {
                 }else if(operation[i] == 'A0'){ //Load Y Register
                     this.loadYRegister(operation[i+1]);
                 }else if(operation[i] == '8D'){ //Store accumulator into memory
-                    var location2 = _MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]);
-                    this.storeAccumulator(location2);
+                    var location = _MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]);
+                    location += _PCB.Base;
+                    this.storeAccumulator(location);
                 }else if(operation[i] == 'AE'){ //Load X register from memory
-                    this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]);
+                    location += _PCB.Base;
+                    this.loadXRegisterMem(location);
                 }else if(operation[i] == 'AC'){ //Load Y register from memory
-                    this.loadYRegisterMem(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]);
+                    location += _PCB.Base;
+                    this.loadYRegisterMem(location);
                 }else if(operation[i] == '6D'){ //Add carry to accumulator
-                    this.addCarry(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]);
+                    location += _PCB.Base;
+                    this.addCarry(location);
                 }else if(operation[i] == 'EC'){ //Compare a byte to X reg, set flag if equal
-                    this.compareByte(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]);
+                    location += _PCB.Base;
+                    this.compareByte(location);
                 }else if(operation[i] == 'D0'){ //Branch n bytes if Z flag is 0
                     this.branchIfNotEqual(operation[i+1],_PCB.getLimit(this.PID), operation);
                 }else if(operation[i] == 'FF'){ //System Call
                     _KernelInterruptQueue.enqueue(new Interrupt(SYSTEM_CALL_IRQ, '')); //Call An Interrupt
                     this.SystemCall();
                 }else if(operation[i] == 'EE'){ //Increment a value of a byte
-                    this.incrementByteValue(_MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]);
+                    location += _PCB.Base;
+                    this.incrementByteValue(location);
                 }else if(operation[i] == '00'){ //Break 
                     this.endProgram();  
                 }
@@ -108,7 +119,8 @@ module TSOS {
             //Turn Single Step Off if On
             (<HTMLButtonElement>document.getElementById("btnSingleStepToggle")).value = "Single Step: Off";
             (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
-            _SingleStepMode = false; 
+            _SingleStepMode = false;
+            console.log(_Memory.memory); 
             //End CPU Cycle here
             this.isExecuting = false;
         }
@@ -200,19 +212,19 @@ module TSOS {
                 _StdOut.putText(this.Yreg + "");
             }else if(this.Xreg == 2){ //Print out 00 terminated string located at address stored in Y reg
                 var terminated = false;
-                var location = this.Yreg;
+                var location = this.Yreg+_PCB.Base;
+                var str = "";
                 while(!terminated){
                     var charNum = _MemoryManager.getVariable(location);
                     if(charNum == 0){
                         terminated = true;
                         break;
                     }else{
-                        console.log(_MemoryManager.hexToDec(charNum));
-                        var newChar = String.fromCharCode(_MemoryManager.hexToDec(charNum));
-                        _StdOut.putText(newChar);
+                        str += String.fromCharCode(_MemoryManager.hexToDec(charNum));
                         location++;
                     }
                 }
+                _StdOut.putText(str);
                 this.PC += 1;
                 this.IR = 'FF';
             }
