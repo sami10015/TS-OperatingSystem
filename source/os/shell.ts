@@ -443,8 +443,9 @@ module TSOS {
                             _MemoryManager.writeToMemory(index, operation); //Write to memory
                             _MemoryManager.pIDReturn(); //Increment PID
                             _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length-1]; //Display purposes
+                            //_cpuScheduler.loaded[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length-1];
+                            //console.log(_cpuScheduler.loaded);
                             _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]));
-                            console.log(_Memory.memory);
                         }
                     }
         		}else{
@@ -501,6 +502,17 @@ module TSOS {
         //Clears all memory allocation
         public clearMem(){
             _MemoryManager.clearAll();
+            _cpuScheduler.clearMem();
+        }
+
+        //Change the quantum for round robin
+        public quantum(params){
+            if(params == ''){
+                _StdOut.putText("Put an Integer for the quantum");
+            }else{
+                _cpuScheduler.quantum = parseInt(params);
+                _StdOut.putText("Quantum set to " + params);
+            }
         }
     }
 }

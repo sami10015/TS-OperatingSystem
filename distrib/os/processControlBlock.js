@@ -69,6 +69,14 @@ var TSOS;
             row.getElementsByTagName("td")[9].innerHTML = '';
             row.getElementsByTagName("td")[10].innerHTML = '';
         };
+        PCB.prototype.updatePCB = function () {
+            this.PID = _CPU.PID;
+            this.PC = _CPU.PC;
+            this.AC = _CPU.Acc;
+            this.X = _CPU.Xreg;
+            this.Y = _CPU.Yreg;
+            this.Z = _CPU.Zflag;
+        };
         PCB.prototype.getPID = function () {
             this.PID = _CPU.PID;
             return _CPU.PID;

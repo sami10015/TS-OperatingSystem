@@ -116,6 +116,8 @@ module TSOS {
             _MemoryManager = new MemoryManager();
 
             _PCB = new PCB();
+
+            _cpuScheduler = new cpuScheduler();
         }
 
         public static hostBtnHaltOS_click(btn): void {

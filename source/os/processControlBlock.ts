@@ -60,6 +60,15 @@ module TSOS{
 			row.getElementsByTagName("td")[10].innerHTML = '';
 		}
 
+		public updatePCB(){
+			this.PID = _CPU.PID;
+			this.PC = _CPU.PC;
+			this.AC = _CPU.Acc;
+			this.X = _CPU.Xreg;
+			this.Y = _CPU.Yreg;
+			this.Z = _CPU.Zflag;
+		}
+
 		public getPID(): number{
 			this.PID = _CPU.PID;
 			return _CPU.PID;
