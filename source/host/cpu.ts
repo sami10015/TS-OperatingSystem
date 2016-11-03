@@ -43,7 +43,12 @@ module TSOS {
         public cycle(): void {
             _Kernel.krnTrace('CPU cycle');  
             // TODO: Accumulate CPU usage and profiling statistics here.
-            // Do the real work here. Be sure to set this.isExecuting appropriately.
+            // Do the real work here. Be sure to set this.isExecuting appropriately
+
+            //Change PID based on current PCB which is changed via cpuScheduler
+            this.PID = _PCB.PID;
+            this.PC = _PCB.PC;
+            //Get specific memory block for operation
             var index = _MemoryManager.memoryIndex(this.PID); //Get memory block location for operation
             var operation = _MemoryManager.getOperation(index); //Array of op codes;
             this.executeCode(operation);           
@@ -96,6 +101,7 @@ module TSOS {
                 if(operation[i] == '00' || operation[i] == operation[operation.length-1]){
                     _PCB.clearPCB();
                 }else{
+                    //This always runs
                     _PCB.displayPCB('Running');
                 }
                 _MemoryManager.updateBlock(this.PID); //Update Memory Table
@@ -120,7 +126,6 @@ module TSOS {
             (<HTMLButtonElement>document.getElementById("btnSingleStepToggle")).value = "Single Step: Off";
             (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
             _SingleStepMode = false;
-            console.log(_Memory.memory); 
             //End CPU Cycle here
             this.isExecuting = false;
         }

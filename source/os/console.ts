@@ -57,7 +57,6 @@ module TSOS {
                     this.buffer = ""; //Reset the buffer
 
                 } else if (chr == String.fromCharCode(8)) { //Backspace Key
-                    console.log(this.backspaceAmount);
                     if(this.backspaceAmount != 0){ //Stop the program from backspacing all the way back to any previous image
                         _DrawingContext.putImageData(this.backspaceImageDataArray.pop(),0,0); //Retrieve image data of previously drawn word
                         this.currentXPosition = this.pastXPositions.pop(); //Retrieve past X position for Canvas drawing, and set it to the current X position
@@ -118,13 +117,10 @@ module TSOS {
                             command = this.commandsArray[this.currentCommandIndex];  
                             this.currentCommandIndex -= 1;  
                         }
-
-                        console.log(this.currentCommandIndex);
                     }else{ //Down Arrow
                         if(this.currentCommandIndex != this.commandsArray.length-1){ //Save from index error
                             command = this.commandsArray[this.currentCommandIndex+1];
-                            this.currentCommandIndex += 1;
-                            console.log(this.currentCommandIndex);    
+                            this.currentCommandIndex += 1;    
                         }                        
                     }
                     if(this.buffer != ""){

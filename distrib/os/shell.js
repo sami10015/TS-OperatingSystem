@@ -2,6 +2,7 @@
 ///<reference path="../utils.ts" />
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
+///<reference path="processControlBlock.ts" />
 /* ------------
    Shell.ts
 
@@ -72,6 +73,9 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // clearmem
             sc = new TSOS.ShellCommand(this.clearMem, "clearmem", " - Clear all memory allocation");
+            this.commandList[this.commandList.length] = sc;
+            // quantum
+            sc = new TSOS.ShellCommand(this.quantum, "quantum", " - Sets the quantum for RR");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -264,6 +268,9 @@ var TSOS;
                     case "clearmem":
                         _StdOut.putText("Clear all memory allocation");
                         break;
+                    case "quantum":
+                        _StdOut.putText("<Integer> - Set the quantum for RR");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -368,15 +375,17 @@ var TSOS;
                     }
                     else {
                         if (operation.split(" ").length > 256) {
-                            console.log(operation.split(" ").length);
                             _StdOut.putText("Program is too large");
                         }
                         else {
+                            //Write operations to memory
                             _MemoryManager.writeToMemory(index, operation); //Write to memory
                             _MemoryManager.pIDReturn(); //Increment PID
                             _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
-                            //_cpuScheduler.loaded[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length-1];
-                            //console.log(_cpuScheduler.loaded);
+                            //Create new PCB object, initialize, and put in resident list
+                            var newPCB = new TSOS.PCB();
+                            newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
+                            _cpuScheduler.residentList.push(newPCB);
                             _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
                         }
                     }
@@ -411,8 +420,15 @@ var TSOS;
                     _StdOut.putText("Please enter a PID along with the run command");
                 }
                 else {
-                    _CPU.PID = parseInt(pID); //Change current pID
-                    _CPU.PC = 0; //Start program counter from 0
+                    //Change global PCB to the correct PCB from the resident list
+                    for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                        if (_cpuScheduler.residentList[i].PID == parseInt(pID)) {
+                            _PCB = _cpuScheduler.residentList[i];
+                            break;
+                        }
+                    }
+                    //_CPU.PID = parseInt(pID); //Change current pID
+                    //_CPU.PC = 0; //Start program counter from 0
                     _CPU.isExecuting = true; //Run CPU
                 }
             }

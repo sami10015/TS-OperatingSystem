@@ -142,7 +142,6 @@ module TSOS{
 		//Updates the memory display as the program runs
 		public updateBlock(PID){
 			var memoryIndex = this.memoryIndex(PID); //1st block, 2nd block, 3rd block
-			console.log(memoryIndex);
 			var opIndex = 0; //0 - 256, 256 - 512, etc
 			var table = (<HTMLInputElement>document.getElementById("processMemTable"));
 			if(memoryIndex == 0){ //1st block
@@ -158,18 +157,19 @@ module TSOS{
 				for(var i = 32; i < 64; i++){
 					var row = table.getElementsByTagName("tr")[i];
                     for(var j = 1; j < 9; j++){
-                    	console.log(this.getVariable(opIndex));
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
                     }
 				}
 			}else if(memoryIndex == 2){ //3rd block
 				opIndex += 512;
+				console.log(opIndex);
 				for(var i = 64; i < 96; i++){
 					var row = table.getElementsByTagName("tr")[i];
                     for(var j = 1; j < 9; j++){
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
+                        console.log(opIndex);
                     }
 				}
 			}
@@ -202,7 +202,10 @@ module TSOS{
 
 		//Get whatever variable is located at the location in memory
 		public getVariable(location){
-			if((location > _PCB.Limit || location < _PCB.Base) && _PCB.Limit != 0){ //This runs after the PCB is cleared, this saves from error
+			if((location > _PCB.Limit || location < _PCB.Base)){ //This runs after the PCB is cleared, this saves from error
+				// console.log(location);
+				// console.log(_PCB.Limit);
+				// console.log(_PCB.Base);
 				_StdOut.putText("Memory Access Violation!");
 				//Finish this part to kill the process
 			}else{

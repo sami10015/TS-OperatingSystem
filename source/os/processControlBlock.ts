@@ -14,6 +14,13 @@ module TSOS{
 					public Limit = 0,
 					public Part = 0){}
 
+		public init(PID){
+			this.PID = PID;
+			this.Base = this.getBase(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
+			this.Limit = this.getLimit(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
+            this.Part = this.getPart(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
+		}
+
 		public displayPCB(State){
 			var table = (<HTMLInputElement>document.getElementById("PCB_Table"));
 			var row = table.getElementsByTagName("tr")[1];
@@ -31,18 +38,8 @@ module TSOS{
 		}
 
 		public clearPCB(){
-			//Empty Values
-			this.PID = -1;
-			this.State = '';
-			this.PC = 0;
-			this.AC = 0;
-			this.IR = '';
-			this.X = 0;
-			this.Y = 0;
-			this.Z = 0;
-			this.Base = 0;
-			this.Limit = 0;
-			this.Part = 0;
+			//Terminated PCB
+			this.State = 'TERMINATED';
 
 			//Clear Display
 			var table = (<HTMLInputElement>document.getElementById("PCB_Table"));
@@ -58,15 +55,6 @@ module TSOS{
 			row.getElementsByTagName("td")[8].innerHTML = '';
 			row.getElementsByTagName("td")[9].innerHTML = '';
 			row.getElementsByTagName("td")[10].innerHTML = '';
-		}
-
-		public updatePCB(){
-			this.PID = _CPU.PID;
-			this.PC = _CPU.PC;
-			this.AC = _CPU.Acc;
-			this.X = _CPU.Xreg;
-			this.Y = _CPU.Yreg;
-			this.Z = _CPU.Zflag;
 		}
 
 		public getPID(): number{
@@ -126,7 +114,7 @@ module TSOS{
 				this.Limit = 512;
 				return 512;
 			}else if(index == 2){
-				this.Limit = 756;
+				this.Limit = 768;
 				return 768;
 			}
 		}

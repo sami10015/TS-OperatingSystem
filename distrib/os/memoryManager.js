@@ -149,7 +149,6 @@ var TSOS;
         //Updates the memory display as the program runs
         MemoryManager.prototype.updateBlock = function (PID) {
             var memoryIndex = this.memoryIndex(PID); //1st block, 2nd block, 3rd block
-            console.log(memoryIndex);
             var opIndex = 0; //0 - 256, 256 - 512, etc
             var table = document.getElementById("processMemTable");
             if (memoryIndex == 0) {
@@ -166,7 +165,6 @@ var TSOS;
                 for (var i = 32; i < 64; i++) {
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
-                        console.log(this.getVariable(opIndex));
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
                     }
@@ -174,11 +172,13 @@ var TSOS;
             }
             else if (memoryIndex == 2) {
                 opIndex += 512;
+                console.log(opIndex);
                 for (var i = 64; i < 96; i++) {
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
+                        console.log(opIndex);
                     }
                 }
             }
@@ -207,7 +207,10 @@ var TSOS;
         };
         //Get whatever variable is located at the location in memory
         MemoryManager.prototype.getVariable = function (location) {
-            if ((location > _PCB.Limit || location < _PCB.Base) && _PCB.Limit != 0) {
+            if ((location > _PCB.Limit || location < _PCB.Base)) {
+                // console.log(location);
+                // console.log(_PCB.Limit);
+                // console.log(_PCB.Base);
                 _StdOut.putText("Memory Access Violation!");
             }
             else {
