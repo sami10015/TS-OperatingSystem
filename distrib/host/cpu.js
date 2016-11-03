@@ -48,6 +48,10 @@ var TSOS;
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately
+            //Check cpu scheduler for possible context switches
+            if (_cpuScheduler.RR) {
+                _cpuScheduler.checkCount();
+            }
             //Change PID based on current PCB which is changed via cpuScheduler
             this.PID = _PCB.PID;
             this.PC = _PCB.PC;

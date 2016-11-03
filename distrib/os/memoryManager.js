@@ -172,13 +172,11 @@ var TSOS;
             }
             else if (memoryIndex == 2) {
                 opIndex += 512;
-                console.log(opIndex);
                 for (var i = 64; i < 96; i++) {
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
-                        console.log(opIndex);
                     }
                 }
             }
@@ -208,9 +206,6 @@ var TSOS;
         //Get whatever variable is located at the location in memory
         MemoryManager.prototype.getVariable = function (location) {
             if ((location > _PCB.Limit || location < _PCB.Base)) {
-                // console.log(location);
-                // console.log(_PCB.Limit);
-                // console.log(_PCB.Base);
                 _StdOut.putText("Memory Access Violation!");
             }
             else {

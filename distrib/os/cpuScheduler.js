@@ -18,12 +18,35 @@ var TSOS;
         cpuScheduler.prototype.contextSwitch = function () {
             //Round Robin Scheduling
             if (this.RR) {
+                var tempPCB = this.readyQueue.dequeue();
+                if (tempPCB.State != "TERMINATED") {
+                    _PCB = tempPCB;
+                    this.readyQueue.enqueue(tempPCB);
+                }
             }
         };
-        //This function is used along with the clearmem command to clear everything in the scheduler as well
+        //This function is used along with the clearmem command to clear everything in the scheduler
         cpuScheduler.prototype.clearMem = function () {
-            this.residentList = [];
+            this.RR = false;
             this.readyQueue.q = new Array();
+        };
+        //Fill up the ready queue with the PCBs loaded in the residentList when you do a runall
+        cpuScheduler.prototype.loadReadyQueue = function () {
+            for (var i = 0; i < this.residentList.length; i++) {
+                if (this.residentList[i].State != "TERMINATED") {
+                    this.readyQueue.enqueue(this.residentList[i]);
+                }
+            }
+        };
+        //Increment counter, if equal to quantum, context switch
+        cpuScheduler.prototype.checkCount = function () {
+            if (this.count < this.quantum) {
+                this.count++;
+            }
+            else {
+                this.count = 0;
+                this.contextSwitch();
+            }
         };
         return cpuScheduler;
     }());

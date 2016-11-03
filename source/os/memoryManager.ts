@@ -163,13 +163,11 @@ module TSOS{
 				}
 			}else if(memoryIndex == 2){ //3rd block
 				opIndex += 512;
-				console.log(opIndex);
 				for(var i = 64; i < 96; i++){
 					var row = table.getElementsByTagName("tr")[i];
                     for(var j = 1; j < 9; j++){
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
-                        console.log(opIndex);
                     }
 				}
 			}
@@ -203,9 +201,6 @@ module TSOS{
 		//Get whatever variable is located at the location in memory
 		public getVariable(location){
 			if((location > _PCB.Limit || location < _PCB.Base)){ //This runs after the PCB is cleared, this saves from error
-				// console.log(location);
-				// console.log(_PCB.Limit);
-				// console.log(_PCB.Base);
 				_StdOut.putText("Memory Access Violation!");
 				//Finish this part to kill the process
 			}else{
