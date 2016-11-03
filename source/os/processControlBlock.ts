@@ -12,7 +12,8 @@ module TSOS{
 					public Z = 0,
 					public Base = 0,
 					public Limit = 0,
-					public Part = 0){}
+					public Part = 0,
+					public isExecuting = true){}
 
 		public init(PID){
 			this.PID = PID;
@@ -40,6 +41,7 @@ module TSOS{
 		public clearPCB(){
 			//Terminated PCB
 			this.State = 'TERMINATED';
+			this.isExecuting = false;
 
 			//Clear Display
 			var table = (<HTMLInputElement>document.getElementById("PCB_Table"));

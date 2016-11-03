@@ -137,14 +137,19 @@ var TSOS;
             _MemoryManager.executedPID.push(this.PID); //Past PID's
             _StdOut.putText("PID: " + this.PID + " done.");
             this.PID = -1; //Change back to normal 
-            //Clear PCB
+            //Clear PCB, change state to terminated, and turn isExecuting to false
             _PCB.clearPCB();
             //Turn Single Step Off if On
             document.getElementById("btnSingleStepToggle").value = "Single Step: Off";
             document.getElementById("btnStep").disabled = true;
             _SingleStepMode = false;
-            //End CPU Cycle here
-            this.isExecuting = false;
+            //End CPU Cycle here depending on type of command(single run, or runall)
+            if (!_cpuScheduler.readyQueue.isEmpty()) {
+                _cpuScheduler.contextSwitch();
+            }
+            if (!_cpuScheduler.RR) {
+                this.isExecuting = false;
+            }
         };
         //Loads a constant in the accumulator(OP Code A9)
         Cpu.prototype.loadAccumulator = function (constant) {

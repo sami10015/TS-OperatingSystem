@@ -77,6 +77,9 @@ var TSOS;
             // quantum
             sc = new TSOS.ShellCommand(this.quantum, "quantum", " - Sets the quantum for RR");
             this.commandList[this.commandList.length] = sc;
+            // runall
+            sc = new TSOS.ShellCommand(this.runall, "runall", " - Run all loaded programs");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -271,6 +274,9 @@ var TSOS;
                     case "quantum":
                         _StdOut.putText("<Integer> - Set the quantum for RR");
                         break;
+                    case "runall":
+                        _StdOut.putText("Run all loaded programs");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -458,6 +464,18 @@ var TSOS;
             else {
                 _cpuScheduler.quantum = parseInt(params);
                 _StdOut.putText("Quantum set to " + params);
+            }
+        };
+        //Run all command
+        Shell.prototype.runall = function () {
+            //If it is one, just perform a single run
+            if (_cpuScheduler.residentList.length == 1) {
+                this.shellRun(_cpuScheduler.residentList[0].PID);
+            }
+            else {
+                _cpuScheduler.loadReadyQueue(); //Load the ready queue
+                _cpuScheduler.RR = true; //Change cpu technique to round robin
+                _CPU.isExecuting = true; //Start the CPU
             }
         };
         return Shell;

@@ -14,9 +14,22 @@ module TSOS{
 			//Round Robin Scheduling
 			if(this.RR){
 				var tempPCB = this.readyQueue.dequeue();
-				if(tempPCB.State != "TERMINATED"){
-					_PCB = tempPCB;
-					this.readyQueue.enqueue(tempPCB);
+				var termination = false;
+				//If the current PCB isn't finished yet, put it back on the ready queue
+				if(_PCB.State != "TERMINATED"){
+					this.readyQueue.enqueue(_PCB);
+				}
+				while(!termination){
+					if(this.readyQueue.isEmpty()){
+						_CPU.isExecuting = false;
+						termination = true;
+					}
+					if(tempPCB.State == "TERMINATED"){
+						tempPCB = this.readyQueue.dequeue();
+					}else{
+						_PCB = tempPCB;
+						break;
+					}
 				}
 			}
 		}
@@ -41,8 +54,8 @@ module TSOS{
 			if(this.count < this.quantum){
 				this.count++
 			}else{
-				this.count = 0;
 				this.contextSwitch();
+				this.count = 0;
 			}
 		}
 	}
