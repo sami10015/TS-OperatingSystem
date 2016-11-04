@@ -52,6 +52,7 @@ var TSOS;
                 this.count++;
             }
             else {
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Schedule New Process')); //Call An Interrupt
                 this.contextSwitch();
                 this.count = 1;
             }

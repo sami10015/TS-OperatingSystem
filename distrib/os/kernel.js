@@ -117,6 +117,8 @@ var TSOS;
                     break;
                 case STEP_TOGGLE_IRQ:
                     break;
+                case CONTEXT_SWITCH_IRQ:
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

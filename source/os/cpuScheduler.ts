@@ -48,6 +48,7 @@ module TSOS{
 			if(this.count < this.quantum){
 				this.count++
 			}else{
+				_KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, 'Schedule New Process')); //Call An Interrupt
 				this.contextSwitch();
 				this.count = 1;
 			}
