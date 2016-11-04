@@ -37,7 +37,7 @@ var TSOS;
             var row = table.getElementsByTagName("tr")[1];
             row.getElementsByTagName("td")[0].innerHTML = this.PID + '';
             row.getElementsByTagName("td")[1].innerHTML = this.State;
-            row.getElementsByTagName("td")[2].innerHTML = this.PC + '';
+            row.getElementsByTagName("td")[2].innerHTML = (this.PC + this.Base) + '';
             row.getElementsByTagName("td")[3].innerHTML = this.AC + '';
             row.getElementsByTagName("td")[4].innerHTML = this.IR;
             row.getElementsByTagName("td")[5].innerHTML = this.X + '';

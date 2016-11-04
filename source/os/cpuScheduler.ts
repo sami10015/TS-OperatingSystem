@@ -13,7 +13,6 @@ module TSOS{
 		public contextSwitch(){
 			//Round Robin Scheduling
 			if(this.RR){
-				//debugger;
 				if(this.readyQueue.isEmpty()){
 					_CPU.isExecuting = false;
 					this.clearMem();
@@ -48,9 +47,8 @@ module TSOS{
 			if(this.count < this.quantum){
 				this.count++
 			}else{
-				_KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, 'Schedule New Process')); //Call An Interrupt
-				this.contextSwitch();
 				this.count = 1;
+				_KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event')); //Call An Interrupt
 			}
 		}
 	}

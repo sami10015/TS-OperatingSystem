@@ -155,6 +155,7 @@ var TSOS;
             }
             if (!_cpuScheduler.RR) {
                 this.isExecuting = false;
+                _Console.putText(_OsShell.promptStr);
             }
         };
         //Loads a constant in the accumulator(OP Code A9)

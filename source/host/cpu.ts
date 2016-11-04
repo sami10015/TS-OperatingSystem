@@ -144,6 +144,7 @@ module TSOS {
             }
             if(!_cpuScheduler.RR){//Single run
                 this.isExecuting = false;
+                _Console.putText(_OsShell.promptStr);
             }
         }
 

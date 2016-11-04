@@ -118,6 +118,7 @@ var TSOS;
                 case STEP_TOGGLE_IRQ:
                     break;
                 case CONTEXT_SWITCH_IRQ:
+                    _cpuScheduler.contextSwitch();
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

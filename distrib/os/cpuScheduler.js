@@ -18,7 +18,6 @@ var TSOS;
         cpuScheduler.prototype.contextSwitch = function () {
             //Round Robin Scheduling
             if (this.RR) {
-                //debugger;
                 if (this.readyQueue.isEmpty()) {
                     _CPU.isExecuting = false;
                     this.clearMem();
@@ -52,9 +51,8 @@ var TSOS;
                 this.count++;
             }
             else {
-                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Schedule New Process')); //Call An Interrupt
-                this.contextSwitch();
                 this.count = 1;
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event')); //Call An Interrupt
             }
         };
         return cpuScheduler;

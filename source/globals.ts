@@ -26,7 +26,7 @@ const STEP_IRQ: number = 3;
 
 const STEP_TOGGLE_IRQ: number = 4;
 
-const CONTEXT_SWITCH_IRQ: number = 4;
+const CONTEXT_SWITCH_IRQ: number = 5;
 
 //
 // Global Variables
