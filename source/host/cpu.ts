@@ -61,6 +61,10 @@ module TSOS {
                 var i = this.PC;
                 if(operation[i] == 'A9'){ //Load Accumulator
                     this.loadAccumulator(operation[i+1]);
+                }else if(operation[i] == 'AD'){
+                    var location = _MemoryManager.littleEndianAddress(operation[i+1],operation[i+2]);
+                    location += _PCB.Base;
+                    this.loadAccumulatorMem(location);
                 }else if(operation[i] == 'A2'){ //Load X Register
                     this.loadXRegister(operation[i+1]);
                 }else if(operation[i] == 'A0'){ //Load Y Register
@@ -147,6 +151,13 @@ module TSOS {
             _PCB.PC += 2; //Add to program counter
             _PCB.IR = 'A9' //Change IR
             _PCB.AC = _MemoryManager.hexToDec(constant); //Store constant in accumulator(Hex)                
+        }
+
+        //Store accumulator into memory(OP Code AD)
+        public loadAccumulatorMem(location){
+            _PCB.PC += 3;
+            _PCB.IR = 'AD';
+            _PCB.AC = _MemoryManager.getVariable(location);
         }
 
         //Loads a constant in X register(OP Code A2)
