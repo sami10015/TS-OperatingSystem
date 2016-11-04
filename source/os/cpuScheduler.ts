@@ -4,7 +4,7 @@
 module TSOS{
 	export class cpuScheduler{
 		constructor(public quantum = 6,
-					public count = 0,
+					public count = 1,
 					public RR = false,
 					public residentList = [],
 					public readyQueue = new Queue()){}
@@ -47,7 +47,7 @@ module TSOS{
 				this.count++
 			}else{
 				this.contextSwitch();
-				this.count = 0;
+				this.count = 1;
 			}
 		}
 	}

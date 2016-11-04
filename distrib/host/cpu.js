@@ -266,6 +266,7 @@ var TSOS;
             this.Xreg = _PCB.X;
             this.Yreg = _PCB.Y;
             this.Zflag = _PCB.Z;
+            this.IR = _PCB.IR;
         };
         //Change CPU Table Display
         Cpu.prototype.displayCpuTable = function () {

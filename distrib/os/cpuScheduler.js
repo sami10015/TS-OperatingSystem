@@ -5,7 +5,7 @@ var TSOS;
     var cpuScheduler = (function () {
         function cpuScheduler(quantum, count, RR, residentList, readyQueue) {
             if (quantum === void 0) { quantum = 6; }
-            if (count === void 0) { count = 0; }
+            if (count === void 0) { count = 1; }
             if (RR === void 0) { RR = false; }
             if (residentList === void 0) { residentList = []; }
             if (readyQueue === void 0) { readyQueue = new TSOS.Queue(); }
@@ -51,7 +51,7 @@ var TSOS;
             }
             else {
                 this.contextSwitch();
-                this.count = 0;
+                this.count = 1;
             }
         };
         return cpuScheduler;
