@@ -207,6 +207,9 @@ var TSOS;
         MemoryManager.prototype.getVariable = function (location) {
             if ((location > _PCB.Limit || location < _PCB.Base)) {
                 _StdOut.putText("Memory Access Violation!");
+                console.log("Location: " + location);
+                console.log("Base: " + _PCB.Base);
+                console.log("Limit: " + _PCB.Limit);
             }
             else {
                 return _Memory.memory[location];

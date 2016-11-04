@@ -202,6 +202,9 @@ module TSOS{
 		public getVariable(location){
 			if((location > _PCB.Limit || location < _PCB.Base)){ //This runs after the PCB is cleared, this saves from error
 				_StdOut.putText("Memory Access Violation!");
+				console.log("Location: " + location);
+				console.log("Base: " + _PCB.Base);
+				console.log("Limit: " + _PCB.Limit);
 				//Finish this part to kill the process
 			}else{
 				return _Memory.memory[location];

@@ -12,8 +12,7 @@ module TSOS{
 					public Z = 0,
 					public Base = 0,
 					public Limit = 0,
-					public Part = 0,
-					public isExecuting = true){}
+					public Part = 0){}
 
 		public init(PID){
 			this.PID = PID;
@@ -22,17 +21,17 @@ module TSOS{
             this.Part = this.getPart(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
 		}
 
-		public displayPCB(State){
+		public displayPCB(){
 			var table = (<HTMLInputElement>document.getElementById("PCB_Table"));
 			var row = table.getElementsByTagName("tr")[1];
-			row.getElementsByTagName("td")[0].innerHTML = this.getPID() + '';
-			row.getElementsByTagName("td")[1].innerHTML = State;
-			row.getElementsByTagName("td")[2].innerHTML = this.getPC() + '';
-			row.getElementsByTagName("td")[3].innerHTML = this.getAcc() + '';
+			row.getElementsByTagName("td")[0].innerHTML = this.PID + '';
+			row.getElementsByTagName("td")[1].innerHTML = this.State;
+			row.getElementsByTagName("td")[2].innerHTML = this.PC + '';
+			row.getElementsByTagName("td")[3].innerHTML = this.AC + '';
 			row.getElementsByTagName("td")[4].innerHTML = this.IR;
-			row.getElementsByTagName("td")[5].innerHTML = this.getXReg() + '';
-			row.getElementsByTagName("td")[6].innerHTML = this.getYReg() + '';
-			row.getElementsByTagName("td")[7].innerHTML = this.getZFlag() + '';
+			row.getElementsByTagName("td")[5].innerHTML = this.X + '';
+			row.getElementsByTagName("td")[6].innerHTML = this.Y + '';
+			row.getElementsByTagName("td")[7].innerHTML = this.Z + '';
 			row.getElementsByTagName("td")[8].innerHTML = this.getBase(this.PID) + '';
 			row.getElementsByTagName("td")[9].innerHTML = this.getLimit(this.PID) + '';
 			row.getElementsByTagName("td")[10].innerHTML = this.getPart(this.PID) + '';
@@ -41,7 +40,6 @@ module TSOS{
 		public clearPCB(){
 			//Terminated PCB
 			this.State = 'TERMINATED';
-			this.isExecuting = false;
 
 			//Clear Display
 			var table = (<HTMLInputElement>document.getElementById("PCB_Table"));

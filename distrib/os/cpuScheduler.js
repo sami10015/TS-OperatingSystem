@@ -18,24 +18,15 @@ var TSOS;
         cpuScheduler.prototype.contextSwitch = function () {
             //Round Robin Scheduling
             if (this.RR) {
-                var tempPCB = this.readyQueue.dequeue();
-                var termination = false;
-                //If the current PCB isn't finished yet, put it back on the ready queue
-                if (_PCB.State != "TERMINATED") {
-                    this.readyQueue.enqueue(_PCB);
+                //debugger;
+                if (this.readyQueue.isEmpty()) {
+                    _CPU.isExecuting = false;
                 }
-                while (!termination) {
-                    if (this.readyQueue.isEmpty()) {
-                        _CPU.isExecuting = false;
-                        termination = true;
+                else {
+                    if (_PCB.State != "TERMINATED") {
+                        this.readyQueue.enqueue(_PCB);
                     }
-                    if (tempPCB.State == "TERMINATED") {
-                        tempPCB = this.readyQueue.dequeue();
-                    }
-                    else {
-                        _PCB = tempPCB;
-                        break;
-                    }
+                    _PCB = this.readyQueue.dequeue();
                 }
             }
         };
@@ -51,6 +42,7 @@ var TSOS;
                     this.readyQueue.enqueue(this.residentList[i]);
                 }
             }
+            _PCB = this.readyQueue.dequeue(); //Set the current PCB to the first item in the ready queue
         };
         //Increment counter, if equal to quantum, context switch
         cpuScheduler.prototype.checkCount = function () {
