@@ -21,6 +21,7 @@ var TSOS;
                 //debugger;
                 if (this.readyQueue.isEmpty()) {
                     _CPU.isExecuting = false;
+                    this.clearMem();
                 }
                 else {
                     if (_PCB.State != "TERMINATED") {
@@ -34,6 +35,7 @@ var TSOS;
         cpuScheduler.prototype.clearMem = function () {
             this.RR = false;
             this.readyQueue.q = new Array();
+            this.count = 1;
         };
         //Fill up the ready queue with the PCBs loaded in the residentList when you do a runall
         cpuScheduler.prototype.loadReadyQueue = function () {

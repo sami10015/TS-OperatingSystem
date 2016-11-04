@@ -16,6 +16,7 @@ module TSOS{
 				//debugger;
 				if(this.readyQueue.isEmpty()){
 					_CPU.isExecuting = false;
+					this.clearMem();
 				}else{
 					if(_PCB.State != "TERMINATED"){
 						this.readyQueue.enqueue(_PCB);
@@ -29,6 +30,7 @@ module TSOS{
 		public clearMem(){
 			this.RR = false;
 			this.readyQueue.q = new Array();
+			this.count = 1;
 		}
 
 		//Fill up the ready queue with the PCBs loaded in the residentList when you do a runall

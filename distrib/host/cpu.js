@@ -48,7 +48,7 @@ var TSOS;
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately
-            //Change CPU based on current PCB which is changed via cpuScheduler
+            //Change CPU based on current PCB, which is changed via cpuScheduler
             this.updateCpuTable();
             //Get specific memory block for operation
             var index = _MemoryManager.memoryIndex(this.PID); //Get memory block location for operation
@@ -126,8 +126,8 @@ var TSOS;
                 _PCB.setIR(operation[i]); //Change IR in PCB
                 this.updateCpuTable();
                 this.displayCpuTable(); //Update CPU Table Display
-                //Check cpu scheduler for possible context switches
-                if (_cpuScheduler.RR) {
+                //Check cpu scheduler for possible context switches, don't perform context switches if nothing is left in the ready queue
+                if (_cpuScheduler.RR && _cpuScheduler.readyQueue.isEmpty() == false) {
                     _cpuScheduler.checkCount();
                 }
             }
@@ -141,6 +141,7 @@ var TSOS;
             _MemoryManager.clearBlock(this.PID); //Clear the block of memory
             _MemoryManager.executedPID.push(this.PID); //Past PID's
             _StdOut.putText("PID: " + this.PID + " done.");
+            _Console.advanceLine();
             //this.PID = -1; //Change back to normal 
             //Clear PCB, change state to terminated, and turn isExecuting to false
             _PCB.clearPCB();
@@ -241,6 +242,7 @@ var TSOS;
                 _PCB.PC += 1;
                 _PCB.IR = 'FF';
                 _StdOut.putText(_PCB.Y + "");
+                _Console.advanceLine();
             }
             else if (_PCB.X == 2) {
                 var terminated = false;
@@ -258,6 +260,7 @@ var TSOS;
                     }
                 }
                 _StdOut.putText(str);
+                _Console.advanceLine();
                 _PCB.PC += 1;
                 _PCB.IR = 'FF';
             }
@@ -269,7 +272,7 @@ var TSOS;
             var byte = _MemoryManager.getVariable(location);
             _MemoryManager.writeOPCode(_MemoryManager.hexToDec(byte + 1), location);
         };
-        //Update CPU Table
+        //Update CPU Table, used mainly when PCB is changed and updated via CPU Scheduler
         Cpu.prototype.updateCpuTable = function () {
             this.PID = _PCB.PID;
             this.PC = _PCB.PC;
