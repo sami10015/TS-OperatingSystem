@@ -134,6 +134,28 @@ module TSOS {
                     break;
                 case CONTEXT_SWITCH_IRQ: //Context Switch Interrupt
                     _cpuScheduler.contextSwitch();
+                    console.log(params);
+                    break;
+                case KILL_IRQ: //KILL Interrupt
+                    var PID = params;
+                    //If nothing is running then print no active process
+                    if(_CPU.isExecuting == false){
+                        _StdOut.putText("No Active Processes");
+                    }else if(PID == _PCB.PID){ //If the selected PID is the current PCB running/one process running
+                        _CPU.endProgram();
+                    }else{ //Remove process from the ready queue, clear memory blocks, etc.
+                        for(var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++){
+                            if(_cpuScheduler.readyQueue.q[i].PID == PID){
+                                _MemoryManager.clearBlock(PID); //Clear memory block
+                                _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
+                                _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
+                                _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
+                                _StdOut.putText("PID: " + PID + " done.");
+                                _Console.advanceLine();
+                                break;
+                            }
+                        }
+                    }
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

@@ -20,6 +20,7 @@ var SYSTEM_CALL_IRQ = 2;
 var STEP_IRQ = 3;
 var STEP_TOGGLE_IRQ = 4;
 var CONTEXT_SWITCH_IRQ = 5;
+var KILL_IRQ = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

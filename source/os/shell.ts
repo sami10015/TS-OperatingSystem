@@ -140,6 +140,18 @@ module TSOS {
                                     " - Run all loaded programs");
             this.commandList[this.commandList.length] = sc;
 
+            // ps
+            sc = new ShellCommand(this.ps,
+                                    "ps",
+                                     " - See all active processes");
+            this.commandList[this.commandList.length] = sc;
+
+            // kill
+            sc = new ShellCommand(this.kill,
+                                    "kill",
+                                    " - Kill active process");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -350,6 +362,12 @@ module TSOS {
                     case "runall":
                         _StdOut.putText("Run all loaded programs");
                         break;
+                    case "ps":
+                        _StdOut.putText("See all active processes");
+                        break;
+                    case "kill":
+                        _StdOut.putText("Kill Active Processes");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -555,6 +573,32 @@ module TSOS {
                 _cpuScheduler.RR = true; //Change cpu technique to round robin
                 _CPU.isExecuting = true; //Start the CPU
             }
+        }
+
+        //Displays active processes
+        public ps(){
+            var str = "Active Processes: ";
+            //If no processes are running
+            if(_cpuScheduler.readyQueue.isEmpty() && _CPU.isExecuting == false){
+                _StdOut.putText("No Active Processes");
+            }else{
+                if(_cpuScheduler.readyQueue.isEmpty() && _CPU.isExecuting == true){ //Nothing in the ready queue but process is running/only one process running
+                str += _PCB.PID + " ";
+                }else{ //Processes in the ready queue, and one process is running as well
+                    str += _PCB.PID + " ";
+                    for(var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++){
+                        var tempPCB_PID = _cpuScheduler.readyQueue.q[i].PID;
+                        str += tempPCB_PID + " ";
+                    }
+                }
+                _StdOut.putText(str);
+            }
+        }
+
+        //Kills active process
+        public kill(params){
+            var PID = parseInt(params); //Get PID as a integer
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(KILL_IRQ, PID)); //Call An Interrupt
         }
     }
 }

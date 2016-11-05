@@ -109,6 +109,7 @@ module TSOS {
                 //     _PCB.displayPCB('Running');
                 // }
                 _PCB.displayPCB();
+                //_cpuScheduler.displayReadyQueue();
                 _MemoryManager.updateBlock(_PCB.PID); //Update Memory Table
                 _PCB.setIR(operation[i]); //Change IR in PCB
                 this.updateCpuTable();
@@ -134,10 +135,7 @@ module TSOS {
             //this.PID = -1; //Change back to normal 
             //Clear PCB, change state to terminated, and turn isExecuting to false
             _PCB.clearPCB();              
-            //Turn Single Step Off if On
-            (<HTMLButtonElement>document.getElementById("btnSingleStepToggle")).value = "Single Step: Off";
-            (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
-            _SingleStepMode = false;
+            
             //End CPU Cycle here depending on type of command(single run, or runall)
             if(_cpuScheduler.count != _cpuScheduler.quantum){//If the count isn't at the quantum yet but there are programs still running
                 _cpuScheduler.contextSwitch();
@@ -145,6 +143,10 @@ module TSOS {
             if(!_cpuScheduler.RR){//Single run
                 this.isExecuting = false;
                 _Console.putText(_OsShell.promptStr);
+                //Turn Single Step Off if On
+                (<HTMLButtonElement>document.getElementById("btnSingleStepToggle")).value = "Single Step: Off";
+                (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
+                _SingleStepMode = false;
             }
         }
 
