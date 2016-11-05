@@ -76,6 +76,7 @@ var TSOS;
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
             else if (_CPU.isExecuting && _SingleStepMode == false) {
+                _cpuScheduler.turnaroundTime++;
                 _CPU.cycle();
             }
             else {
@@ -119,7 +120,6 @@ var TSOS;
                     break;
                 case CONTEXT_SWITCH_IRQ:
                     _cpuScheduler.contextSwitch();
-                    console.log(params);
                     break;
                 case KILL_IRQ:
                     var PID = params;

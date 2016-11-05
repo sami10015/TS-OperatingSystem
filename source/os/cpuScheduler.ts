@@ -7,7 +7,8 @@ module TSOS{
 					public count = 1,
 					public RR = false,
 					public residentList = [],
-					public readyQueue = new Queue()){}
+					public readyQueue = new Queue(),
+					public turnaroundTime = 0){}
 
 
 		public contextSwitch(){
@@ -48,8 +49,9 @@ module TSOS{
 			_PCB.State = "Running";
 		}
 
-		//Increment counter, if equal to quantum, context switch
+		//Increment counters, if equal to quantum, context switch
 		public checkCount(){
+			//this.turnaroundTime++;
 			if(this.count < this.quantum){
 				this.count++
 			}else{

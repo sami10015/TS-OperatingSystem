@@ -404,7 +404,6 @@ var TSOS;
                             var newPCB = new TSOS.PCB();
                             newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
                             _cpuScheduler.residentList.push(newPCB);
-                            console.log(_Memory.memory);
                             _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
                         }
                     }
