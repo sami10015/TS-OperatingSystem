@@ -141,7 +141,7 @@ var TSOS;
             //Clear specific memory location 
             _MemoryManager.clearBlock(this.PID); //Clear the block of memory
             _MemoryManager.executedPID.push(this.PID); //Past PID's
-            _StdOut.putText("PID: " + this.PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime);
+            _StdOut.putText("PID: " + this.PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _PCB.waitTime));
             _Console.advanceLine();
             //this.PID = -1; //Change back to normal 
             //Clear PCB, change state to terminated, and turn isExecuting to false

@@ -12,7 +12,8 @@ module TSOS{
 					public Z = 0,
 					public Base = 0,
 					public Limit = 0,
-					public Part = 0){}
+					public Part = 0,
+					public waitTime = 0){}
 
 		public init(PID){
 			this.PID = PID;

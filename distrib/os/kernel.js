@@ -77,6 +77,7 @@ var TSOS;
             }
             else if (_CPU.isExecuting && _SingleStepMode == false) {
                 _cpuScheduler.turnaroundTime++;
+                _PCB.waitTime++;
                 _CPU.cycle();
             }
             else {

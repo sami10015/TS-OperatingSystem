@@ -2,7 +2,7 @@
 var TSOS;
 (function (TSOS) {
     var PCB = (function () {
-        function PCB(PID, State, PC, AC, IR, X, Y, Z, Base, Limit, Part) {
+        function PCB(PID, State, PC, AC, IR, X, Y, Z, Base, Limit, Part, waitTime) {
             if (PID === void 0) { PID = -1; }
             if (State === void 0) { State = ''; }
             if (PC === void 0) { PC = 0; }
@@ -14,6 +14,7 @@ var TSOS;
             if (Base === void 0) { Base = 0; }
             if (Limit === void 0) { Limit = 0; }
             if (Part === void 0) { Part = 0; }
+            if (waitTime === void 0) { waitTime = 0; }
             this.PID = PID;
             this.State = State;
             this.PC = PC;
@@ -25,6 +26,7 @@ var TSOS;
             this.Base = Base;
             this.Limit = Limit;
             this.Part = Part;
+            this.waitTime = waitTime;
         }
         PCB.prototype.init = function (PID) {
             this.PID = PID;
