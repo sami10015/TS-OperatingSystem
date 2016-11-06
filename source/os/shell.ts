@@ -570,6 +570,8 @@ module TSOS {
             }else{
                 _cpuScheduler.loadReadyQueue(); //Load the ready queue
                 _cpuScheduler.RR = true; //Change cpu technique to round robin
+                _PCB.State = "Ready";
+                _cpuScheduler.displayReadyQueue();
                 _CPU.isExecuting = true; //Start the CPU
             }
         }

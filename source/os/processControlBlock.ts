@@ -13,7 +13,8 @@ module TSOS{
 					public Base = 0,
 					public Limit = 0,
 					public Part = 0,
-					public waitTime = 0){}
+					public waitTime = 0,
+					public rowNumber = 0){}
 
 		public init(PID){
 			this.PID = PID;
@@ -23,8 +24,8 @@ module TSOS{
 		}
 
 		public displayPCB(){
-			var table = (<HTMLInputElement>document.getElementById("PCB_Table"));
-			var row = table.getElementsByTagName("tr")[1];
+			var table = (<HTMLTableElement>document.getElementById("PCB_Table"));
+			var row = table.getElementsByTagName("tr")[this.rowNumber];
 			row.getElementsByTagName("td")[0].innerHTML = this.PID + '';
 			row.getElementsByTagName("td")[1].innerHTML = this.State;
 			row.getElementsByTagName("td")[2].innerHTML = (this.PC+this.Base) + '';

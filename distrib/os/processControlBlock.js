@@ -2,7 +2,7 @@
 var TSOS;
 (function (TSOS) {
     var PCB = (function () {
-        function PCB(PID, State, PC, AC, IR, X, Y, Z, Base, Limit, Part, waitTime) {
+        function PCB(PID, State, PC, AC, IR, X, Y, Z, Base, Limit, Part, waitTime, rowNumber) {
             if (PID === void 0) { PID = -1; }
             if (State === void 0) { State = ''; }
             if (PC === void 0) { PC = 0; }
@@ -15,6 +15,7 @@ var TSOS;
             if (Limit === void 0) { Limit = 0; }
             if (Part === void 0) { Part = 0; }
             if (waitTime === void 0) { waitTime = 0; }
+            if (rowNumber === void 0) { rowNumber = 0; }
             this.PID = PID;
             this.State = State;
             this.PC = PC;
@@ -27,6 +28,7 @@ var TSOS;
             this.Limit = Limit;
             this.Part = Part;
             this.waitTime = waitTime;
+            this.rowNumber = rowNumber;
         }
         PCB.prototype.init = function (PID) {
             this.PID = PID;
@@ -36,7 +38,7 @@ var TSOS;
         };
         PCB.prototype.displayPCB = function () {
             var table = document.getElementById("PCB_Table");
-            var row = table.getElementsByTagName("tr")[1];
+            var row = table.getElementsByTagName("tr")[this.rowNumber];
             row.getElementsByTagName("td")[0].innerHTML = this.PID + '';
             row.getElementsByTagName("td")[1].innerHTML = this.State;
             row.getElementsByTagName("td")[2].innerHTML = (this.PC + this.Base) + '';
