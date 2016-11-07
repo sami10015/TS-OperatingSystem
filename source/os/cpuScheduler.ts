@@ -16,6 +16,7 @@ module TSOS{
 			if(this.RR){
 				if(this.readyQueue.isEmpty()){
 					_CPU.isExecuting = false;
+					this.turnaroundTime = 0;
 					(<HTMLButtonElement>document.getElementById("btnSingleStepToggle")).value = "Single Step: Off";
 	                (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
 	                _SingleStepMode = false;
@@ -123,6 +124,15 @@ module TSOS{
 			        cell10.innerHTML = tempPCB.getPart(tempPCB.PID) + '';
 
 		    	}
+			}
+		}
+
+		//When a row is deleted from PCB display, deincrement a row number
+		public deIncrementRowNum(){
+			for(var i = 0; i < this.readyQueue.getSize(); i++){
+				if(this.readyQueue.q[i].rowNumber > 1){
+					this.readyQueue.q[i].rowNumber -= 1
+				}
 			}
 		}
 

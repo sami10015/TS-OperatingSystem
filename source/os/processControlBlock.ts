@@ -14,7 +14,7 @@ module TSOS{
 					public Limit = 0,
 					public Part = 0,
 					public waitTime = 0,
-					public rowNumber = 0){}
+					public rowNumber = 1){}
 
 		public init(PID){
 			this.PID = PID;
@@ -39,24 +39,44 @@ module TSOS{
 			row.getElementsByTagName("td")[10].innerHTML = this.getPart(this.PID) + '';
 		}
 
+		public insertSingleRunRow(){
+			var table = (<HTMLTableElement>document.getElementById("PCB_Table"));
+			//Display current PCB
+			var row = table.insertRow(this.rowNumber);
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+	        var cell3 = row.insertCell(2);
+	        var cell4 = row.insertCell(3);
+	        var cell5 = row.insertCell(4);
+	        var cell6 = row.insertCell(5);
+	        var cell7 = row.insertCell(6);
+	        var cell8 = row.insertCell(7);
+	        var cell9 = row.insertCell(8);
+	        var cell10 = row.insertCell(9);
+	        var cell11 = row.insertCell(10);
+
+	        cell1.innerHTML = _PCB.PID + '';
+	        cell2.innerHTML = _PCB.State;
+	        cell3.innerHTML = _PCB.PC + '';
+	        cell4.innerHTML = _PCB.AC + '';
+	        cell5.innerHTML = _PCB.IR;
+	        cell6.innerHTML = _PCB.X + '';
+	        cell7.innerHTML = _PCB.Y + '';
+	        cell8.innerHTML = _PCB.Z + '';
+	        cell9.innerHTML = _PCB.getBase(_PCB.PID) + '';
+	        cell9.innerHTML = _PCB.getLimit(_PCB.PID) + '';
+	        cell10.innerHTML = _PCB.getPart(_PCB.PID) + '';
+		}
+
 		public clearPCB(){
 			//Terminated PCB
 			this.State = 'TERMINATED';
-
-			//Clear Display
-			var table = (<HTMLInputElement>document.getElementById("PCB_Table"));
-			var row = table.getElementsByTagName("tr")[1];
-			row.getElementsByTagName("td")[0].innerHTML = '';
-			row.getElementsByTagName("td")[1].innerHTML = '';
-			row.getElementsByTagName("td")[2].innerHTML = '';
-			row.getElementsByTagName("td")[3].innerHTML = '';
-			row.getElementsByTagName("td")[4].innerHTML = '';
-			row.getElementsByTagName("td")[5].innerHTML = '';
-			row.getElementsByTagName("td")[6].innerHTML = '';
-			row.getElementsByTagName("td")[7].innerHTML = '';
-			row.getElementsByTagName("td")[8].innerHTML = '';
-			row.getElementsByTagName("td")[9].innerHTML = '';
-			row.getElementsByTagName("td")[10].innerHTML = '';
+			var table = (<HTMLTableElement>document.getElementById("PCB_Table"));
+			table.deleteRow(this.rowNumber);
+			//If multiple PCBs are in display
+			if(_cpuScheduler.RR){
+				_cpuScheduler.deIncrementRowNum();
+			}
 		}
 
 		public getPID(): number{

@@ -22,6 +22,7 @@ var TSOS;
             if (this.RR) {
                 if (this.readyQueue.isEmpty()) {
                     _CPU.isExecuting = false;
+                    this.turnaroundTime = 0;
                     document.getElementById("btnSingleStepToggle").value = "Single Step: Off";
                     document.getElementById("btnStep").disabled = true;
                     _SingleStepMode = false;
@@ -122,6 +123,14 @@ var TSOS;
                     cell9.innerHTML = tempPCB.getBase(tempPCB.PID) + '';
                     cell9.innerHTML = tempPCB.getLimit(tempPCB.PID) + '';
                     cell10.innerHTML = tempPCB.getPart(tempPCB.PID) + '';
+                }
+            }
+        };
+        //When a row is deleted from PCB display, deincrement a row number
+        cpuScheduler.prototype.deIncrementRowNum = function () {
+            for (var i = 0; i < this.readyQueue.getSize(); i++) {
+                if (this.readyQueue.q[i].rowNumber > 1) {
+                    this.readyQueue.q[i].rowNumber -= 1;
                 }
             }
         };

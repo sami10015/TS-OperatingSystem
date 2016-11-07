@@ -47,6 +47,7 @@ module TSOS {
 
             //Change CPU based on current PCB, which is changed via cpuScheduler
             this.updateCpuTable();
+            _PCB.State = "Running";
 
             //Get specific memory block for operation
             var index = _MemoryManager.memoryIndex(this.PID); //Get memory block location for operation
@@ -102,13 +103,10 @@ module TSOS {
                     this.endProgram();  
                 }
 
-                // if(operation[i] == '00' || operation[i] == operation[operation.length-1]){
-                //     _PCB.clearPCB();
-                // }else{
-                //     //This always runs
-                //     _PCB.displayPCB('Running');
-                // }
-                _PCB.displayPCB();
+                //Display purposes
+                if(_PCB.State != "TERMINATED"){
+                    _PCB.displayPCB();
+                }
                 //_cpuScheduler.displayReadyQueue();
                 _MemoryManager.updateBlock(_PCB.PID); //Update Memory Table
                 _PCB.setIR(operation[i]); //Change IR in PCB
@@ -132,7 +130,7 @@ module TSOS {
             _MemoryManager.executedPID.push(this.PID); //Past PID's
             _StdOut.putText("PID: " + this.PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _PCB.waitTime));
             _Console.advanceLine();
-            //this.PID = -1; //Change back to normal 
+             
             //Clear PCB, change state to terminated, and turn isExecuting to false
             _PCB.clearPCB();              
             
@@ -142,6 +140,7 @@ module TSOS {
             }
             if(!_cpuScheduler.RR){//Single run
                 this.isExecuting = false;
+                _cpuScheduler.turnaroundTime = 0; //Reset TT
                 _Console.putText(_OsShell.promptStr);
                 //Turn Single Step Off if On
                 (<HTMLButtonElement>document.getElementById("btnSingleStepToggle")).value = "Single Step: Off";

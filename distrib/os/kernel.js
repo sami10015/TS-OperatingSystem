@@ -138,7 +138,7 @@ var TSOS;
                                 _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
                                 _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
                                 _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
-                                _StdOut.putText("PID: " + PID + " done.");
+                                _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                 _Console.advanceLine();
                                 break;
                             }

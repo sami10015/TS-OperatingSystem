@@ -445,8 +445,9 @@ var TSOS;
                             break;
                         }
                     }
-                    //_CPU.PID = parseInt(pID); //Change current pID
-                    //_CPU.PC = 0; //Start program counter from 0
+                    _PCB.State = "Ready";
+                    _PCB.insertSingleRunRow(); //Insert a row into PCB Table
+                    _PCB.displayPCB();
                     _CPU.isExecuting = true; //Run CPU
                 }
             }
@@ -465,8 +466,13 @@ var TSOS;
         };
         //Clears all memory allocation
         Shell.prototype.clearMem = function () {
-            _MemoryManager.clearAll();
-            _cpuScheduler.clearMem();
+            if (_CPU.isExecuting) {
+                _StdOut.putText("CPU is currently executing, sorry.");
+            }
+            else {
+                _MemoryManager.clearAll();
+                _cpuScheduler.clearMem();
+            }
         };
         //Change the quantum for round robin
         Shell.prototype.quantum = function (params) {
