@@ -26,6 +26,9 @@ const STEP_IRQ: number = 3;
 
 const STEP_TOGGLE_IRQ: number = 4;
 
+const CONTEXT_SWITCH_IRQ: number = 5;
+
+const KILL_IRQ: number = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -78,6 +81,9 @@ var _hardwareClockID: number = null;
 
 // Single Step Mode
 var _SingleStepMode: boolean = false;
+
+// Cpu Scheduler
+var _cpuScheduler: TSOS.cpuScheduler;
 
 // For testing (and enrichment)...
 var Glados: any = null;  // This is the function Glados() in glados.js on Labouseur.com.

@@ -45,7 +45,7 @@ module TSOS{
 			}
 			return operationArray;
 		}
-		
+
 		//Writes op codes into specific memory slot
 		public write(memorySlotIndex, operation){
 			var opCount = 0;

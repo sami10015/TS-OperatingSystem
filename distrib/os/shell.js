@@ -2,6 +2,7 @@
 ///<reference path="../utils.ts" />
 ///<reference path="shellCommand.ts" />
 ///<reference path="userCommand.ts" />
+///<reference path="processControlBlock.ts" />
 /* ------------
    Shell.ts
 
@@ -69,6 +70,21 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // run
             sc = new TSOS.ShellCommand(this.shellRun, "run", " - Load Program <PID>");
+            this.commandList[this.commandList.length] = sc;
+            // clearmem
+            sc = new TSOS.ShellCommand(this.clearMem, "clearmem", " - Clear all memory allocation");
+            this.commandList[this.commandList.length] = sc;
+            // quantum
+            sc = new TSOS.ShellCommand(this.quantum, "quantum", " - Sets the quantum for RR");
+            this.commandList[this.commandList.length] = sc;
+            // runall
+            sc = new TSOS.ShellCommand(this.runall, "runall", " - Run all loaded programs");
+            this.commandList[this.commandList.length] = sc;
+            // ps
+            sc = new TSOS.ShellCommand(this.ps, "ps", " - See all active processes");
+            this.commandList[this.commandList.length] = sc;
+            // kill
+            sc = new TSOS.ShellCommand(this.kill, "kill", " - Kill active process");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -258,6 +274,21 @@ var TSOS;
                     case "run":
                         _StdOut.putText("Run program based on <PID>");
                         break;
+                    case "clearmem":
+                        _StdOut.putText("Clear all memory allocation");
+                        break;
+                    case "quantum":
+                        _StdOut.putText("<Integer> - Set the quantum for RR");
+                        break;
+                    case "runall":
+                        _StdOut.putText("Run all loaded programs");
+                        break;
+                    case "ps":
+                        _StdOut.putText("See all active processes");
+                        break;
+                    case "kill":
+                        _StdOut.putText("Kill Active Processes");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -361,10 +392,20 @@ var TSOS;
                         _StdOut.putText("Format!");
                     }
                     else {
-                        _MemoryManager.writeToMemory(index, operation); //Write to memory
-                        _MemoryManager.pIDReturn(); //Increment PID
-                        _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
-                        _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
+                        if (operation.split(" ").length > 256) {
+                            _StdOut.putText("Program is too large");
+                        }
+                        else {
+                            //Write operations to memory
+                            _MemoryManager.writeToMemory(index, operation); //Write to memory
+                            _MemoryManager.pIDReturn(); //Increment PID
+                            _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
+                            //Create new PCB object, initialize, and put in resident list
+                            var newPCB = new TSOS.PCB();
+                            newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
+                            _cpuScheduler.residentList.push(newPCB);
+                            _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
+                        }
                     }
                 }
                 else {
@@ -397,8 +438,16 @@ var TSOS;
                     _StdOut.putText("Please enter a PID along with the run command");
                 }
                 else {
-                    _CPU.PID = parseInt(pID); //Change current pID
-                    _CPU.PC = 0; //Start program counter from 0
+                    //Change global PCB to the correct PCB from the resident list
+                    for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                        if (_cpuScheduler.residentList[i].PID == parseInt(pID)) {
+                            _PCB = _cpuScheduler.residentList[i];
+                            break;
+                        }
+                    }
+                    _PCB.State = "Ready";
+                    _PCB.insertSingleRunRow(); //Insert a row into PCB Table
+                    _PCB.displayPCB();
                     _CPU.isExecuting = true; //Run CPU
                 }
             }
@@ -414,6 +463,66 @@ var TSOS;
         //Cause a test OS error
         Shell.prototype.shellError = function () {
             _Kernel.krnTrapError("Test Error");
+        };
+        //Clears all memory allocation
+        Shell.prototype.clearMem = function () {
+            if (_CPU.isExecuting) {
+                _StdOut.putText("CPU is currently executing, sorry.");
+            }
+            else {
+                _MemoryManager.clearAll();
+                _cpuScheduler.clearMem();
+            }
+        };
+        //Change the quantum for round robin
+        Shell.prototype.quantum = function (params) {
+            if (params == '') {
+                _StdOut.putText("Put an Integer for the quantum");
+            }
+            else {
+                _cpuScheduler.quantum = parseInt(params);
+                _StdOut.putText("Quantum set to " + params);
+            }
+        };
+        //Run all command
+        Shell.prototype.runall = function () {
+            //If it is one, just perform a single run
+            if (_cpuScheduler.residentList.length == 1) {
+                this.shellRun(_cpuScheduler.residentList[0].PID);
+            }
+            else {
+                _cpuScheduler.loadReadyQueue(); //Load the ready queue
+                _cpuScheduler.RR = true; //Change cpu technique to round robin
+                _PCB.State = "Ready";
+                _cpuScheduler.displayReadyQueue();
+                _CPU.isExecuting = true; //Start the CPU
+            }
+        };
+        //Displays active processes
+        Shell.prototype.ps = function () {
+            var str = "Active Processes: ";
+            //If no processes are running
+            if (_cpuScheduler.readyQueue.isEmpty() && _CPU.isExecuting == false) {
+                _StdOut.putText("No Active Processes");
+            }
+            else {
+                if (_cpuScheduler.readyQueue.isEmpty() && _CPU.isExecuting == true) {
+                    str += _PCB.PID + " ";
+                }
+                else {
+                    str += _PCB.PID + " ";
+                    for (var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++) {
+                        var tempPCB_PID = _cpuScheduler.readyQueue.q[i].PID;
+                        str += tempPCB_PID + " ";
+                    }
+                }
+                _StdOut.putText(str);
+            }
+        };
+        //Kills active process
+        Shell.prototype.kill = function (params) {
+            var PID = parseInt(params); //Get PID as a integer
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(KILL_IRQ, PID)); //Call An Interrupt
         };
         return Shell;
     }());

@@ -47,7 +47,11 @@ var TSOS;
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
-            // Do the real work here. Be sure to set this.isExecuting appropriately.
+            // Do the real work here. Be sure to set this.isExecuting appropriately
+            //Change CPU based on current PCB, which is changed via cpuScheduler
+            this.updateCpuTable();
+            _PCB.State = "Running";
+            //Get specific memory block for operation
             var index = _MemoryManager.memoryIndex(this.PID); //Get memory block location for operation
             var operation = _MemoryManager.getOperation(index); //Array of op codes;
             this.executeCode(operation);
@@ -61,6 +65,11 @@ var TSOS;
                 if (operation[i] == 'A9') {
                     this.loadAccumulator(operation[i + 1]);
                 }
+                else if (operation[i] == 'AD') {
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.loadAccumulatorMem(location);
+                }
                 else if (operation[i] == 'A2') {
                     this.loadXRegister(operation[i + 1]);
                 }
@@ -68,43 +77,58 @@ var TSOS;
                     this.loadYRegister(operation[i + 1]);
                 }
                 else if (operation[i] == '8D') {
-                    var location2 = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
-                    this.storeAccumulator(location2);
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.storeAccumulator(location);
                 }
                 else if (operation[i] == 'AE') {
-                    this.loadXRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.loadXRegisterMem(location);
                 }
                 else if (operation[i] == 'AC') {
-                    this.loadYRegisterMem(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.loadYRegisterMem(location);
                 }
                 else if (operation[i] == '6D') {
-                    this.addCarry(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.addCarry(location);
                 }
                 else if (operation[i] == 'EC') {
-                    this.compareByte(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.compareByte(location);
                 }
                 else if (operation[i] == 'D0') {
-                    this.branchIfNotEqual(operation[i + 1], _PCB.getLimit(this.PID), operation);
+                    this.branchIfNotEqual(operation[i + 1], _PCB.Limit, operation);
                 }
                 else if (operation[i] == 'FF') {
                     _KernelInterruptQueue.enqueue(new TSOS.Interrupt(SYSTEM_CALL_IRQ, '')); //Call An Interrupt
                     this.SystemCall();
                 }
                 else if (operation[i] == 'EE') {
-                    this.incrementByteValue(_MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]));
+                    var location = _MemoryManager.littleEndianAddress(operation[i + 1], operation[i + 2]);
+                    location += _PCB.Base;
+                    this.incrementByteValue(location);
                 }
                 else if (operation[i] == '00') {
                     this.endProgram();
                 }
-                if (operation[i] == '00' || operation[i] == operation[operation.length - 1]) {
-                    _PCB.clearPCB();
+                //Display purposes
+                if (_PCB.State != "TERMINATED") {
+                    _PCB.displayPCB();
                 }
-                else {
-                    _PCB.displayPCB('Running');
-                }
-                _MemoryManager.updateBlock(this.PID);
+                //_cpuScheduler.displayReadyQueue();
+                _MemoryManager.updateBlock(_PCB.PID); //Update Memory Table
                 _PCB.setIR(operation[i]); //Change IR in PCB
-                this.updateCpuTable(); //Update CPU Table
+                this.updateCpuTable();
+                this.displayCpuTable(); //Update CPU Table Display
+                //Check cpu scheduler for possible context switches, don't perform context switches if nothing is left in the ready queue
+                if (_cpuScheduler.RR && _cpuScheduler.readyQueue.isEmpty() == false) {
+                    _cpuScheduler.checkCount();
+                }
             }
         };
         //End the program
@@ -112,102 +136,118 @@ var TSOS;
             //Clear CPU Table
             var table = document.getElementById("cpuTable");
             table.getElementsByTagName("tr")[1].getElementsByTagName("td")[2].innerHTML = '00'; //Reset IR
-            //Clear specific memory location  
+            //Clear specific memory location 
             _MemoryManager.clearBlock(this.PID); //Clear the block of memory
             _MemoryManager.executedPID.push(this.PID); //Past PID's
-            _StdOut.putText("PID: " + this.PID + " done.");
-            this.PID = -1; //Change back to normal 
-            //Clear PCB
+            _StdOut.putText("PID: " + this.PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _PCB.waitTime));
+            _Console.advanceLine();
+            //Clear PCB, change state to terminated, and turn isExecuting to false
             _PCB.clearPCB();
-            //Turn Single Step Off if On
-            document.getElementById("btnSingleStepToggle").value = "Single Step: Off";
-            document.getElementById("btnStep").disabled = true;
-            _SingleStepMode = false;
-            //End CPU Cycle here
-            this.isExecuting = false;
+            //End CPU Cycle here depending on type of command(single run, or runall)
+            if (_cpuScheduler.count != _cpuScheduler.quantum) {
+                _cpuScheduler.contextSwitch();
+            }
+            if (!_cpuScheduler.RR) {
+                this.isExecuting = false;
+                _cpuScheduler.turnaroundTime = 0; //Reset TT
+                _Console.putText(_OsShell.promptStr);
+                //Turn Single Step Off if On
+                document.getElementById("btnSingleStepToggle").value = "Single Step: Off";
+                document.getElementById("btnStep").disabled = true;
+                _SingleStepMode = false;
+            }
         };
         //Loads a constant in the accumulator(OP Code A9)
         Cpu.prototype.loadAccumulator = function (constant) {
-            this.PC += 2; //Add to program counter
-            this.IR = 'A9'; //Change IR
-            this.Acc = _MemoryManager.hexToDec(constant); //Store constant in accumulator(Hex)                
+            _PCB.PC += 2; //Add to program counter
+            _PCB.IR = 'A9'; //Change IR
+            _PCB.AC = _MemoryManager.hexToDec(constant); //Store constant in accumulator(Hex)                
+        };
+        //Store accumulator into memory(OP Code AD)
+        Cpu.prototype.loadAccumulatorMem = function (location) {
+            _PCB.PC += 3;
+            _PCB.IR = 'AD';
+            _PCB.AC = _MemoryManager.getVariable(location);
         };
         //Loads a constant in X register(OP Code A2)
         Cpu.prototype.loadXRegister = function (constant) {
-            this.PC += 2; //Add to program counter
-            this.IR = 'A2'; //Change IR
-            this.Xreg = _MemoryManager.hexToDec(constant); //Store constant in X Register(Hex)
+            _PCB.PC += 2; //Add to program counter
+            _PCB.IR = 'A2'; //Change IR
+            _PCB.X = _MemoryManager.hexToDec(constant); //Store constant in X Register(Hex)
         };
         //Loads a constant in the Y register(OP Code A0)
         Cpu.prototype.loadYRegister = function (constant) {
-            this.PC += 2; //Add to program counter
-            this.IR = 'A0'; //Change IR
-            this.Yreg = _MemoryManager.hexToDec(constant); //Store constant in Y Register(Hex)
+            _PCB.PC += 2; //Add to program counter
+            _PCB.IR = 'A0'; //Change IR
+            _PCB.Y = _MemoryManager.hexToDec(constant); //Store constant in Y Register(Hex)
         };
         //Store accumulator into specific little endian memory location(OP Code 8D)
         Cpu.prototype.storeAccumulator = function (memoryLoc) {
-            this.PC += 3; //Add to program counter
-            this.IR = '8D'; //Change IR
-            _MemoryManager.writeOPCode(this.Acc, memoryLoc); //Write Op code into location
+            _PCB.PC += 3; //Add to program counter
+            _PCB.IR = '8D'; //Change IR
+            _MemoryManager.writeOPCode(_PCB.AC, memoryLoc); //Write Op code into location
         };
         //Loads X register from memory(OP Code AE)
         Cpu.prototype.loadXRegisterMem = function (location) {
-            this.PC += 3; //Add to program counter
-            this.IR = 'AE'; //Change IR
-            this.Xreg = _MemoryManager.getVariable(location); //Get variable from that memory address
+            _PCB.PC += 3; //Add to program counter
+            _PCB.IR = 'AE'; //Change IR
+            _PCB.X = _MemoryManager.getVariable(location); //Get variable from that memory address
         };
         //Loads Y register from memory(OP Code AC)
         Cpu.prototype.loadYRegisterMem = function (location) {
-            this.PC += 3; //Add to program counter
-            this.IR = 'AC'; //Change IR
-            this.Yreg = _MemoryManager.getVariable(location); //Get variable from that memory address
+            _PCB.PC += 3; //Add to program counter
+            _PCB.IR = 'AC'; //Change IR
+            _PCB.Y = _MemoryManager.getVariable(location); //Get variable from that memory address
         };
         //Adds contents of an address to the accumulator(OP Code 6D)
         Cpu.prototype.addCarry = function (location) {
-            this.PC += 3; //Add to program counter
-            this.IR = '6D'; //Change IR
-            this.Acc += _MemoryManager.getVariable(location);
+            _PCB.PC += 3; //Add to program counter
+            _PCB.IR = '6D'; //Change IR
+            _PCB.AC += _MemoryManager.getVariable(location);
         };
         //Compare a byte in memory to the X reg(Op Code EC)
         Cpu.prototype.compareByte = function (location) {
-            this.PC += 3; //Add to program counter
-            this.IR = 'EC'; //Change IR
+            _PCB.PC += 3; //Add to program counter
+            _PCB.IR = 'EC'; //Change IR
             var byte = _MemoryManager.getVariable(location); //Byte in memory
-            if (parseInt(byte) != this.Xreg) {
-                this.Zflag = 0; //Change z flag if not equal
+            if (parseInt(byte) != _PCB.X) {
+                _PCB.Z = 0; //Change z flag if not equal
             }
             else {
-                this.Zflag = 1;
+                _PCB.Z = 1;
             }
         };
         //Branch n bytes if Z flag = 0(Op Code D0)
         Cpu.prototype.branchIfNotEqual = function (distance, limit, operation) {
             var distance = _MemoryManager.hexToDec(distance);
-            if (this.Zflag == 0) {
-                if (this.PC + distance > limit) {
-                    this.PC = (this.PC + distance) - limit + 2;
-                    this.IR = operation[this.PC];
+            var base = _PCB.Base;
+            if (_PCB.Z == 0) {
+                if (_PCB.PC + distance + base > limit) {
+                    _PCB.PC = (_PCB.PC + distance + base) - limit + 2;
+                    _PCB.IR = operation[_PCB.PC];
                 }
                 else {
-                    this.PC = this.PC + distance + 2; //Increment to branch
-                    this.IR = operation[this.PC]; //Change IR
+                    _PCB.PC = _PCB.PC + distance + 2; //Increment to branch
+                    _PCB.IR = operation[_PCB.PC]; //Change IR
                 }
             }
             else {
-                this.PC += 2;
-                this.IR = 'D0';
+                _PCB.PC += 2;
+                _PCB.IR = 'D0';
             }
         };
         //System Call(Op Code FF)
         Cpu.prototype.SystemCall = function () {
-            if (this.Xreg == 1) {
-                this.PC += 1;
-                this.IR = 'FF';
-                _StdOut.putText(this.Yreg + "");
+            if (_PCB.X == 1) {
+                _PCB.PC += 1;
+                _PCB.IR = 'FF';
+                _StdOut.putText(_PCB.Y + "");
+                _Console.advanceLine();
             }
-            else if (this.Xreg == 2) {
+            else if (_PCB.X == 2) {
                 var terminated = false;
-                var location = this.Yreg;
+                var location = _PCB.Y + _PCB.Base;
+                var str = "";
                 while (!terminated) {
                     var charNum = _MemoryManager.getVariable(location);
                     if (charNum == 0) {
@@ -215,26 +255,37 @@ var TSOS;
                         break;
                     }
                     else {
-                        var newChar = String.fromCharCode(_MemoryManager.hexToDec(charNum));
-                        _StdOut.putText(newChar);
+                        str += String.fromCharCode(_MemoryManager.hexToDec(charNum));
                         location++;
                     }
                 }
-                this.PC += 1;
-                this.IR = 'FF';
+                _StdOut.putText(str);
+                _Console.advanceLine();
+                _PCB.PC += 1;
+                _PCB.IR = 'FF';
             }
         };
         //Increment value of a byte in location(Op Code EE)
         Cpu.prototype.incrementByteValue = function (location) {
-            this.PC += 3;
-            this.IR = 'EE';
+            _PCB.PC += 3;
+            _PCB.IR = 'EE';
             var byte = _MemoryManager.getVariable(location);
             _MemoryManager.writeOPCode(_MemoryManager.hexToDec(byte + 1), location);
         };
-        //Update CPU Table
+        //Update CPU Table, used mainly when PCB is changed and updated via CPU Scheduler
         Cpu.prototype.updateCpuTable = function () {
+            this.PID = _PCB.PID;
+            this.PC = _PCB.PC;
+            this.Acc = _PCB.AC;
+            this.Xreg = _PCB.X;
+            this.Yreg = _PCB.Y;
+            this.Zflag = _PCB.Z;
+            this.IR = _PCB.IR;
+        };
+        //Change CPU Table Display
+        Cpu.prototype.displayCpuTable = function () {
             var table = "";
-            table += "<td>" + this.PC + "</td>";
+            table += "<td>" + (this.PC + _PCB.Base) + "</td>";
             table += "<td>" + this.Acc + "</td>";
             table += "<td>" + this.IR + "</td>";
             table += "<td>" + this.Xreg + "</td>";

@@ -10,14 +10,28 @@ module TSOS{
 					public executedPID = [],
 					public operationIndex = 0){}
 
+		//Clear all memory and display
 		public clearAll(){
 			this.memorySpace = [0,0,0];
 			this.PID_Memory_Loc = [-1,-1,-1];
 			_Memory.eraseAll();
-			//Clear display
+			this.clearDisplay();
+			//Add all unexecuted PIDs to executed PIDs list
+			for(var i = 0; i < this.PIDList.length; i++){
+				var pid = this.PIDList[i]; //Comparison PID
+				var counter = 0; //Use this counter to check if it has been executed or not
+				for(var j = 0; j < this.executedPID.length; j++){
+					if(pid != this.executedPID[i]){
+						counter++;
+					}
+				}
+				if(counter == this.executedPID.length){
+					this.executedPID.push(pid);
+				}
+			}
 		}
 
-		//Displays the memory block
+		//Displays the memory block and checks if the memory blocks are full
 		public displayBlock(operation): number{
 			//Change process memory table
 	        var table = (<HTMLInputElement>document.getElementById("processMemTable"));
@@ -92,7 +106,7 @@ module TSOS{
                         this.PID_Memory_Loc[0] = -1; //Free that space
                         this.memorySpace[0] = 0; //Free that space
                         index = 0; //Block to clear
-                        for(var i = 0; i <= 32; i++){
+                        for(var i = 0; i < 32; i++){
                             var row = table.getElementsByTagName("tr")[i];
                             for(var j = 1; j < 9; j++){
                                 row.getElementsByTagName("td")[j].innerHTML = '0';
@@ -102,7 +116,7 @@ module TSOS{
                         this.PID_Memory_Loc[1] = -1; //Free that space
                         this.memorySpace[1] = 0; //Free that space
                         index = 1; //Block to clear
-                        for(var i = 33; i <= 64; i++){
+                        for(var i = 32; i < 64; i++){
                             var row = table.getElementsByTagName("tr")[i];
                             for(var j = 1; j < 9; j++){
                                 row.getElementsByTagName("td")[j].innerHTML = '0';
@@ -112,7 +126,7 @@ module TSOS{
                         this.PID_Memory_Loc[2] = -1; //Free that space
                         this.memorySpace[2] = 0; //Free that space
                         index = 2; //Block to clear
-                        for(var i = 65; i <= 96; i++){
+                        for(var i = 64; i < 96; i++){
                             var row = table.getElementsByTagName("tr")[i];
                             for(var j = 1; j < 9; j++){
                                 row.getElementsByTagName("td")[j].innerHTML = '0';
@@ -125,6 +139,7 @@ module TSOS{
             _Memory.eraseBlock(index); //Erase memory
 		}
 
+		//Updates the memory display as the program runs
 		public updateBlock(PID){
 			var memoryIndex = this.memoryIndex(PID); //1st block, 2nd block, 3rd block
 			var opIndex = 0; //0 - 256, 256 - 512, etc
@@ -138,20 +153,33 @@ module TSOS{
                     }
 				}
 			}else if(memoryIndex == 1){ //2st block
-				for(var i = 33; i < 64; i++){
+				opIndex += 256;
+				for(var i = 32; i < 64; i++){
 					var row = table.getElementsByTagName("tr")[i];
                     for(var j = 1; j < 9; j++){
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
                     }
 				}
-			}else if(memoryIndex == 3){ //3rd block
-				for(var i = 65; i < 96; i++){
+			}else if(memoryIndex == 2){ //3rd block
+				opIndex += 512;
+				for(var i = 64; i < 96; i++){
 					var row = table.getElementsByTagName("tr")[i];
                     for(var j = 1; j < 9; j++){
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
                     }
+				}
+			}
+		}
+
+		//Clears all memory blocks display
+		public clearDisplay(){
+			var table = (<HTMLInputElement>document.getElementById("processMemTable"));
+			for(var i = 0; i < 96; i++){
+				var row = table.getElementsByTagName("tr")[i];
+				for(var j = 1; j < 9; j++){
+					row.getElementsByTagName("td")[j].innerHTML = '00';
 				}
 			}
 		}
@@ -170,8 +198,14 @@ module TSOS{
 			}
 		}
 
+		//Get whatever variable is located at the location in memory
 		public getVariable(location){
-			return _Memory.memory[location];
+			if((location > _PCB.Limit || location < _PCB.Base)){ //This runs after the PCB is cleared, this saves from error
+				_StdOut.putText("Memory Access Violation!");
+				//Finish this part to kill the process
+			}else{
+				return _Memory.memory[location];
+			}
 		}
 
 		//Get OP Codes from Memory
@@ -181,7 +215,12 @@ module TSOS{
 
 		//Write OP Code into Memory Address
 		public  writeOPCode(constant, address){
-			_Memory.memory[address] = constant;
+			if(address > _PCB.Limit || address < _PCB.Base){
+				_StdOut.putText("Memory Access Violation!");
+				//Finish this part to kill the process
+			}else{
+				_Memory.memory[address] = constant;
+			}
 		}
 
 		//Little Endian Address

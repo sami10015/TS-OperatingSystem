@@ -14,13 +14,27 @@ var TSOS;
             this.executedPID = executedPID;
             this.operationIndex = operationIndex;
         }
+        //Clear all memory and display
         MemoryManager.prototype.clearAll = function () {
             this.memorySpace = [0, 0, 0];
             this.PID_Memory_Loc = [-1, -1, -1];
             _Memory.eraseAll();
-            //Clear display
+            this.clearDisplay();
+            //Add all unexecuted PIDs to executed PIDs list
+            for (var i = 0; i < this.PIDList.length; i++) {
+                var pid = this.PIDList[i]; //Comparison PID
+                var counter = 0; //Use this counter to check if it has been executed or not
+                for (var j = 0; j < this.executedPID.length; j++) {
+                    if (pid != this.executedPID[i]) {
+                        counter++;
+                    }
+                }
+                if (counter == this.executedPID.length) {
+                    this.executedPID.push(pid);
+                }
+            }
         };
-        //Displays the memory block
+        //Displays the memory block and checks if the memory blocks are full
         MemoryManager.prototype.displayBlock = function (operation) {
             //Change process memory table
             var table = document.getElementById("processMemTable");
@@ -98,7 +112,7 @@ var TSOS;
                         this.PID_Memory_Loc[0] = -1; //Free that space
                         this.memorySpace[0] = 0; //Free that space
                         index = 0; //Block to clear
-                        for (var i = 0; i <= 32; i++) {
+                        for (var i = 0; i < 32; i++) {
                             var row = table.getElementsByTagName("tr")[i];
                             for (var j = 1; j < 9; j++) {
                                 row.getElementsByTagName("td")[j].innerHTML = '0';
@@ -109,7 +123,7 @@ var TSOS;
                         this.PID_Memory_Loc[1] = -1; //Free that space
                         this.memorySpace[1] = 0; //Free that space
                         index = 1; //Block to clear
-                        for (var i = 33; i <= 64; i++) {
+                        for (var i = 32; i < 64; i++) {
                             var row = table.getElementsByTagName("tr")[i];
                             for (var j = 1; j < 9; j++) {
                                 row.getElementsByTagName("td")[j].innerHTML = '0';
@@ -120,7 +134,7 @@ var TSOS;
                         this.PID_Memory_Loc[2] = -1; //Free that space
                         this.memorySpace[2] = 0; //Free that space
                         index = 2; //Block to clear
-                        for (var i = 65; i <= 96; i++) {
+                        for (var i = 64; i < 96; i++) {
                             var row = table.getElementsByTagName("tr")[i];
                             for (var j = 1; j < 9; j++) {
                                 row.getElementsByTagName("td")[j].innerHTML = '0';
@@ -132,6 +146,7 @@ var TSOS;
             }
             _Memory.eraseBlock(index); //Erase memory
         };
+        //Updates the memory display as the program runs
         MemoryManager.prototype.updateBlock = function (PID) {
             var memoryIndex = this.memoryIndex(PID); //1st block, 2nd block, 3rd block
             var opIndex = 0; //0 - 256, 256 - 512, etc
@@ -146,7 +161,8 @@ var TSOS;
                 }
             }
             else if (memoryIndex == 1) {
-                for (var i = 33; i < 64; i++) {
+                opIndex += 256;
+                for (var i = 32; i < 64; i++) {
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
@@ -154,13 +170,24 @@ var TSOS;
                     }
                 }
             }
-            else if (memoryIndex == 3) {
-                for (var i = 65; i < 96; i++) {
+            else if (memoryIndex == 2) {
+                opIndex += 512;
+                for (var i = 64; i < 96; i++) {
                     var row = table.getElementsByTagName("tr")[i];
                     for (var j = 1; j < 9; j++) {
                         row.getElementsByTagName("td")[j].innerHTML = this.getVariable(opIndex) + '';
                         opIndex++;
                     }
+                }
+            }
+        };
+        //Clears all memory blocks display
+        MemoryManager.prototype.clearDisplay = function () {
+            var table = document.getElementById("processMemTable");
+            for (var i = 0; i < 96; i++) {
+                var row = table.getElementsByTagName("tr")[i];
+                for (var j = 1; j < 9; j++) {
+                    row.getElementsByTagName("td")[j].innerHTML = '00';
                 }
             }
         };
@@ -176,8 +203,14 @@ var TSOS;
                 }
             }
         };
+        //Get whatever variable is located at the location in memory
         MemoryManager.prototype.getVariable = function (location) {
-            return _Memory.memory[location];
+            if ((location > _PCB.Limit || location < _PCB.Base)) {
+                _StdOut.putText("Memory Access Violation!");
+            }
+            else {
+                return _Memory.memory[location];
+            }
         };
         //Get OP Codes from Memory
         MemoryManager.prototype.getOperation = function (index) {
@@ -185,7 +218,12 @@ var TSOS;
         };
         //Write OP Code into Memory Address
         MemoryManager.prototype.writeOPCode = function (constant, address) {
-            _Memory.memory[address] = constant;
+            if (address > _PCB.Limit || address < _PCB.Base) {
+                _StdOut.putText("Memory Access Violation!");
+            }
+            else {
+                _Memory.memory[address] = constant;
+            }
         };
         //Little Endian Address
         MemoryManager.prototype.littleEndianAddress = function (addressBase, addressEnd) {

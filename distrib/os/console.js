@@ -63,7 +63,6 @@ var TSOS;
                     this.buffer = ""; //Reset the buffer
                 }
                 else if (chr == String.fromCharCode(8)) {
-                    console.log(this.backspaceAmount);
                     if (this.backspaceAmount != 0) {
                         _DrawingContext.putImageData(this.backspaceImageDataArray.pop(), 0, 0); //Retrieve image data of previously drawn word
                         this.currentXPosition = this.pastXPositions.pop(); //Retrieve past X position for Canvas drawing, and set it to the current X position
@@ -127,13 +126,11 @@ var TSOS;
                             command = this.commandsArray[this.currentCommandIndex];
                             this.currentCommandIndex -= 1;
                         }
-                        console.log(this.currentCommandIndex);
                     }
                     else {
                         if (this.currentCommandIndex != this.commandsArray.length - 1) {
                             command = this.commandsArray[this.currentCommandIndex + 1];
                             this.currentCommandIndex += 1;
-                            console.log(this.currentCommandIndex);
                         }
                     }
                     if (this.buffer != "") {

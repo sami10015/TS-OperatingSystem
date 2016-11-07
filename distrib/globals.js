@@ -19,6 +19,8 @@ var KEYBOARD_IRQ = 1;
 var SYSTEM_CALL_IRQ = 2;
 var STEP_IRQ = 3;
 var STEP_TOGGLE_IRQ = 4;
+var CONTEXT_SWITCH_IRQ = 5;
+var KILL_IRQ = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -57,6 +59,8 @@ var _Control;
 var _hardwareClockID = null;
 // Single Step Mode
 var _SingleStepMode = false;
+// Cpu Scheduler
+var _cpuScheduler;
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados.js on Labouseur.com.
 var _GLaDOS = null; // If the above is linked in, this is the instantiated instance of Glados.

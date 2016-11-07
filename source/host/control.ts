@@ -116,6 +116,8 @@ module TSOS {
             _MemoryManager = new MemoryManager();
 
             _PCB = new PCB();
+
+            _cpuScheduler = new cpuScheduler();
         }
 
         public static hostBtnHaltOS_click(btn): void {
@@ -157,6 +159,7 @@ module TSOS {
             if(_CPU.isExecuting){
                 _CPU.cycle();
                 _KernelInterruptQueue.enqueue(new Interrupt(STEP_IRQ, '')); //Call An Interrupt
+                console.log(_Memory.memory);
             }
         }
     }
