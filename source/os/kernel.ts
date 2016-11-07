@@ -86,7 +86,9 @@ module TSOS {
                 // TODO: Implement a priority queue based on the IRQ number/id to enforce interrupt priority.
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
-            } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
+            } else if (_CPU.isExecuting && _SingleStepMode == false) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
+                _cpuScheduler.turnaroundTime++;
+                _PCB.waitTime++;
                 _CPU.cycle();
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");
@@ -125,6 +127,36 @@ module TSOS {
                 case KEYBOARD_IRQ:
                     _krnKeyboardDriver.isr(params);   // Kernel mode device driver
                     _StdIn.handleInput();
+                    break;
+                case SYSTEM_CALL_IRQ: // System Call Interrupt
+                    break;
+                case STEP_IRQ: //Step Interrupt
+                    break;
+                case STEP_TOGGLE_IRQ: //Step Toggle Interrupt
+                    break;
+                case CONTEXT_SWITCH_IRQ: //Context Switch Interrupt
+                    _cpuScheduler.contextSwitch();
+                    break;
+                case KILL_IRQ: //KILL Interrupt
+                    var PID = params;
+                    //If nothing is running then print no active process
+                    if(_CPU.isExecuting == false){
+                        _StdOut.putText("No Active Processes");
+                    }else if(PID == _PCB.PID){ //If the selected PID is the current PCB running/one process running
+                        _CPU.endProgram();
+                    }else{ //Remove process from the ready queue, clear memory blocks, etc.
+                        for(var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++){
+                            if(_cpuScheduler.readyQueue.q[i].PID == PID){
+                                _MemoryManager.clearBlock(PID); //Clear memory block
+                                _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
+                                _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
+                                _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
+                                _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
+                                _Console.advanceLine();
+                                break;
+                            }
+                        }
+                    }
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

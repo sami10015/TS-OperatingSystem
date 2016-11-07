@@ -78,9 +78,10 @@ var TSOS;
         Control.hostBtnStartOS_click = function (btn) {
             // Disable the (passed-in) start button...
             btn.disabled = true;
-            // .. enable the Halt and Reset buttons ...
+            // .. enable the Halt and Reset and Single Step buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
+            document.getElementById("btnSingleStepToggle").disabled = false;
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
@@ -91,6 +92,11 @@ var TSOS;
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
+            _Memory = new TSOS.Memory();
+            _Memory.init();
+            _MemoryManager = new TSOS.MemoryManager();
+            _PCB = new TSOS.PCB();
+            _cpuScheduler = new TSOS.cpuScheduler();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
@@ -100,6 +106,8 @@ var TSOS;
             // Stop the interval that's simulating our clock pulse.
             clearInterval(_hardwareClockID);
             // TODO: Is there anything else we need to do here?
+            document.getElementById("btnSingleStepToggle").disabled = true;
+            document.getElementById("btnStep").disabled = true;
         };
         Control.hostBtnReset_click = function (btn) {
             // The easiest and most thorough way to do this is to reload (not refresh) the document.
@@ -107,6 +115,28 @@ var TSOS;
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        };
+        Control.hostBtnSingleStepToggle_click = function (btn) {
+            if (!_SingleStepMode) {
+                btn.value = "Single Step: On";
+                document.getElementById("btnStep").disabled = false;
+                Control.hostLog("Single Step Mode On", "host");
+                _SingleStepMode = true;
+            }
+            else {
+                btn.value = "Single Step: Off";
+                document.getElementById("btnStep").disabled = true;
+                Control.hostLog("Single Step Mode Off", "host");
+                _SingleStepMode = false;
+            }
+            _KernelInterruptQueue.enqueue(new TSOS.Interrupt(STEP_TOGGLE_IRQ, '')); //Call An Interrupt
+        };
+        Control.hostBtnStep = function (btn) {
+            if (_CPU.isExecuting) {
+                _CPU.cycle();
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(STEP_IRQ, '')); //Call An Interrupt
+                console.log(_Memory.memory);
+            }
         };
         return Control;
     }());

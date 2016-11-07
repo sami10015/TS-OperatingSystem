@@ -75,7 +75,9 @@ var TSOS;
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             }
-            else if (_CPU.isExecuting) {
+            else if (_CPU.isExecuting && _SingleStepMode == false) {
+                _cpuScheduler.turnaroundTime++;
+                _PCB.waitTime++;
                 _CPU.cycle();
             }
             else {
@@ -110,6 +112,38 @@ var TSOS;
                 case KEYBOARD_IRQ:
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
+                    break;
+                case SYSTEM_CALL_IRQ:
+                    break;
+                case STEP_IRQ:
+                    break;
+                case STEP_TOGGLE_IRQ:
+                    break;
+                case CONTEXT_SWITCH_IRQ:
+                    _cpuScheduler.contextSwitch();
+                    break;
+                case KILL_IRQ:
+                    var PID = params;
+                    //If nothing is running then print no active process
+                    if (_CPU.isExecuting == false) {
+                        _StdOut.putText("No Active Processes");
+                    }
+                    else if (PID == _PCB.PID) {
+                        _CPU.endProgram();
+                    }
+                    else {
+                        for (var i = 0; i < _cpuScheduler.readyQueue.getSize(); i++) {
+                            if (_cpuScheduler.readyQueue.q[i].PID == PID) {
+                                _MemoryManager.clearBlock(PID); //Clear memory block
+                                _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
+                                _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
+                                _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
+                                _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
+                                _Console.advanceLine();
+                                break;
+                            }
+                        }
+                    }
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

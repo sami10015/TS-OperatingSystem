@@ -16,6 +16,11 @@ var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;
+var SYSTEM_CALL_IRQ = 2;
+var STEP_IRQ = 3;
+var STEP_TOGGLE_IRQ = 4;
+var CONTEXT_SWITCH_IRQ = 5;
+var KILL_IRQ = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -40,11 +45,22 @@ var _StdOut;
 // UI
 var _Console;
 var _OsShell;
+// Memory
+var _Memory;
+var _MemoryManager;
+// PCB
+var _PCB;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+// Control
+var _Control;
 var _hardwareClockID = null;
+// Single Step Mode
+var _SingleStepMode = false;
+// Cpu Scheduler
+var _cpuScheduler;
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados.js on Labouseur.com.
 var _GLaDOS = null; // If the above is linked in, this is the instantiated instance of Glados.

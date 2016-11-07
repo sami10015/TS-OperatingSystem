@@ -15,6 +15,7 @@
    <script type="text/javascript" src="distrib/host/control.js"></script>
    <script type="text/javascript" src="distrib/host/devices.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
+   <script type="text/javascript" src="distrib/host/memory.js"></script>
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -27,18 +28,22 @@
    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
+   <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
+   <script type="text/javascript" src="distrib/os/processControlBlock.js"></script>
+   <script type="text/javascript" src="distrib/os/cpuScheduler.js"></script>
+
 
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment this line below to enable GLaDOS testing -->
-   <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip1.js"></script>
+   <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip3.js"></script>
 </head>
 
 <body onload="onDocumentLoad()">
 
 <div id="divMain" style="width:100%;">
 
-   <div id="divButtonBar" style="margin:4px;">
+   <div id="divButtonBar" style="margin:5px;">
       <input type="button"
              id = "btnStartOS"
              name="brnStartOS"
@@ -64,6 +69,25 @@
              value="Reset"
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
+
+      <input type="button"
+             id = "btnSingleStepToggle"
+             name="btnSingleStepToggle"
+             class="normal_button"
+             disabled="disabled"
+             value="Single Step: Off"
+             tabindex="4"
+             onclick="TSOS.Control.hostBtnSingleStepToggle_click(this);">
+
+      <input type="button"
+             id = "btnStep"
+             name="btnStep"
+             class="normal_button"
+             disabled="disabled"
+             value=">"
+             tabindex="3"
+             style="padding:0px;"
+             onclick="TSOS.Control.hostBtnStep(this);">
    </div>
    <div id = "time_status_container">
 		<label id = "Time" style = "color:white"> Time: 00:00:00 AM </label>
@@ -77,6 +101,31 @@
       </canvas>
    </div>
 
+   <div id="cpu" class = "cpuDisplay">
+      <label id = "cpuLabel"> CPU Display </label>
+      <table id = "cpuTable" cellpadding="10">
+      <tr>
+        <th>PC</th>
+        <th>AC</th>
+        <th>IR</th>
+        <th>X</th>
+        <th>Y</th>
+        <th>Z</th>
+      </tr>
+      <tbody id = "cpuTableBody">
+        <tr>
+          <td>0</td>
+          <td>0</td>
+          <td>00</td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+      </tbody>
+      </table>
+   </div>
+
+
    <div id="divLog" style="margin-left:520px;">
       <label style="color:white">
          Host Log
@@ -89,6 +138,71 @@
       </label>
    </div>
 
+   <br>
+
+   <div id= "process_mem">
+    <label id ="processLabel"> Process Memory </label>
+    <table id = "processMemTable" cellpadding="15">
+    
+      <tbody id = "body">
+        <tr>
+          <td> 0x000 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+          <td> 0 </td>
+        </tr>
+      </tbody>
+    </table>
+   </div>
+
+<script>
+  var table = document.getElementById("processMemTable");
+  var j = 1;
+    for(var i = 0; i <= 760; i+=8){
+        var row = table.insertRow(j);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+        var cell4 = row.insertCell(3);
+        var cell5 = row.insertCell(4);
+        var cell6 = row.insertCell(5);
+        var cell7 = row.insertCell(6);
+        var cell8 = row.insertCell(7);
+        var cell9 = row.insertCell(8);
+
+        var hexRow = i.toString(16);
+
+        if(i != 0){
+          cell1.innerHTML = "0x";
+          if(hexRow.length == 1){
+            cell1.innerHTML += "00" + hexRow;
+          }else if(hexRow.length == 2){
+            cell1.innerHTML += "0" + hexRow;
+          }else{
+            cell1.innerHTML += hexRow;
+          }
+          cell2.innerHTML = "0";
+          cell3.innerHTML = "0";
+          cell4.innerHTML = "0";
+          cell5.innerHTML = "0";
+          cell6.innerHTML = "0";
+          cell7.innerHTML = "0";
+          cell8.innerHTML = "0";
+          cell9.innerHTML = "0";
+          j++;
+        }
+        
+        
+    }
+</script>
+  
+  
+
    <div id="divUserProgramInput" style="margin-left:520px;">
       <label style="color:black">
          User Program Input
@@ -97,10 +211,35 @@
                    id  ="taProgramInput"
                    rows="8"
                    cols="48"
-         ></textarea>
+         >A9 00 8D 00 00 A9 00 8D 4B 00 A9 00 8D 4B 00 A2 03 EC 4B 00 D0 07 A2 01 EC 00 00 D0 05 A2 00 EC 00 00 D0 26 A0 4C A2 02 FF AC 4B 00 A2 01 FF A9 01 6D 4B 00 8D 4B 00 A2 02 EC 4B 00 D0 05 A0 55 A2 02 FF A2 01 EC 00 00 D0 C5 00 00 63 6F 75 6E 74 69 6E 67 00 68 65 6C 6C 6F 20 77 6F 72 6C 64 00</textarea>
       </label>
    </div>
 </div>
+
+<br>
+
+<div id="divPCB">
+  <label id = "PCB_Label"> Processes </label>
+  <table id = "PCB_Table" cellpadding="15">    
+      <tbody id = "body">
+        <tr>
+          <th> PID </th>
+          <th> State </th>
+          <th> PC </th>
+          <th> AC </th>
+          <th> IR </th>
+          <th> X </th>
+          <th> Y </th>
+          <th> Z </th>
+          <th> Base </th>
+          <th> Limit </th>
+          <th> Part </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <br><br><br>
 
 <p class="footerText" style="clear:both;">
    <br>

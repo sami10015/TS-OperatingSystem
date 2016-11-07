@@ -20,7 +20,15 @@ const TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (inte
                               // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 const KEYBOARD_IRQ: number = 1;
 
+const SYSTEM_CALL_IRQ: number = 2;
 
+const STEP_IRQ: number = 3;
+
+const STEP_TOGGLE_IRQ: number = 4;
+
+const CONTEXT_SWITCH_IRQ: number = 5;
+
+const KILL_IRQ: number = 6;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
@@ -53,13 +61,29 @@ var _StdOut;
 var _Console: TSOS.Console;
 var _OsShell: TSOS.Shell;
 
+// Memory
+var _Memory: TSOS.Memory;
+var _MemoryManager: TSOS.MemoryManager;
+
+// PCB
+var _PCB: TSOS.PCB;
+
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
 
+// Control
+var _Control: TSOS.Control;
+
 var _hardwareClockID: number = null;
+
+// Single Step Mode
+var _SingleStepMode: boolean = false;
+
+// Cpu Scheduler
+var _cpuScheduler: TSOS.cpuScheduler;
 
 // For testing (and enrichment)...
 var Glados: any = null;  // This is the function Glados() in glados.js on Labouseur.com.
