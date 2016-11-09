@@ -207,6 +207,8 @@ var TSOS;
         MemoryManager.prototype.getVariable = function (location) {
             if ((location > _PCB.Limit || location < _PCB.Base)) {
                 _StdOut.putText("Memory Access Violation!");
+                //Finish this part to kill the process
+                _OsShell.kill(_PCB.PID);
             }
             else {
                 return _Memory.memory[location];
@@ -220,6 +222,8 @@ var TSOS;
         MemoryManager.prototype.writeOPCode = function (constant, address) {
             if (address > _PCB.Limit || address < _PCB.Base) {
                 _StdOut.putText("Memory Access Violation!");
+                //Finish this part to kill the process
+                _OsShell.kill(_PCB.PID);
             }
             else {
                 _Memory.memory[address] = constant;

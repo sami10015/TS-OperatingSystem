@@ -134,6 +134,9 @@ module TSOS{
 					this.readyQueue.q[i].rowNumber -= 1
 				}
 			}
+			if(_PCB.PID > 1){
+				_PCB.rowNumber -= 1;
+			}
 		}
 
 	}

@@ -120,7 +120,6 @@ var TSOS;
                 if (_PCB.State != "TERMINATED") {
                     _PCB.displayPCB();
                 }
-                //_cpuScheduler.displayReadyQueue();
                 _MemoryManager.updateBlock(_PCB.PID); //Update Memory Table
                 _PCB.setIR(operation[i]); //Change IR in PCB
                 this.updateCpuTable();
@@ -145,7 +144,7 @@ var TSOS;
             _PCB.clearPCB();
             //End CPU Cycle here depending on type of command(single run, or runall)
             if (_cpuScheduler.count != _cpuScheduler.quantum) {
-                _cpuScheduler.contextSwitch();
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event')); //Call An Interrupt
             }
             if (!_cpuScheduler.RR) {
                 this.isExecuting = false;
