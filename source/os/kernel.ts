@@ -134,9 +134,6 @@ module TSOS {
                     break;
                 case STEP_TOGGLE_IRQ: //Step Toggle Interrupt
                     break;
-                case CONTEXT_SWITCH_IRQ: //Context Switch Interrupt
-                    _cpuScheduler.contextSwitch();
-                    break;
                 case KILL_IRQ: //KILL Interrupt
                     var PID = params;
                     //If nothing is running then print no active process
@@ -149,14 +146,17 @@ module TSOS {
                             if(_cpuScheduler.readyQueue.q[i].PID == PID){
                                 _MemoryManager.clearBlock(PID); //Clear memory block
                                 _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
+                                _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                 _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
                                 _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
-                                _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                 _Console.advanceLine();
                                 break;
                             }
                         }
                     }
+                    break;
+                case CONTEXT_SWITCH_IRQ: //Context Switch Interrupt
+                    _cpuScheduler.contextSwitch();
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");

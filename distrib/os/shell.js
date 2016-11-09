@@ -472,6 +472,13 @@ var TSOS;
             else {
                 _MemoryManager.clearAll();
                 _cpuScheduler.clearMem();
+                for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                    //Has not been executed
+                    if (_cpuScheduler.residentList[i].State == '') {
+                        _MemoryManager.executedPID.push(_cpuScheduler.residentList[i].PID);
+                        _cpuScheduler.residentList[i].State = "TERMINATED";
+                    }
+                }
             }
         };
         //Change the quantum for round robin
@@ -487,15 +494,35 @@ var TSOS;
         //Run all command
         Shell.prototype.runall = function () {
             //If it is one, just perform a single run
-            if (_cpuScheduler.residentList.length == 1) {
-                this.shellRun(_cpuScheduler.residentList[0].PID);
+            var singleRunCounter = 0;
+            var index = 0;
+            for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                if (_cpuScheduler.residentList[i].State == '') {
+                    singleRunCounter++;
+                    index = i;
+                }
+            }
+            if (singleRunCounter == 1) {
+                this.shellRun(_cpuScheduler.residentList[index].PID);
             }
             else {
-                _cpuScheduler.loadReadyQueue(); //Load the ready queue
-                _cpuScheduler.RR = true; //Change cpu technique to round robin
-                _PCB.State = "Ready";
-                _cpuScheduler.displayReadyQueue();
-                _CPU.isExecuting = true; //Start the CPU
+                var x = false;
+                for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                    if (_cpuScheduler.residentList[i].State == '') {
+                        x = true;
+                    }
+                }
+                //Check if any of the programs can be executed
+                if (x) {
+                    _cpuScheduler.loadReadyQueue(); //Load the ready queue
+                    _cpuScheduler.RR = true; //Change cpu technique to round robin
+                    _PCB.State = "Ready";
+                    _cpuScheduler.displayReadyQueue();
+                    _CPU.isExecuting = true; //Start the CPU
+                }
+                else {
+                    _StdOut.putText("No programs to execute");
+                }
             }
         };
         //Displays active processes

@@ -107,7 +107,6 @@ module TSOS {
                 if(_PCB.State != "TERMINATED"){
                     _PCB.displayPCB();
                 }
-                //_cpuScheduler.displayReadyQueue();
                 _MemoryManager.updateBlock(_PCB.PID); //Update Memory Table
                 _PCB.setIR(operation[i]); //Change IR in PCB
                 this.updateCpuTable();
@@ -136,7 +135,7 @@ module TSOS {
             
             //End CPU Cycle here depending on type of command(single run, or runall)
             if(_cpuScheduler.count != _cpuScheduler.quantum){//If the count isn't at the quantum yet but there are programs still running
-                _cpuScheduler.contextSwitch();
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event')); //Call An Interrupt
             }
             if(!_cpuScheduler.RR){//Single run
                 this.isExecuting = false;
