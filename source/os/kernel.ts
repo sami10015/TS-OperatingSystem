@@ -47,9 +47,6 @@ module TSOS {
             _krnHardDriveDriver.driverEntry();
             this.krnTrace(_krnHardDriveDriver.status);
 
-            //
-            // ... more?
-            //
 
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");

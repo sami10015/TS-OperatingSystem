@@ -62,6 +62,8 @@ var _hardwareClockID = null;
 var _SingleStepMode = false;
 // Cpu Scheduler
 var _cpuScheduler;
+//Hard Drive
+var _hardDrive;
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados.js on Labouseur.com.
 var _GLaDOS = null; // If the above is linked in, this is the instantiated instance of Glados.
