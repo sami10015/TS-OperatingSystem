@@ -14,7 +14,7 @@ module TSOS {
     // Extends DeviceDriver
     export class deviceDriverHDD extends DeviceDriver {
 
-        constructor(public formatted) {
+        constructor(public formatted = false) {
             // Override the base method pointers.
 
             // The code below cannot run because "this" can only be
@@ -22,7 +22,6 @@ module TSOS {
             //super(this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
             super();
             this.driverEntry = this.krnHDDDriverEntry;
-            this.formatted = false;
         }
 
         public krnHDDDriverEntry() {

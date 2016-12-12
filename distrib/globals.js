@@ -54,6 +54,7 @@ var _PCB;
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+var _krnHardDriveDriver;
 // Control
 var _Control;
 var _hardwareClockID = null;

@@ -73,6 +73,7 @@ var _SarcasticMode: boolean = false;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+var _krnHardDriveDriver;
 
 // Control
 var _Control: TSOS.Control;

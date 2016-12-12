@@ -19,13 +19,13 @@ var TSOS;
         __extends(deviceDriverHDD, _super);
         function deviceDriverHDD(formatted) {
             // Override the base method pointers.
+            if (formatted === void 0) { formatted = false; }
             // The code below cannot run because "this" can only be
             // accessed after calling super.
             //super(this.krnKbdDriverEntry, this.krnKbdDispatchKeyPress);
             _super.call(this);
             this.formatted = formatted;
             this.driverEntry = this.krnHDDDriverEntry;
-            this.formatted = false;
         }
         deviceDriverHDD.prototype.krnHDDDriverEntry = function () {
             // Initialization routine for this, the kernel-mode File System Device Driver.
