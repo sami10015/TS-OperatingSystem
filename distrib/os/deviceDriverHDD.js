@@ -100,8 +100,8 @@ var TSOS;
             emptyData = emptyDataArray.join("");
             _hardDrive.write(emptyDataTSB, emptyData);
             //Find first empty file in the directory
-            for (var i = 0; i < 999; i++) {
-                var TSB = _hardDrive.TSBList[i];
+            for (var j = 0; j < 999; j++) {
+                var TSB = _hardDrive.TSBList[j];
                 var validInvalidBit = _hardDrive.read(TSB).split("")[0];
                 //Full on files
                 if (TSB == "100") {
@@ -173,7 +173,15 @@ var TSOS;
             TSB += currentTSBDataArray[3];
             for (var i = 0; i < linkCount; i++) {
                 var x = 0;
-                var inputData = '';
+                //Start with 1 for invalid/valid bit
+                var inputData = '1';
+                //If there is no other link, do not fill link TSB
+                if (i === linkCount - 1) {
+                    inputData += '---';
+                }
+                else {
+                    inputData += this.krnHDDFindEmptyDataBlock();
+                }
                 while (x < 60) {
                     if (hexDataCount >= hexData.length) {
                         break;
