@@ -2,7 +2,9 @@
 var TSOS;
 (function (TSOS) {
     var hardDrive = (function () {
-        function hardDrive() {
+        function hardDrive(TSBList) {
+            if (TSBList === void 0) { TSBList = []; }
+            this.TSBList = TSBList;
         }
         //Write data to the HDD
         hardDrive.prototype.write = function (tsb, data) {

@@ -3,7 +3,7 @@
 module TSOS{
 
 	export class hardDrive{
-		constructor(){}
+		constructor(public TSBList = []){}
 
 		//Write data to the HDD
 		public write(tsb, data){

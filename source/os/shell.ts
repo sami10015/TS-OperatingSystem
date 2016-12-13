@@ -663,10 +663,19 @@ module TSOS {
                 _StdOut.putText("Format HDD first!");
             }else if(params == ''){//Cant be empty
                 _StdOut.putText("Give a filename!")
-            }else if(params.length > 30){//Use 30 here because each hex character code is 2 bits
+            }else if(params.length > 1){
+                _StdOut.putText("Do not put space in file name!");
+            }else if(params[0].length > 30){//Use 30 here because each hex character code is 2 bits
                 _StdOut.putText("File name too large!");
             }else{//Create file
-                _krnHardDriveDriver.krnHDDCreateFile(params.toString());
+                //Full on files if return false
+                if(_krnHardDriveDriver.krnHDDCreateFile(params.toString()) == -1){
+                    _StdOut.putText("No more file space");
+                }else if(_krnHardDriveDriver.krnHDDCreateFile(params.toString()) == 0){
+                    _StdOut.putText("File has already been created");
+                }else{ //Succesfully created the file
+                    _StdOut.putText("Created file " + params);
+                }
             }
         }
     }

@@ -56,6 +56,7 @@ module TSOS {
                 //If the TSB is the first, format it correctly
                 if(track == 0 && sector == 0 && block == 0){
                     _hardDrive.write(TSB,firstTSB);
+                    _hardDrive.TSBList.push(TSB);
                     //Increment block
                     block++;
                 }else{ //Fill otherwise
@@ -71,6 +72,7 @@ module TSOS {
                     }
 
                     TSB = track.toString() + sector.toString() + block.toString();
+                    _hardDrive.TSBList.push(TSB);
                     _hardDrive.write(TSB,emptyData);
 
                     block++;
@@ -80,18 +82,56 @@ module TSOS {
             this.updateHDDTable();
         }
 
+        //Function to create a file
         public krnHDDCreateFile(fileName){
             //Change file name letters to hex
             var newFileName = fileName.split("");
-            var hexFileName = [];
+            var hexFileNameList = [];
             for(var i = 0; i < newFileName.length; i++){
-                hexFileName.push(newFileName[i].charCodeAt(0).toString(16))
+                hexFileNameList.push(newFileName[i].charCodeAt(0).toString(16))
             }
-            console.log(hexFileName);
-            //First find first empty file in the dir 
-            //Second change file name to hex and place those bits in the data
-            //Third to the end of the free data)
-            //Update the table
+ 
+            //Find first empty file in the directory
+            for(var i = 0; i < 999; i++){
+                var TSB = _hardDrive.TSBList[i];
+                var validInvalidBit = _hardDrive.read(TSB).split("")[0];
+                //Full on files
+                if(TSB == "100"){
+                    return -1;
+                }
+                //Check if file is already created
+                if(validInvalidBit == '1' && i > 0){
+                    //Get file data and match count of file name
+                    var data = _hardDrive.read(TSB).split("");
+                    var compareData = '1---';
+                    //Create comparison data
+                    for(var i = 0; i < hexFileNameList.length; i++){
+                        compareData += hexFileNameList[i];
+                    }
+                    //Append 0s to the end of file name
+                    for(var i = compareData.length-1; i < 64; i++){
+                        compareData += '0';
+                    }
+                    //If they are the same, then the file has already been created
+                    if(data.join("") == compareData){
+                        return 0;
+                    }
+                }else if(validInvalidBit == '0' && i > 0){ //Found an empty not in use file
+                    //Create data for file
+                    var data = '1---';
+                    for(var i = 0; i < hexFileNameList.length; i++){
+                        data += hexFileNameList[i];
+                    }
+                    //Append 0s to the end of file name
+                    for(var i = data.length-1; i < 64; i++){
+                        data += '0';
+                    }
+                    //Write to HDD and update HDD Table
+                    _hardDrive.write(TSB, data);
+                    this.updateHDDTable();
+                    return 1;
+                }
+            }
         }
 
         public updateHDDTable(): void{

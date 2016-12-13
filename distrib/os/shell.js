@@ -576,11 +576,23 @@ var TSOS;
             else if (params == '') {
                 _StdOut.putText("Give a filename!");
             }
-            else if (params.length > 30) {
+            else if (params.length > 1) {
+                _StdOut.putText("Do not put space in file name!");
+            }
+            else if (params[0].length > 30) {
                 _StdOut.putText("File name too large!");
             }
             else {
-                _krnHardDriveDriver.krnHDDCreateFile(params.toString());
+                //Full on files if return false
+                if (_krnHardDriveDriver.krnHDDCreateFile(params.toString()) == -1) {
+                    _StdOut.putText("No more file space");
+                }
+                else if (_krnHardDriveDriver.krnHDDCreateFile(params.toString()) == 0) {
+                    _StdOut.putText("File has already been created");
+                }
+                else {
+                    _StdOut.putText("Created file " + params);
+                }
             }
         };
         return Shell;
