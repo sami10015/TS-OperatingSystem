@@ -668,10 +668,11 @@ module TSOS {
             }else if(params[0].length > 30){//Use 30 here because each hex character code is 2 bits
                 _StdOut.putText("File name too large!");
             }else{//Create file
+                var resultNum = _krnHardDriveDriver.krnHDDCreateFile(params.toString())
                 //Full on files if return false
-                if(_krnHardDriveDriver.krnHDDCreateFile(params.toString()) == -1){
+                if(resultNum == -1){
                     _StdOut.putText("No more file space");
-                }else if(_krnHardDriveDriver.krnHDDCreateFile(params.toString()) == 0){
+                }else if(resultNum == 0){ //File has already been created
                     _StdOut.putText("File has already been created");
                 }else{ //Succesfully created the file
                     _StdOut.putText("Created file " + params);

@@ -123,7 +123,7 @@ module TSOS {
                         data2 += hexFileNameList[i];
                     }
                     //Append 0s to the end of file name
-                    for(var i = data.length-1; i < 64; i++){
+                    for(var i = data2.length-1; i < 64; i++){
                         data2 += '0';
                     }
                     //Write to HDD and update HDD Table

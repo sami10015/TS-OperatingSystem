@@ -583,11 +583,12 @@ var TSOS;
                 _StdOut.putText("File name too large!");
             }
             else {
+                var resultNum = _krnHardDriveDriver.krnHDDCreateFile(params.toString());
                 //Full on files if return false
-                if (_krnHardDriveDriver.krnHDDCreateFile(params.toString()) == -1) {
+                if (resultNum == -1) {
                     _StdOut.putText("No more file space");
                 }
-                else if (_krnHardDriveDriver.krnHDDCreateFile(params.toString()) == 0) {
+                else if (resultNum == 0) {
                     _StdOut.putText("File has already been created");
                 }
                 else {
