@@ -89,6 +89,9 @@ var TSOS;
             // format
             sc = new TSOS.ShellCommand(this.format, "format", " - Format the HDD");
             this.commandList[this.commandList.length] = sc;
+            // create
+            sc = new TSOS.ShellCommand(this.createFile, "create", "<string> - Create a file");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -294,6 +297,9 @@ var TSOS;
                         break;
                     case "format":
                         _StdOut.putText("Format the HDD");
+                        break;
+                    case "create":
+                        _StdOut.putText("<String> - Create a file");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -567,10 +573,14 @@ var TSOS;
             if (!_krnHardDriveDriver.formatted) {
                 _StdOut.putText("Format HDD first!");
             }
-            else if (params.length > 60) {
+            else if (params == '') {
+                _StdOut.putText("Give a filename!");
+            }
+            else if (params.length > 30) {
                 _StdOut.putText("File name too large!");
             }
             else {
+                _krnHardDriveDriver.krnHDDCreateFile(params.toString());
             }
         };
         return Shell;

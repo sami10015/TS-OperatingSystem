@@ -158,6 +158,12 @@ module TSOS {
                                     " - Format the HDD");
             this.commandList[this.commandList.length] = sc;
 
+            // create
+            sc = new ShellCommand(this.createFile,
+                                    "create",
+                                    "<string> - Create a file");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -376,6 +382,9 @@ module TSOS {
                         break;
                     case "format":
                         _StdOut.putText("Format the HDD");
+                        break;
+                    case "create":
+                        _StdOut.putText("<String> - Create a file");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -650,12 +659,14 @@ module TSOS {
 
         //Create file name
         public createFile(params){
-            if(!_krnHardDriveDriver.formatted){
+            if(!_krnHardDriveDriver.formatted){//Check if it is formatted first
                 _StdOut.putText("Format HDD first!");
-            }else if(params.length > 60){
+            }else if(params == ''){//Cant be empty
+                _StdOut.putText("Give a filename!")
+            }else if(params.length > 30){//Use 30 here because each hex character code is 2 bits
                 _StdOut.putText("File name too large!");
-            }else{
-                
+            }else{//Create file
+                _krnHardDriveDriver.krnHDDCreateFile(params.toString());
             }
         }
     }

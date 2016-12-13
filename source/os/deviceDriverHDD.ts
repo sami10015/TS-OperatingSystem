@@ -82,10 +82,10 @@ module TSOS {
 
         public krnHDDCreateFile(fileName){
             //Change file name letters to hex
-            var fileName = fileName.split("");
-            var hexFileName = '';
-            for(var i = 0; i < fileName.length; i++){
-                hexFileName += fileName.charCodeAt(i).toString(16);
+            var newFileName = fileName.split("");
+            var hexFileName = [];
+            for(var i = 0; i < newFileName.length; i++){
+                hexFileName.push(newFileName[i].charCodeAt(0).toString(16))
             }
             console.log(hexFileName);
             //First find first empty file in the dir 
