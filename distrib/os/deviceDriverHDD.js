@@ -80,6 +80,19 @@ var TSOS;
             this.formatted = true;
             this.updateHDDTable();
         };
+        DeviceDriverHDD.prototype.krnHDDCreateFile = function (fileName) {
+            //Change file name letters to hex
+            var fileName = fileName.split("");
+            var hexFileName = '';
+            for (var i = 0; i < fileName.length; i++) {
+                hexFileName += fileName.charCodeAt(i).toString(16);
+            }
+            console.log(hexFileName);
+            //First find first empty file in the dir 
+            //Second change file name to hex and place those bits in the data
+            //Third to the end of the free data)
+            //Update the table
+        };
         DeviceDriverHDD.prototype.updateHDDTable = function () {
             var table = document.getElementById("hardDriveTable");
             var j = 1;

@@ -562,6 +562,17 @@ var TSOS;
             _krnHardDriveDriver.krnHDDformat();
             _StdOut.putText("Hard Drive has been formatted!");
         };
+        //Create file name
+        Shell.prototype.createFile = function (params) {
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else if (params.length > 60) {
+                _StdOut.putText("File name too large!");
+            }
+            else {
+            }
+        };
         return Shell;
     }());
     TSOS.Shell = Shell;

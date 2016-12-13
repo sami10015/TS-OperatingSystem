@@ -80,6 +80,20 @@ module TSOS {
             this.updateHDDTable();
         }
 
+        public krnHDDCreateFile(fileName){
+            //Change file name letters to hex
+            var fileName = fileName.split("");
+            var hexFileName = '';
+            for(var i = 0; i < fileName.length; i++){
+                hexFileName += fileName.charCodeAt(i).toString(16);
+            }
+            console.log(hexFileName);
+            //First find first empty file in the dir 
+            //Second change file name to hex and place those bits in the data
+            //Third to the end of the free data)
+            //Update the table
+        }
+
         public updateHDDTable(): void{
             var table = (<HTMLTableElement>document.getElementById("hardDriveTable"));
             var j = 1;
