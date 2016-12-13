@@ -691,7 +691,6 @@ module TSOS {
 
         //Write to file
         public writeFile(params){
-            console.log(params)
             //Check if the HDD is formatted first
             if(!_krnHardDriveDriver.formatted){
                 _StdOut.putText("Format HDD first!");
@@ -699,16 +698,20 @@ module TSOS {
                 _StdOut.putText("Give a filename and data!");
             }else if(params.length < 2){//Check if filename and data are both given
                 _StdOut.putText("Must give filename and data params!");
-            }else if(params[1].charAt(0) != "\"" || params[1].charAt(params.length-1) != "\""){
+            }else if(params[1].charAt(0) != "\"" || params[1].charAt(params[1].length-1) != "\""){//Data must be in quotations
                 _StdOut.putText("Data must have quotations around it");
+            }else if(_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false){//Check if file exists
+                _StdOut.putText("File does not exist");
             }else{
                 _StdOut.putText("Wrote data");
+                //Recreate data without quotations
+                var data = ''
+                for(var i = 1; i < params[1].length-1; i++){
+                    data += params[1].charAt(i);
+                }
+                console.log(data);
+                //_krnHardDriveDriver.krnHDDWriteFile(params[0].toString(), data)
             }
-            //Check if nothing
-            //Check if file and data are given
-            //Check if quotations are around data
-            //Check if file has not been created
-            //Write to file
         }
     }
 }
