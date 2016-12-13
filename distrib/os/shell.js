@@ -92,6 +92,9 @@ var TSOS;
             // create
             sc = new TSOS.ShellCommand(this.createFile, "create", "<string> - Create a file");
             this.commandList[this.commandList.length] = sc;
+            // write
+            sc = new TSOS.ShellCommand(this.writeFile, "write", "<string> <string> - Write to file");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -300,6 +303,9 @@ var TSOS;
                         break;
                     case "create":
                         _StdOut.putText("<String> - Create a file");
+                        break;
+                    case "write":
+                        _StdOut.putText("<String> <String> - Write to file");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -595,6 +601,14 @@ var TSOS;
                     _StdOut.putText("Created file " + params);
                 }
             }
+        };
+        //Write to file
+        Shell.prototype.writeFile = function (params) {
+            //Check if nothing
+            //Check if file and data are given
+            //Check if quotations are around data
+            //Check if file has not been created
+            //Write to file
         };
         return Shell;
     }());

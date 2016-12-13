@@ -23,11 +23,13 @@ module TSOS {
             this.driverEntry = this.krnHDDDriverEntry;
         }
 
+        //Load the driver
         public krnHDDDriverEntry() {
             // Initialization routine for this, the kernel-mode File System Device Driver.
             this.status = "loaded";
         }
 
+        //Format the HDD
         public krnHDDformat(){
             //Format the first TSB 
             var firstTSB = "1---MBR";
@@ -130,6 +132,44 @@ module TSOS {
                     _hardDrive.write(TSB, data2);
                     this.updateHDDTable();
                     return 1;
+                }
+            }
+        }
+
+        public krnHDDWriteFile(filename, data){
+            if(!this.krnHDDCheckFileExists(filename)){
+                return 0;
+            }
+        }
+
+        public krnHDDCheckFileExists(fileName){
+            //Change file name letters to hex
+            var newFileName = fileName.split("");
+            var hexFileNameList = [];
+            for(var i = 0; i < newFileName.length; i++){
+                hexFileNameList.push(newFileName[i].charCodeAt(0).toString(16))
+            }
+            //Loop through all of the TSBs
+            for(var i = 0; i < _hardDrive.TSBList.length; i++){
+                var TSB = _hardDrive.TSBList[i];
+                //It has reached the end and no file exists
+                if(TSB == '100'){
+                    return false;
+                }
+                //Get file data and match count of file name
+                var data = _hardDrive.read(TSB).split("");
+                var compareData = '1---';
+                //Create comparison data
+                for(var i = 0; i < hexFileNameList.length; i++){
+                    compareData += hexFileNameList[i];
+                }
+                //Append 0s to the end of file name
+                for(var i = compareData.length-1; i < 64; i++){
+                    compareData += '0';
+                }
+                //If they are the same, then the file has already been created
+                if(data.join("") == compareData){
+                    return true;
                 }
             }
         }
