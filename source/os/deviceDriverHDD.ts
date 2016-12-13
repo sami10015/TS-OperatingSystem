@@ -164,8 +164,15 @@ module TSOS {
             //Split string back into array to make life easier
             hexData = hexDataString.split("");
             var hexDataCount = 0;
+            //Get current TSB
+            var TSB = this.krnHDDFindFileBlock(filename);
+            var currentTSBData = _hardDrive.read(TSB);
+            var currentTSBDataArray = currentTSBData.split("");
+            TSB = '';
+            TSB += currentTSBDataArray[1];
+            TSB += currentTSBDataArray[2];
+            TSB += currentTSBDataArray[3];
             for(var i = 0; i < linkCount; i++){
-                var TSB = this.krnHDDFindEmptyDataBlock();
                 var x = 0;
                 var inputData = ''
                 while(x < 60){
@@ -177,6 +184,7 @@ module TSOS {
                     x++;
                 }
                 _hardDrive.write(TSB, inputData);
+                TSB = this.krnHDDFindEmptyDataBlock();
             }
             this.updateHDDTable()            
         }
@@ -207,10 +215,6 @@ module TSOS {
                 for(var y = compareData.length-1; y < 59; y++){
                     compareData += '0';
                 }
-                console.log(data);
-                console.log(data.length)
-                console.log(compareData);
-                console.log(compareData.length)
                 //If they are the same, then the file has already been created
                 if(data.join("") == compareData){
                     return true;
@@ -238,7 +242,7 @@ module TSOS {
                     compareData += hexFileNameList[x];
                 }
                 //Append 0s to the end of file name
-                for(var y = compareData.length-1; y < 60; y++){
+                for(var y = compareData.length-1; y < 59; y++){
                     compareData += '0';
                 }
                 //If they are the same, then the file has already been created
