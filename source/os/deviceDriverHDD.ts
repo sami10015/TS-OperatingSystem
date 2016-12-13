@@ -133,7 +133,7 @@ module TSOS {
                         data2 += hexFileNameList[i];
                     }
                     //Append 0s to the end of file name
-                    for(var i = data2.length-1; i < 60; i++){
+                    for(var i = data2.length-1; i < 63; i++){
                         data2 += '0';
                     }
                     //Write to HDD and update HDD Table
@@ -204,9 +204,13 @@ module TSOS {
                     compareData += hexFileNameList[x];
                 }
                 //Append 0s to the end of file name
-                for(var y = compareData.length-1; y < 60; y++){
+                for(var y = compareData.length-1; y < 59; y++){
                     compareData += '0';
                 }
+                console.log(data);
+                console.log(data.length)
+                console.log(compareData);
+                console.log(compareData.length)
                 //If they are the same, then the file has already been created
                 if(data.join("") == compareData){
                     return true;
