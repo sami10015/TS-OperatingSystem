@@ -117,22 +117,23 @@ var TSOS;
                     }
                 }
                 else if (validInvalidBit == '0' && i > 0) {
-                    //Create data for file
-                    var data = '1---';
+                    //Create data for file(For some reason I have to use different variable names for compiling to work)
+                    var data2 = '1---';
                     for (var i = 0; i < hexFileNameList.length; i++) {
-                        data += hexFileNameList[i];
+                        data2 += hexFileNameList[i];
                     }
                     //Append 0s to the end of file name
                     for (var i = data.length - 1; i < 64; i++) {
-                        data += '0';
+                        data2 += '0';
                     }
                     //Write to HDD and update HDD Table
-                    _hardDrive.write(TSB, data);
+                    _hardDrive.write(TSB, data2);
                     this.updateHDDTable();
                     return 1;
                 }
             }
         };
+        //Update the HTML table, soon to be moved elsewhere
         DeviceDriverHDD.prototype.updateHDDTable = function () {
             var table = document.getElementById("hardDriveTable");
             var j = 1;
