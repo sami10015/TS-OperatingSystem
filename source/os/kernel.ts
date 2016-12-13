@@ -43,7 +43,7 @@ module TSOS {
 
             //Load The HDD Device Driver
             this.krnTrace("Loading the Hard Drive device driver");
-            _krnHardDriveDriver = new deviceDriverHDD();
+            _krnHardDriveDriver = new DeviceDriverHDD();
             _krnHardDriveDriver.driverEntry();
             this.krnTrace(_krnHardDriveDriver.status);
 

@@ -152,6 +152,12 @@ module TSOS {
                                     " - Kill active process");
             this.commandList[this.commandList.length] = sc;
 
+            // format
+            sc = new ShellCommand(this.format,
+                                    "format",
+                                    " - Format the HDD");
+            this.commandList[this.commandList.length] = sc;
+
 
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -367,6 +373,9 @@ module TSOS {
                         break;
                     case "kill":
                         _StdOut.putText("Kill Active Processes");
+                        break;
+                    case "format":
+                        _StdOut.putText("Format the HDD");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -631,6 +640,12 @@ module TSOS {
         public kill(params){
             var PID = parseInt(params); //Get PID as a integer
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(KILL_IRQ, PID)); //Call An Interrupt
+        }
+
+        //Format
+        public format(){
+            _krnHardDriveDriver.krnHDDformat();
+            _StdOut.putText("Hard Drive has been formatted!");
         }
     }
 }

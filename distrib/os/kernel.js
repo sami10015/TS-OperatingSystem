@@ -38,7 +38,7 @@ var TSOS;
             this.krnTrace(_krnKeyboardDriver.status);
             //Load The HDD Device Driver
             this.krnTrace("Loading the Hard Drive device driver");
-            _krnHardDriveDriver = new TSOS.deviceDriverHDD();
+            _krnHardDriveDriver = new TSOS.DeviceDriverHDD();
             _krnHardDriveDriver.driverEntry();
             this.krnTrace(_krnHardDriveDriver.status);
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)

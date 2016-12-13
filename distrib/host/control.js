@@ -139,6 +139,38 @@ var TSOS;
                 console.log(_Memory.memory);
             }
         };
+        Control.prototype.updateHDDTable = function () {
+            var table = document.getElementById("hardDriveTable");
+            var j = 1;
+            //Form TSB Display
+            var track = 0;
+            var sector = 0;
+            var block = 0;
+            //Create Table
+            for (var i = 0; i <= 999; i++) {
+                if (track == 3 && sector == 7 && block == 8) {
+                    break;
+                }
+                var row = table.insertRow(j);
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+                //Change block, sector, and track numbers
+                if (block == 8) {
+                    block = 0;
+                    sector++;
+                }
+                if (sector == 8) {
+                    block = 0;
+                    sector = 0;
+                    track++;
+                }
+                cell1.innerHTML = track.toString() + ':' + sector.toString() + ':' + block.toString();
+                var TSB = track.toString() + sector.toString() + block.toString();
+                cell2.innerHTML = _hardDrive.read(TSB);
+                block++;
+                j++;
+            }
+        };
         return Control;
     }());
     TSOS.Control = Control;

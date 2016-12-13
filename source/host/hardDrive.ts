@@ -5,16 +5,14 @@ module TSOS{
 	export class hardDrive{
 		constructor(){}
 
+		//Write data to the HDD
 		public write(tsb, data){
-
+			sessionStorage[tsb] = data;
 		}
 
-		public delete(tsb){
-
-		}
-
+		//Return data from the HDD
 		public read(tsb){
-			
+			return sessionStorage[tsb];
 		}
 	}
 }
