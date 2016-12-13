@@ -92,13 +92,6 @@ var TSOS;
             for (var i = 0; i < newFileName.length; i++) {
                 hexFileNameList.push(newFileName[i].charCodeAt(0).toString(16));
             }
-            //Get empty data block and changed its bit to 1
-            var emptyDataTSB = this.krnHDDFindEmptyDataBlock();
-            var emptyData = _hardDrive.read(emptyDataTSB);
-            var emptyDataArray = emptyData.split("");
-            emptyDataArray[0] = '1';
-            emptyData = emptyDataArray.join("");
-            _hardDrive.write(emptyDataTSB, emptyData);
             //Find first empty file in the directory
             for (var j = 0; j < 999; j++) {
                 var TSB = _hardDrive.TSBList[j];
@@ -117,7 +110,7 @@ var TSOS;
                         compareData += hexFileNameList[i];
                     }
                     //Append 0s to the end of file name
-                    for (var x = compareData.length - 1; x < 60; x++) {
+                    for (var x = compareData.length - 1; x < 59; x++) {
                         compareData += '0';
                     }
                     //If they are the same, then the file has already been created
@@ -126,6 +119,13 @@ var TSOS;
                     }
                 }
                 else if (validInvalidBit == '0' && i > 0) {
+                    //Get empty data block and changed its bit to 1
+                    var emptyDataTSB = this.krnHDDFindEmptyDataBlock();
+                    var emptyData = _hardDrive.read(emptyDataTSB);
+                    var emptyDataArray = emptyData.split("");
+                    emptyDataArray[0] = '1';
+                    emptyData = emptyDataArray.join("");
+                    _hardDrive.write(emptyDataTSB, emptyData);
                     //Create data for file(For some reason I have to use different variable names for compiling to work)
                     var data2 = '1' + emptyDataTSB;
                     console.log(data2);
