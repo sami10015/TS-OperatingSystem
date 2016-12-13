@@ -176,18 +176,26 @@ module TSOS {
                 var x = 0;
                 //Start with 1 for invalid/valid bit
                 var inputData = '1';
+
+                //Must quickly make the current TSB bit to 1 so the linkage will be incremented
+                currentTSBData = _hardDrive.read(TSB);
+                var currentTSBDataArray = currentTSBData.split("");
+                currentTSBDataArray[0] = '1';
+                _hardDrive.write(TSB, currentTSBDataArray.join(""));
+
                 //If there is no other link, do not fill link TSB
                 if(i === linkCount-1){
                     inputData += '---';
-                }else{
+                }else{//Otherwise, link
                     inputData += this.krnHDDFindEmptyDataBlock();
                 }
                 while(x < 60){
                     if(hexDataCount >= hexData.length){
-                        break;
+                        inputData += '0'
+                    }else{
+                        inputData += hexData[hexDataCount];
+                        hexDataCount++;
                     }
-                    inputData += hexData[hexDataCount];
-                    hexDataCount++;
                     x++;
                 }
                 _hardDrive.write(TSB, inputData);
