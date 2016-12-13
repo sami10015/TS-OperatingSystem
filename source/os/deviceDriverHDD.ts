@@ -92,6 +92,13 @@ module TSOS {
             for(var i = 0; i < newFileName.length; i++){
                 hexFileNameList.push(newFileName[i].charCodeAt(0).toString(16))
             }
+            //Get empty data block and changed its bit to 1
+            var emptyDataTSB = this.krnHDDFindEmptyDataBlock();
+            var emptyData = _hardDrive.read(emptyDataTSB);
+            var emptyDataArray = emptyData.split("");
+            emptyDataArray[0] = '1';
+            emptyData = emptyDataArray.join("");
+            _hardDrive.write(emptyDataTSB, emptyData);
  
             //Find first empty file in the directory
             for(var i = 0; i < 999; i++){
@@ -120,12 +127,13 @@ module TSOS {
                     }
                 }else if(validInvalidBit == '0' && i > 0){ //Found an empty not in use file
                     //Create data for file(For some reason I have to use different variable names for compiling to work)
-                    var data2 = '1---';
+                    var data2 = '1'+emptyDataTSB;
+                    console.log(data2);
                     for(var i = 0; i < hexFileNameList.length; i++){
                         data2 += hexFileNameList[i];
                     }
                     //Append 0s to the end of file name
-                    for(var i = data2.length-1; i < 64; i++){
+                    for(var i = data2.length-1; i < 60; i++){
                         data2 += '0';
                     }
                     //Write to HDD and update HDD Table
@@ -137,32 +145,40 @@ module TSOS {
         }
 
         public krnHDDWriteFile(filename, data){
-            debugger;
-            this.krnHDDCheckFileExists(filename);
             //See how many bytes the data is when converted to hex
             //Change data to hex
             var newData = data.split("");
             var hexData = [];
             for(var i = 0; i < newData.length; i++){
-                hexData.push(newData[i].charCodeAt(0).toString(16))
+                hexData.push(newData[i].charCodeAt(0).toString(16));
             }
-            console.log(hexData);
-            console.log(hexData.length);
-            // //Find first empty data block
-            // var start = 0;
-            // //Get the start of the file TSB
-            // for(var i = 0; i < _hardDrive.TSBList.length; i++){
-            //     if(_hardDrive.TSBList[i] == '100'){
-            //         start = i;
-            //         break;
-            //     }
-            // }
-            // for(var i = start; i < _hardDrive.TSBList.length; i++){
-            //     //Find first open block
-            //     if(_hardDrive.TSBList[i].split("")[0] == '0'){
-
-            //     }
-            // }
+            //Convert to string to find how many bytes it is, and if you need to link files
+            var hexDataString = hexData.join("");
+            //Find out if you need to link the file, if so how many times
+            var linkCount = 1;
+            //Can not be more than 60 bytes
+            if(hexDataString.length > 60){
+                //Round up
+                linkCount = Math.ceil(hexDataString.length/60);
+            }
+            //Split string back into array to make life easier
+            hexData = hexDataString.split("");
+            var hexDataCount = 0;
+            for(var i = 0; i < linkCount; i++){
+                var TSB = this.krnHDDFindEmptyDataBlock();
+                var x = 0;
+                var inputData = ''
+                while(x < 60){
+                    if(hexDataCount >= hexData.length){
+                        break;
+                    }
+                    inputData += hexData[hexDataCount];
+                    hexDataCount++;
+                    x++;
+                }
+                _hardDrive.write(TSB, inputData);
+            }
+            this.updateHDDTable()            
         }
 
         public krnHDDCheckFileExists(fileName){
@@ -194,6 +210,55 @@ module TSOS {
                 //If they are the same, then the file has already been created
                 if(data.join("") == compareData){
                     return true;
+                }
+            }
+        }
+
+        //Find empty file block
+        public krnHDDFindFileBlock(fileName){
+            //Change file name letters to hex
+            var newFileName = fileName.split("");
+            var hexFileNameList = [];
+            for(var i = 0; i < newFileName.length; i++){
+                hexFileNameList.push(newFileName[i].charCodeAt(0).toString(16))
+            }
+            //Loop through all of the TSBs
+            for(var j = 0; j < _hardDrive.TSBList.length; j++){
+                var TSB = _hardDrive.TSBList[j];
+                //Create comparison data
+                //Get file data, use slice to not account for the possible linkage(just looking for file name)
+                var data = _hardDrive.read(TSB).split("").slice(4);
+                var compareData = '';
+                //Create comparison data
+                for(var x = 0; x < hexFileNameList.length; x++){
+                    compareData += hexFileNameList[x];
+                }
+                //Append 0s to the end of file name
+                for(var y = compareData.length-1; y < 60; y++){
+                    compareData += '0';
+                }
+                //If they are the same, then the file has already been created
+                if(data.join("") == compareData){
+                    return TSB;
+                }
+            }
+        }
+
+        //Find empty data block
+        public krnHDDFindEmptyDataBlock(){
+            //Find first empty data block
+            var start = 0;
+            //Get the start of the file TSB
+            for(var i = 0; i < _hardDrive.TSBList.length; i++){
+                if(_hardDrive.TSBList[i] == '100'){
+                    start = i;
+                    break;
+                }
+            }
+            for(var i = start; i < _hardDrive.TSBList.length; i++){
+                //Find first open block
+                if(_hardDrive.read(_hardDrive.TSBList[i]).split("")[0] == '0'){
+                    return _hardDrive.TSBList[i];
                 }
             }
         }

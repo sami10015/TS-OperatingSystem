@@ -628,6 +628,7 @@ var TSOS;
                     data += params[1].charAt(i);
                 }
                 console.log(data);
+                _krnHardDriveDriver.krnHDDWriteFile(params[0].toString(), data);
             }
         };
         return Shell;
