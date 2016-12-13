@@ -604,6 +604,23 @@ var TSOS;
         };
         //Write to file
         Shell.prototype.writeFile = function (params) {
+            console.log(params);
+            //Check if the HDD is formatted first
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else if (params == '') {
+                _StdOut.putText("Give a filename and data!");
+            }
+            else if (params.length < 2) {
+                _StdOut.putText("Must give filename and data params!");
+            }
+            else if (params[1].charAt(0) != "\"" || params[1].charAt(params.length - 1) != "\"") {
+                _StdOut.putText("Data must have quotations around it");
+            }
+            else {
+                _StdOut.putText("Wrote data");
+            }
             //Check if nothing
             //Check if file and data are given
             //Check if quotations are around data

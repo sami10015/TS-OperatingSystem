@@ -53,7 +53,8 @@ var TSOS;
             else if (((keyCode >= 48) && (keyCode <= 57)) ||
                 (keyCode == 32) ||
                 (keyCode == 13) || (keyCode == 8) || (keyCode == 9) // enter or backspace or TAB
-                || (keyCode == 38) || (keyCode == 40)) {
+                || (keyCode == 38) || (keyCode == 40) ||
+                (keyCode == 222)) {
                 if (keyCode == 48 && isShifted) {
                     chr = ')';
                 }
@@ -83,6 +84,14 @@ var TSOS;
                 }
                 else if (keyCode == 57 && isShifted) {
                     chr = '(';
+                }
+                else if (keyCode == 222) {
+                    if (isShifted) {
+                        chr = "\"";
+                    }
+                    else {
+                        chr = "'";
+                    }
                 }
                 else {
                     chr = String.fromCharCode(keyCode);
