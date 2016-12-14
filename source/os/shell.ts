@@ -182,6 +182,12 @@ module TSOS {
                                     "<string> - Delete a file");
             this.commandList[this.commandList.length] = sc;
 
+            // ls
+            sc = new ShellCommand(this.listFiles,
+                                    "ls",
+                                    "List files stored on HDD");
+            this.commandList[this.commandList.length] = sc;
+
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -408,6 +414,9 @@ module TSOS {
                         break;
                     case "delete":
                         _StdOut.putText("<String> - Delete file");
+                        break;
+                    case "ls":
+                        _StdOut.putText("List files stored on HDD");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -761,6 +770,16 @@ module TSOS {
                 _StdOut.putText("File does not exist");
             }else{//Read file contents
                 _krnHardDriveDriver.krnHDDDeleteFile(params[0].toString());
+            }
+        }
+
+        //List files on HDD
+        public listFiles(){
+            //Check if the HDD is formatted first
+            if(!_krnHardDriveDriver.formatted){
+                _StdOut.putText("Format HDD first!");
+            }else{
+                _krnHardDriveDriver.krnHDDListFiles();
             }
         }
     }

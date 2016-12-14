@@ -413,6 +413,43 @@ module TSOS {
             this.updateHDDTable();
         }
 
+        //List files
+        public krnHDDListFiles(){
+            //Get all the TSB up to 100
+            var fileTSB = [];
+            for(var i = 1; i < _hardDrive.TSBList.length; i++){
+                if(_hardDrive.TSBList[i] == '100'){
+                    break;
+                }
+                fileTSB.push(_hardDrive.TSBList[i]);
+            }
+            //Check which ones are active and store names into array
+            var fileNames = [];
+            for(var i = 0; i < fileTSB.length; i++){
+                if(_hardDrive.read(fileTSB[i]).split("")[0] == '1'){
+                    //Get file name hex string
+                    var normalString = ''
+                    var hexString = _hardDrive.read(fileTSB[i]).split("").slice(4).join("");
+                    for(var j = 0; j < hexString.length; j+=2){
+                        normalString += String.fromCharCode(parseInt(hexString.substring(j, j+2),16));
+                    }
+                    console.log(normalString)
+                    fileNames.push(normalString);
+                }
+            }
+            //Print out file names
+            if(fileNames.length == 0){
+                _StdOut.putText("No files");
+            }else{
+                for(var i = 0; i < fileNames.length; i++){
+                    _StdOut.putText(fileNames[i]);
+                    if(i != fileNames.length-1){
+                        _StdOut.advanceLine();
+                    }
+                }
+            }
+        }
+
         //Update the HTML table, soon to be moved elsewhere
         public updateHDDTable(): void{
             var table = (<HTMLTableElement>document.getElementById("hardDriveTable"));

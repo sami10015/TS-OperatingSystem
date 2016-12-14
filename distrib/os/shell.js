@@ -101,6 +101,9 @@ var TSOS;
             // delete
             sc = new TSOS.ShellCommand(this.deleteFile, "delete", "<string> - Delete a file");
             this.commandList[this.commandList.length] = sc;
+            // ls
+            sc = new TSOS.ShellCommand(this.listFiles, "ls", "List files stored on HDD");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -316,6 +319,9 @@ var TSOS;
                         break;
                     case "delete":
                         _StdOut.putText("<String> - Delete file");
+                        break;
+                    case "ls":
+                        _StdOut.putText("List files stored on HDD");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -681,6 +687,16 @@ var TSOS;
             }
             else {
                 _krnHardDriveDriver.krnHDDDeleteFile(params[0].toString());
+            }
+        };
+        //List files on HDD
+        Shell.prototype.listFiles = function () {
+            //Check if the HDD is formatted first
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else {
+                _krnHardDriveDriver.krnHDDListFiles();
             }
         };
         return Shell;
