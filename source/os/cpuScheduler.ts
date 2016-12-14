@@ -15,7 +15,7 @@ module TSOS{
 
 		public contextSwitch(){
 			//Round Robin Scheduling
-			if(this.RR || this.fcfs){
+			if(this.RR || this.fcfs || this.priority){
 				if(this.readyQueue.isEmpty()){
 					_CPU.isExecuting = false;
 					this.turnaroundTime = 0;
@@ -37,7 +37,7 @@ module TSOS{
 
 		//This function is used along with the clearmem command to clear everything in the scheduler
 		public clearMem(){
-			this.RR = false;
+			//this.RR = false;
 			this.readyQueue.q = new Array();
 			this.count = 1;
 		}
@@ -47,15 +47,48 @@ module TSOS{
 			var rowCounter = 1; //Indicate which row in the ready queue display the PCB is located in
 			for(var i = 0; i < this.residentList.length; i++){
 				if(this.residentList[i].State != "TERMINATED"){
-					if(!this.fcfs){
+					if(!this.fcfs && !this.priority){
 						this.residentList[i].rowNumber = rowCounter;
 					}
 					this.readyQueue.enqueue(this.residentList[i]);
 					rowCounter++; //Increment row
 				}
 			}
+			if(this.priority){
+				this.sortReadyQueue();
+			}
 			_PCB = this.readyQueue.dequeue(); //Set the current PCB to the first item in the ready queue
 			_PCB.State = "Running";
+		}
+
+		//Sort the ready queue based on priority if the scheduling technique is priority
+		public sortReadyQueue(){
+			debugger;
+			var PCBs = [];
+			var priorityNums = [];
+			var fixedLength = this.readyQueue.getSize();
+			//Dequeue the ready queue into this array
+			for(var i = 0; i < fixedLength; i++){
+				var PCB = this.readyQueue.dequeue()
+				PCBs.push(PCB);
+				priorityNums.push(PCB.priority)
+			}
+			var sortedPCBs = [];
+			//List the priority numbers from max to lowest
+			priorityNums = priorityNums.sort().reverse();
+			//Sort the PCBs array based on the priority
+			for(var i = 0; i < fixedLength; i++){
+				var priority = priorityNums[i];
+				for(var j = 0; j < PCBs.length; j++){
+					if(PCBs[j].priority == priority){
+						sortedPCBs.push(PCBs.splice(j,1));
+					}
+				}
+			}
+			//Splice turns into matrix for whatever reason
+			for(var i = 0; i < sortedPCBs.length; i++){
+				this.readyQueue.enqueue(sortedPCBs[i][0]);
+			}
 		}
 
 		//Increment counters, if equal to quantum, context switch

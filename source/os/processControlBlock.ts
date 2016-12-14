@@ -14,13 +14,15 @@ module TSOS{
 					public Limit = 0,
 					public Part = 0,
 					public waitTime = 0,
-					public rowNumber = 1){}
+					public rowNumber = 1,
+					public priority = 0){}
 
-		public init(PID){
+		public init(PID, priority = 32){
 			this.PID = PID;
 			this.Base = this.getBase(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
 			this.Limit = this.getLimit(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
             this.Part = this.getPart(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
+            this.priority = priority;
 		}
 
 		public displayPCB(){

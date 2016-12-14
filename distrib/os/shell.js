@@ -409,7 +409,7 @@ var TSOS;
             _StdOut.putText(quotes[random]);
         };
         //Validates the user program input
-        Shell.prototype.shellLoad = function () {
+        Shell.prototype.shellLoad = function (params) {
             //Cast as HTMLInputElement and then retrieve the value within the program input text area
             var input = document.getElementById("taProgramInput").value;
             var hexChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', ' '];
@@ -442,15 +442,29 @@ var TSOS;
                             _StdOut.putText("Program is too large");
                         }
                         else {
-                            //Write operations to memory
-                            _MemoryManager.writeToMemory(index, operation); //Write to memory
-                            _MemoryManager.pIDReturn(); //Increment PID
-                            _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
-                            //Create new PCB object, initialize, and put in resident list
-                            var newPCB = new TSOS.PCB();
-                            newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
-                            _cpuScheduler.residentList.push(newPCB);
-                            _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
+                            //Priority number has been inputed, check if priority scheduling technique was created
+                            if (params.length >= 1 && !_cpuScheduler.priority) {
+                                _StdOut.putText("Must set schedule to priority");
+                            }
+                            else if (params.length > 1) {
+                                _StdOut.putText("Enter a number for priority");
+                            }
+                            else {
+                                //Write operations to memory
+                                _MemoryManager.writeToMemory(index, operation); //Write to memory
+                                _MemoryManager.pIDReturn(); //Increment PID
+                                _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
+                                //Create new PCB object, initialize, and put in resident list
+                                var newPCB = new TSOS.PCB();
+                                if (_cpuScheduler.priority) {
+                                    newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1], parseInt(params[0]));
+                                }
+                                else {
+                                    newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
+                                }
+                                _cpuScheduler.residentList.push(newPCB);
+                                _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
+                            }
                         }
                     }
                 }
@@ -539,6 +553,7 @@ var TSOS;
         };
         //Run all command
         Shell.prototype.runall = function () {
+            //Defualt to round robin if nothing was selected
             if (!_cpuScheduler.RR && !_cpuScheduler.fcfs && !_cpuScheduler.priority) {
                 _cpuScheduler.RR = true;
                 _cpuScheduler.fcfs = false;
@@ -724,6 +739,9 @@ var TSOS;
             else if (params.length > 1) {
                 _StdOut.putText("Must only give one scheduling technique!");
             }
+            else if (_CPU.isExecuting) {
+                _StdOut.putText("Can't change scheduling technique while CPU is running!");
+            }
             else if (params[0] == 'rr') {
                 _StdOut.putText("Set cpu scheduling to round robin");
                 _cpuScheduler.RR = true;
@@ -739,10 +757,11 @@ var TSOS;
                 _cpuScheduler.priority = false;
             }
             else if (params[0] == 'priority') {
-                _StdOut.putText("Set cpu scheduling to round robin");
-                _cpuScheduler.RR = false;
+                _StdOut.putText("Set cpu scheduling to priority");
+                _cpuScheduler.RR = true;
                 _cpuScheduler.fcfs = false;
                 _cpuScheduler.priority = true;
+                _cpuScheduler.quantum = 99999999999999;
             }
             else {
                 _StdOut.putText("That scheduling technique does not exist");
@@ -756,11 +775,11 @@ var TSOS;
             else if (_cpuScheduler.fcfs) {
                 _StdOut.putText("First-Come First-Serve");
             }
-            else if (_cpuScheduler.RR) {
-                _StdOut.putText("Round Robin");
-            }
             else if (_cpuScheduler.priority) {
                 _StdOut.putText("Priority");
+            }
+            else if (_cpuScheduler.RR) {
+                _StdOut.putText("Round Robin");
             }
         };
         return Shell;

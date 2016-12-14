@@ -155,6 +155,7 @@ var TSOS;
                 document.getElementById("btnStep").disabled = true;
                 _SingleStepMode = false;
             }
+            debugger;
         };
         //Loads a constant in the accumulator(OP Code A9)
         Cpu.prototype.loadAccumulator = function (constant) {

@@ -146,6 +146,7 @@ module TSOS {
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
                 _SingleStepMode = false;
             }
+            debugger;
         }
 
         //Loads a constant in the accumulator(OP Code A9)
