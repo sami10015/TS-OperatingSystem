@@ -164,7 +164,8 @@ module TSOS {
             //Split string back into array to make life easier
             hexData = hexDataString.split("");
             var hexDataCount = 0;
-            //Get current TSB
+
+            //Get current TSB from file data
             var TSB = this.krnHDDFindFileBlock(filename);
             var currentTSBData = _hardDrive.read(TSB);
             var currentTSBDataArray = currentTSBData.split("");
@@ -172,6 +173,30 @@ module TSOS {
             TSB += currentTSBDataArray[1];
             TSB += currentTSBDataArray[2];
             TSB += currentTSBDataArray[3];
+            
+            //Clear TSBs in case of updating the same file
+            var tempTSB = TSB; //Use for clearing data
+            var clearTSBList = [tempTSB]
+            while(true){
+                var TSBData = _hardDrive.read(tempTSB);
+                if(TSBData.split("")[1] != '-'){
+                    tempTSB = ''
+                    tempTSB += TSBData.split("")[1]
+                    tempTSB += TSBData.split("")[2]
+                    tempTSB += TSBData.split("")[3]
+                    clearTSBList.push(tempTSB);
+                }else{
+                    break;
+                }
+            }
+            if(clearTSBList.length != 0){
+                console.log(clearTSBList)
+                for(var i = 0; i < clearTSBList.length; i++){
+                    this.krnHDDClearTSB(tempTSB);
+                }
+            }
+
+            //Write to the file
             for(var i = 0; i < linkCount; i++){
                 var x = 0;
                 //Start with 1 for invalid/valid bit
@@ -235,6 +260,22 @@ module TSOS {
                     return true;
                 }
             }
+        }
+
+        //Clear TSB
+        public krnHDDClearTSB(TSB){
+            var emptyData = '';
+
+            //Create Empty Data
+            for(var i = 0; i < 64; i++){
+                if(i >= 1 && i <= 3){
+                    emptyData += '-';        
+                }else{
+                    emptyData += '0';
+                }
+            }
+            //Clear that TSB
+            _hardDrive.write(TSB, emptyData);
         }
 
         //Find empty file block
