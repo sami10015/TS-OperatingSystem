@@ -434,8 +434,8 @@ var TSOS;
                     var operation = document.getElementById("taProgramInput").value; //Op Codes
                     var index = _MemoryManager.displayBlock(operation);
                     //If all memory spaces are full then they must format 
-                    if (index == -1) {
-                        _StdOut.putText("Format!");
+                    if (index == -1 && !_krnHardDriveDriver.formatted) {
+                        _StdOut.putText("Format the HDD!");
                     }
                     else {
                         if (operation.split(" ").length > 256) {
@@ -450,20 +450,43 @@ var TSOS;
                                 _StdOut.putText("Enter a number for priority");
                             }
                             else {
-                                //Write operations to memory
-                                _MemoryManager.writeToMemory(index, operation); //Write to memory
-                                _MemoryManager.pIDReturn(); //Increment PID
-                                _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
-                                //Create new PCB object, initialize, and put in resident list
-                                var newPCB = new TSOS.PCB();
-                                if (_cpuScheduler.priority) {
-                                    newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1], parseInt(params[0]));
+                                //Check if no memory is available, therefore you must store in HDD
+                                if (index == -1) {
+                                    //Create file
+                                    _MemoryManager.pIDReturn(); //Increment PID
+                                    var PID = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Naming purposes
+                                    var fileName = 'process' + PID.toString();
+                                    _krnHardDriveDriver.krnHDDCreateFile(fileName);
+                                    //Write to file
+                                    _krnHardDriveDriver.krnHDDWriteFile(fileName, operation);
+                                    //Push PCB to resident list, be sure to mark that it is in the HDD
+                                    //Create new PCB object, initialize, and put in resident list
+                                    var newPCB = new TSOS.PCB();
+                                    if (_cpuScheduler.priority) {
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1], parseInt(params[0]));
+                                    }
+                                    else {
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
+                                    }
+                                    newPCB.inHDD = true;
+                                    _cpuScheduler.residentList.push(newPCB);
                                 }
                                 else {
-                                    newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
+                                    //Write operations to memory
+                                    _MemoryManager.writeToMemory(index, operation); //Write to memory
+                                    _MemoryManager.pIDReturn(); //Increment PID
+                                    _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
+                                    //Create new PCB object, initialize, and put in resident list
+                                    var newPCB = new TSOS.PCB();
+                                    if (_cpuScheduler.priority) {
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1], parseInt(params[0]));
+                                    }
+                                    else {
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
+                                    }
+                                    _cpuScheduler.residentList.push(newPCB);
+                                    _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
                                 }
-                                _cpuScheduler.residentList.push(newPCB);
-                                _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
                             }
                         }
                     }

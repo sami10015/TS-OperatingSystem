@@ -15,7 +15,8 @@ module TSOS{
 					public Part = 0,
 					public waitTime = 0,
 					public rowNumber = 1,
-					public priority = 0){}
+					public priority = 0,
+					public inHDD = false){}
 
 		public init(PID, priority = 32){
 			this.PID = PID;

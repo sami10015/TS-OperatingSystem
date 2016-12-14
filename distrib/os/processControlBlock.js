@@ -2,7 +2,7 @@
 var TSOS;
 (function (TSOS) {
     var PCB = (function () {
-        function PCB(PID, State, PC, AC, IR, X, Y, Z, Base, Limit, Part, waitTime, rowNumber, priority) {
+        function PCB(PID, State, PC, AC, IR, X, Y, Z, Base, Limit, Part, waitTime, rowNumber, priority, inHDD) {
             if (PID === void 0) { PID = -1; }
             if (State === void 0) { State = ''; }
             if (PC === void 0) { PC = 0; }
@@ -17,6 +17,7 @@ var TSOS;
             if (waitTime === void 0) { waitTime = 0; }
             if (rowNumber === void 0) { rowNumber = 1; }
             if (priority === void 0) { priority = 0; }
+            if (inHDD === void 0) { inHDD = false; }
             this.PID = PID;
             this.State = State;
             this.PC = PC;
@@ -31,6 +32,7 @@ var TSOS;
             this.waitTime = waitTime;
             this.rowNumber = rowNumber;
             this.priority = priority;
+            this.inHDD = inHDD;
         }
         PCB.prototype.init = function (PID, priority) {
             if (priority === void 0) { priority = 32; }
