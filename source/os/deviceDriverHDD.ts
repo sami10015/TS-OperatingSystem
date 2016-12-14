@@ -178,7 +178,6 @@ module TSOS {
             var tempTSB = TSB; //Use for clearing data
             var clearTSBList = [tempTSB]
             while(true){
-                debugger;
                 var TSBData = _hardDrive.read(tempTSB);
                 if(TSBData.split("")[1] != '-'){
                     tempTSB = ''
