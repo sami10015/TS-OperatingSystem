@@ -175,6 +175,7 @@ var TSOS;
             var tempTSB = TSB; //Use for clearing data
             var clearTSBList = [tempTSB];
             while (true) {
+                debugger;
                 var TSBData = _hardDrive.read(tempTSB);
                 if (TSBData.split("")[1] != '-') {
                     tempTSB = '';
@@ -190,7 +191,7 @@ var TSOS;
             if (clearTSBList.length != 0) {
                 console.log(clearTSBList);
                 for (var i = 0; i < clearTSBList.length; i++) {
-                    this.krnHDDClearTSB(tempTSB);
+                    this.krnHDDClearTSB(clearTSBList[i]);
                 }
             }
             //Write to the file
