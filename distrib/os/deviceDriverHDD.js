@@ -260,7 +260,6 @@ var TSOS;
         };
         //Read file
         DeviceDriverHDD.prototype.krnHDDReadFile = function (fileName) {
-            debugger;
             //Get the current file TSB
             var fileTSB = this.krnHDDFindFileBlock(fileName);
             var fileTSBArray = _hardDrive.read(fileTSB).split("");
@@ -284,12 +283,34 @@ var TSOS;
                     break;
                 }
             }
+            //Retrieve the hex version of the data
             var hexDataList = [];
             for (var i = 0; i < dataTSBList.length; i++) {
                 //Get all the data and not the first 4 bits
                 hexDataList.push(_hardDrive.read(dataTSBList[i]).split("").slice(4));
             }
-            console.log(hexDataList);
+            //Input hex version of data into normal decimal string
+            var hexString = '';
+            for (var i = 0; i < hexDataList.length; i++) {
+                for (var j = 0; j < hexDataList[i].length; j++) {
+                    hexString += hexDataList[i][j];
+                }
+            }
+            //Turn hex string into normal string
+            var returnString = '';
+            for (var i = 0; i < hexString.length; i += 2) {
+                if (hexString.substring(i, i + 2) == '00') {
+                    break;
+                }
+                var str = String.fromCharCode(parseInt(hexString.substring(i, i + 2), 16));
+                returnString += str;
+            }
+            if (returnString == '') {
+                _StdOut.putText("File is empty");
+            }
+            else {
+                _StdOut.putText(returnString);
+            }
         };
         //Clear TSB
         DeviceDriverHDD.prototype.krnHDDClearTSB = function (TSB) {
