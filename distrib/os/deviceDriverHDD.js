@@ -148,6 +148,7 @@ var TSOS;
             //Change data to hex
             var newData = data.split("");
             var hexData = [];
+            console.log(hexData);
             for (var i = 0; i < newData.length; i++) {
                 hexData.push(newData[i].charCodeAt(0).toString(16));
             }
@@ -256,6 +257,12 @@ var TSOS;
                     return true;
                 }
             }
+        };
+        DeviceDriverHDD.prototype.krnHDDReadFile = function (fileName) {
+            var fileTSB = this.krnHDDFindFileBlock(fileName);
+            var fileTSBArray = fileTSB.split("");
+            var dataTSB = '';
+            //dataTSB += 
         };
         //Clear TSB
         DeviceDriverHDD.prototype.krnHDDClearTSB = function (TSB) {

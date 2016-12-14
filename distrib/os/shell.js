@@ -95,8 +95,9 @@ var TSOS;
             // write
             sc = new TSOS.ShellCommand(this.writeFile, "write", "<string> <string> - Write to file");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            // read
+            sc = new TSOS.ShellCommand(this.readFile, "read", "<string> - Read a file");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -306,6 +307,9 @@ var TSOS;
                         break;
                     case "write":
                         _StdOut.putText("<String> <String> - Write to file");
+                        break;
+                    case "read":
+                        _StdOut.putText("<String> - Read file");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -604,6 +608,7 @@ var TSOS;
         };
         //Write to file
         Shell.prototype.writeFile = function (params) {
+            console.log(params);
             //Check if the HDD is formatted first
             if (!_krnHardDriveDriver.formatted) {
                 _StdOut.putText("Format HDD first!");
@@ -614,7 +619,7 @@ var TSOS;
             else if (params.length < 2) {
                 _StdOut.putText("Must give filename and data params!");
             }
-            else if (params[1].charAt(0) != "\"" || params[1].charAt(params[1].length - 1) != "\"") {
+            else if (params[1].charAt(0) != "\"" || params[params.length - 1].charAt(params[params.length - 1].length - 1) != "\"") {
                 _StdOut.putText("Data must have quotations around it");
             }
             else if (_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false) {
@@ -624,11 +629,32 @@ var TSOS;
                 _StdOut.putText("Wrote data");
                 //Recreate data without quotations
                 var data = '';
-                for (var i = 1; i < params[1].length - 1; i++) {
-                    data += params[1].charAt(i);
+                for (var i = 1; i < params.length; i++) {
+                    data += params[i];
+                    if (params.length > 2 && i != params.length - 1) {
+                        data += ' ';
+                    }
                 }
-                console.log(data);
+                data = data.substring(1, data.length - 1);
                 _krnHardDriveDriver.krnHDDWriteFile(params[0].toString(), data);
+            }
+        };
+        //Read file content
+        Shell.prototype.readFile = function (params) {
+            //Check if the HDD is formatted first
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else if (params == '') {
+                _StdOut.putText("Give a filename");
+            }
+            else if (params.length > 1) {
+                _StdOut.putText("Do not put a space in file name!");
+            }
+            else if (_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false) {
+                _StdOut.putText("File does not exist");
+            }
+            else {
             }
         };
         return Shell;

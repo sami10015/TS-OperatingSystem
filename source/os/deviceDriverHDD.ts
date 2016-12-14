@@ -149,6 +149,7 @@ module TSOS {
             //Change data to hex
             var newData = data.split("");
             var hexData = [];
+            console.log(hexData);
             for(var i = 0; i < newData.length; i++){
                 hexData.push(newData[i].charCodeAt(0).toString(16));
             }
@@ -260,6 +261,13 @@ module TSOS {
                     return true;
                 }
             }
+        }
+
+        public krnHDDReadFile(fileName){
+            var fileTSB = this.krnHDDFindFileBlock(fileName);
+            var fileTSBArray = fileTSB.split("");
+            var dataTSB = '';
+            //dataTSB += 
         }
 
         //Clear TSB

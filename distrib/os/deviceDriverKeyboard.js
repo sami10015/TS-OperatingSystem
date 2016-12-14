@@ -93,6 +93,9 @@ var TSOS;
                         chr = "'";
                     }
                 }
+                else if (keyCode === 32) {
+                    chr = ' ';
+                }
                 else {
                     chr = String.fromCharCode(keyCode);
                 }

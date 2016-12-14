@@ -170,9 +170,11 @@ module TSOS {
                                     "<string> <string> - Write to file");
             this.commandList[this.commandList.length] = sc;
 
-
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            // read
+            sc = new ShellCommand(this.readFile,
+                                    "read",
+                                    "<string> - Read a file");
+            this.commandList[this.commandList.length] = sc;
 
             //
             // Display the initial prompt.
@@ -394,6 +396,9 @@ module TSOS {
                         break;
                     case "write":
                         _StdOut.putText("<String> <String> - Write to file");
+                        break;
+                    case "read":
+                        _StdOut.putText("<String> - Read file");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -691,6 +696,7 @@ module TSOS {
 
         //Write to file
         public writeFile(params){
+            console.log(params);
             //Check if the HDD is formatted first
             if(!_krnHardDriveDriver.formatted){
                 _StdOut.putText("Format HDD first!");
@@ -698,7 +704,7 @@ module TSOS {
                 _StdOut.putText("Give a filename and data!");
             }else if(params.length < 2){//Check if filename and data are both given
                 _StdOut.putText("Must give filename and data params!");
-            }else if(params[1].charAt(0) != "\"" || params[1].charAt(params[1].length-1) != "\""){//Data must be in quotations
+            }else if(params[1].charAt(0) != "\"" || params[params.length-1].charAt(params[params.length-1].length-1) != "\""){//Data must be in quotations
                 _StdOut.putText("Data must have quotations around it");
             }else if(_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false){//Check if file exists
                 _StdOut.putText("File does not exist");
@@ -706,11 +712,30 @@ module TSOS {
                 _StdOut.putText("Wrote data");
                 //Recreate data without quotations
                 var data = ''
-                for(var i = 1; i < params[1].length-1; i++){
-                    data += params[1].charAt(i);
+                for(var i = 1; i < params.length; i++){
+                    data += params[i];
+                    if(params.length > 2 && i != params.length-1){
+                        data += ' ';
+                    }
                 }
-                console.log(data);
+                data = data.substring(1, data.length-1);
                 _krnHardDriveDriver.krnHDDWriteFile(params[0].toString(), data)
+            }
+        }
+
+        //Read file content
+        public readFile(params){
+            //Check if the HDD is formatted first
+            if(!_krnHardDriveDriver.formatted){
+                _StdOut.putText("Format HDD first!");
+            }else if(params == ''){//Check if empty
+                _StdOut.putText("Give a filename");
+            }else if(params.length > 1){//Check if filename and data are both given
+                _StdOut.putText("Do not put a space in file name!");
+            }else if(_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false){//Check if file exists
+                _StdOut.putText("File does not exist");
+            }else{//Read file contents
+
             }
         }
     }
