@@ -647,7 +647,7 @@ module TSOS {
                 //Check if any of the programs can be executed
                 if(x){
                     _cpuScheduler.loadReadyQueue(); //Load the ready queue
-                    _cpuScheduler.RR = true; //Change cpu technique to round robin
+                    //_cpuScheduler.RR = true; //Change cpu technique to round robin
                     _PCB.State = "Ready";
                     _cpuScheduler.displayReadyQueue();
                     _CPU.isExecuting = true; //Start the CPU

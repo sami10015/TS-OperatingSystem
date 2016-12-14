@@ -5,7 +5,8 @@ module TSOS{
 	export class cpuScheduler{
 		constructor(public quantum = 6,
 					public count = 1,
-					public RR = false,
+					public RR = true,
+					public fcfs = false,
 					public residentList = [],
 					public readyQueue = new Queue(),
 					public turnaroundTime = 0){}
