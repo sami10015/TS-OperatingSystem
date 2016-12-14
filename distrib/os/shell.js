@@ -104,6 +104,9 @@ var TSOS;
             // ls
             sc = new TSOS.ShellCommand(this.listFiles, "ls", "List files stored on HDD");
             this.commandList[this.commandList.length] = sc;
+            // setschedule
+            sc = new TSOS.ShellCommand(this.setSchedule, "setschedule", "<string> - Set the scheduling technique for the CPU");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -323,6 +326,9 @@ var TSOS;
                     case "ls":
                         _StdOut.putText("List files stored on HDD");
                         break;
+                    case "setschedule":
+                        _StdOut.putText("<String> - Set scheduling technique for cpu");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -527,6 +533,12 @@ var TSOS;
         };
         //Run all command
         Shell.prototype.runall = function () {
+            if (!_cpuScheduler.RR && !_cpuScheduler.fcfs && !_cpuScheduler.priority) {
+                _cpuScheduler.RR = true;
+                _cpuScheduler.fcfs = false;
+                _cpuScheduler.priority = false;
+                _cpuScheduler.quantum = 6;
+            }
             //If it is one, just perform a single run
             var singleRunCounter = 0;
             var index = 0;
@@ -549,7 +561,6 @@ var TSOS;
                 //Check if any of the programs can be executed
                 if (x) {
                     _cpuScheduler.loadReadyQueue(); //Load the ready queue
-                    //_cpuScheduler.RR = true; //Change cpu technique to round robin
                     _PCB.State = "Ready";
                     _cpuScheduler.displayReadyQueue();
                     _CPU.isExecuting = true; //Start the CPU
@@ -697,6 +708,38 @@ var TSOS;
             }
             else {
                 _krnHardDriveDriver.krnHDDListFiles();
+            }
+        };
+        //Set the schedule of the cpu scheduler
+        Shell.prototype.setSchedule = function (params) {
+            if (params == '') {
+                _StdOut.putText("Must give scheduling technique!");
+            }
+            else if (params.length > 1) {
+                _StdOut.putText("Must only give one scheduling technique!");
+            }
+            else if (params[0] == 'rr') {
+                _StdOut.putText("Set cpu scheduling to round robin");
+                _cpuScheduler.RR = true;
+                _cpuScheduler.quantum = 6;
+                _cpuScheduler.fcfs = false;
+                _cpuScheduler.priority = false;
+            }
+            else if (params[0] == 'fcfs') {
+                _StdOut.putText("Set cpu scheduling to fcfs");
+                _cpuScheduler.quantum = 99999999999999;
+                _cpuScheduler.RR = true;
+                _cpuScheduler.fcfs = true;
+                _cpuScheduler.priority = false;
+            }
+            else if (params[0] == 'priority') {
+                _StdOut.putText("Set cpu scheduling to round robin");
+                _cpuScheduler.RR = false;
+                _cpuScheduler.fcfs = false;
+                _cpuScheduler.priority = true;
+            }
+            else {
+                _StdOut.putText("That scheduling technique does not exist");
             }
         };
         return Shell;

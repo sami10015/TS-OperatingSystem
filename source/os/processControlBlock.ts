@@ -72,10 +72,14 @@ module TSOS{
 			//Terminated PCB
 			this.State = 'TERMINATED';
 			var table = (<HTMLTableElement>document.getElementById("PCB_Table"));
-			table.deleteRow(this.rowNumber);
-			//If multiple PCBs are in display
-			if(_cpuScheduler.RR){
-				_cpuScheduler.deIncrementRowNum();
+			if(_cpuScheduler.fcfs){
+				table.deleteRow(1);
+			}else{
+				table.deleteRow(this.rowNumber);
+				//If multiple PCBs are in display
+				if(_cpuScheduler.RR){
+					_cpuScheduler.deIncrementRowNum();
+				}
 			}
 		}
 

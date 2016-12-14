@@ -3,11 +3,12 @@
 var TSOS;
 (function (TSOS) {
     var cpuScheduler = (function () {
-        function cpuScheduler(quantum, count, RR, fcfs, residentList, readyQueue, turnaroundTime) {
+        function cpuScheduler(quantum, count, RR, fcfs, priority, residentList, readyQueue, turnaroundTime) {
             if (quantum === void 0) { quantum = 6; }
             if (count === void 0) { count = 1; }
-            if (RR === void 0) { RR = true; }
+            if (RR === void 0) { RR = false; }
             if (fcfs === void 0) { fcfs = false; }
+            if (priority === void 0) { priority = false; }
             if (residentList === void 0) { residentList = []; }
             if (readyQueue === void 0) { readyQueue = new TSOS.Queue(); }
             if (turnaroundTime === void 0) { turnaroundTime = 0; }
@@ -15,13 +16,14 @@ var TSOS;
             this.count = count;
             this.RR = RR;
             this.fcfs = fcfs;
+            this.priority = priority;
             this.residentList = residentList;
             this.readyQueue = readyQueue;
             this.turnaroundTime = turnaroundTime;
         }
         cpuScheduler.prototype.contextSwitch = function () {
             //Round Robin Scheduling
-            if (this.RR) {
+            if (this.RR || this.fcfs) {
                 if (this.readyQueue.isEmpty()) {
                     _CPU.isExecuting = false;
                     this.turnaroundTime = 0;
@@ -52,7 +54,9 @@ var TSOS;
             var rowCounter = 1; //Indicate which row in the ready queue display the PCB is located in
             for (var i = 0; i < this.residentList.length; i++) {
                 if (this.residentList[i].State != "TERMINATED") {
-                    this.residentList[i].rowNumber = rowCounter;
+                    if (!this.fcfs) {
+                        this.residentList[i].rowNumber = rowCounter;
+                    }
                     this.readyQueue.enqueue(this.residentList[i]);
                     rowCounter++; //Increment row
                 }

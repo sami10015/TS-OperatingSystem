@@ -146,7 +146,7 @@ var TSOS;
             if (_cpuScheduler.count != _cpuScheduler.quantum) {
                 _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event')); //Call An Interrupt
             }
-            if (!_cpuScheduler.RR) {
+            if (!_cpuScheduler.RR && !_cpuScheduler.fcfs) {
                 this.isExecuting = false;
                 _cpuScheduler.turnaroundTime = 0; //Reset TT
                 _Console.putText(_OsShell.promptStr);

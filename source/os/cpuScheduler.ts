@@ -5,8 +5,9 @@ module TSOS{
 	export class cpuScheduler{
 		constructor(public quantum = 6,
 					public count = 1,
-					public RR = true,
+					public RR = false,
 					public fcfs = false,
+					public priority = false,
 					public residentList = [],
 					public readyQueue = new Queue(),
 					public turnaroundTime = 0){}
@@ -14,7 +15,7 @@ module TSOS{
 
 		public contextSwitch(){
 			//Round Robin Scheduling
-			if(this.RR){
+			if(this.RR || this.fcfs){
 				if(this.readyQueue.isEmpty()){
 					_CPU.isExecuting = false;
 					this.turnaroundTime = 0;
@@ -46,7 +47,9 @@ module TSOS{
 			var rowCounter = 1; //Indicate which row in the ready queue display the PCB is located in
 			for(var i = 0; i < this.residentList.length; i++){
 				if(this.residentList[i].State != "TERMINATED"){
-					this.residentList[i].rowNumber = rowCounter;
+					if(!this.fcfs){
+						this.residentList[i].rowNumber = rowCounter;
+					}
 					this.readyQueue.enqueue(this.residentList[i]);
 					rowCounter++; //Increment row
 				}
