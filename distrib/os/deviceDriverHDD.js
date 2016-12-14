@@ -143,6 +143,7 @@ var TSOS;
                 }
             }
         };
+        //Write to file
         DeviceDriverHDD.prototype.krnHDDWriteFile = function (filename, data) {
             //See how many bytes the data is when converted to hex
             //Change data to hex

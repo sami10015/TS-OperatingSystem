@@ -144,6 +144,7 @@ module TSOS {
             }
         }
 
+        //Write to file
         public krnHDDWriteFile(filename, data){
             //See how many bytes the data is when converted to hex
             //Change data to hex
