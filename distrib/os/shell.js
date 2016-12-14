@@ -107,6 +107,9 @@ var TSOS;
             // setschedule
             sc = new TSOS.ShellCommand(this.setSchedule, "setschedule", "<string> - Set the scheduling technique for the CPU");
             this.commandList[this.commandList.length] = sc;
+            // getschedule
+            sc = new TSOS.ShellCommand(this.getSchedule, "getschedule", "Get the scheduling technique for the CPU");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -328,6 +331,9 @@ var TSOS;
                         break;
                     case "setschedule":
                         _StdOut.putText("<String> - Set scheduling technique for cpu");
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Get the scheduling technique for the cpu");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -740,6 +746,21 @@ var TSOS;
             }
             else {
                 _StdOut.putText("That scheduling technique does not exist");
+            }
+        };
+        //Get the scheduling technique of the CPU
+        Shell.prototype.getSchedule = function () {
+            if (!_cpuScheduler.RR && !_cpuScheduler.fcfs && !_cpuScheduler.priority) {
+                _StdOut.putText("No scheduling technique has been selected");
+            }
+            else if (_cpuScheduler.fcfs) {
+                _StdOut.putText("First-Come First-Serve");
+            }
+            else if (_cpuScheduler.RR) {
+                _StdOut.putText("Round Robin");
+            }
+            else if (_cpuScheduler.priority) {
+                _StdOut.putText("Priority");
             }
         };
         return Shell;

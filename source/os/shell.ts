@@ -194,6 +194,12 @@ module TSOS {
                                     "<string> - Set the scheduling technique for the CPU");
             this.commandList[this.commandList.length] = sc;
 
+            // getschedule
+            sc = new ShellCommand(this.getSchedule,
+                                    "getschedule",
+                                    "Get the scheduling technique for the CPU");
+            this.commandList[this.commandList.length] = sc;
+
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -426,6 +432,9 @@ module TSOS {
                         break;
                     case "setschedule":
                         _StdOut.putText("<String> - Set scheduling technique for cpu");
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Get the scheduling technique for the cpu");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -822,6 +831,19 @@ module TSOS {
                 _cpuScheduler.priority = true;
             }else{
                 _StdOut.putText("That scheduling technique does not exist");
+            }
+        }
+
+        //Get the scheduling technique of the CPU
+        public getSchedule(){
+            if(!_cpuScheduler.RR && !_cpuScheduler.fcfs && !_cpuScheduler.priority){
+                _StdOut.putText("No scheduling technique has been selected");
+            }else if(_cpuScheduler.fcfs){
+                _StdOut.putText("First-Come First-Serve")
+            }else if(_cpuScheduler.RR){
+                _StdOut.putText("Round Robin");
+            }else if(_cpuScheduler.priority){
+                _StdOut.putText("Priority");
             }
         }
     }
