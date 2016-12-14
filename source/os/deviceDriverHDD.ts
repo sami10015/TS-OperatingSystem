@@ -381,6 +381,38 @@ module TSOS {
             }
         }
 
+        //Delete a file
+        public krnHDDDeleteFile(fileName){
+            //Get the current file TSB
+            var fileTSB = this.krnHDDFindFileBlock(fileName);
+            var fileTSBArray = _hardDrive.read(fileTSB).split("");
+            //Create the initial data block TSB
+            var dataTSB = '';
+            dataTSB += fileTSBArray[1];
+            dataTSB += fileTSBArray[2];
+            dataTSB += fileTSBArray[3];
+            //Get all the TSBs you must delete data
+            var dataTSBList = [fileTSB,dataTSB];
+            while(true){
+                var TSBData = _hardDrive.read(dataTSB);
+                if(TSBData.split("")[1] != '-'){
+                    dataTSB = ''
+                    dataTSB += TSBData.split("")[1]
+                    dataTSB += TSBData.split("")[2]
+                    dataTSB += TSBData.split("")[3]
+                    dataTSBList.push(dataTSB);
+                }else{
+                    break;
+                }
+            }
+            //Clear the TSB
+            for(var i = 0; i < dataTSBList.length; i++){
+                this.krnHDDClearTSB(dataTSBList[i]);
+            }
+            _StdOut.putText("Deleted: " + fileName);
+            this.updateHDDTable();
+        }
+
         //Update the HTML table, soon to be moved elsewhere
         public updateHDDTable(): void{
             var table = (<HTMLTableElement>document.getElementById("hardDriveTable"));

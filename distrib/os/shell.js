@@ -98,6 +98,9 @@ var TSOS;
             // read
             sc = new TSOS.ShellCommand(this.readFile, "read", "<string> - Read a file");
             this.commandList[this.commandList.length] = sc;
+            // delete
+            sc = new TSOS.ShellCommand(this.deleteFile, "delete", "<string> - Delete a file");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -310,6 +313,9 @@ var TSOS;
                         break;
                     case "read":
                         _StdOut.putText("<String> - Read file");
+                        break;
+                    case "delete":
+                        _StdOut.putText("<String> - Delete file");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -656,6 +662,25 @@ var TSOS;
             }
             else {
                 _krnHardDriveDriver.krnHDDReadFile(params[0].toString());
+            }
+        };
+        //Delete file content
+        Shell.prototype.deleteFile = function (params) {
+            //Check if the HDD is formatted first
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else if (params == '') {
+                _StdOut.putText("Give a filename");
+            }
+            else if (params.length > 1) {
+                _StdOut.putText("Do not put a space in file name!");
+            }
+            else if (_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false) {
+                _StdOut.putText("File does not exist");
+            }
+            else {
+                _krnHardDriveDriver.krnHDDDeleteFile(params[0].toString());
             }
         };
         return Shell;
