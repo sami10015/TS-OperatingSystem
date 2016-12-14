@@ -258,11 +258,38 @@ var TSOS;
                 }
             }
         };
+        //Read file
         DeviceDriverHDD.prototype.krnHDDReadFile = function (fileName) {
+            debugger;
+            //Get the current file TSB
             var fileTSB = this.krnHDDFindFileBlock(fileName);
-            var fileTSBArray = fileTSB.split("");
+            var fileTSBArray = _hardDrive.read(fileTSB).split("");
+            //Create the initial data block TSB
             var dataTSB = '';
-            //dataTSB += 
+            dataTSB += fileTSBArray[1];
+            dataTSB += fileTSBArray[2];
+            dataTSB += fileTSBArray[3];
+            //Get all the TSBs you must retrieve data from
+            var dataTSBList = [dataTSB];
+            while (true) {
+                var TSBData = _hardDrive.read(dataTSB);
+                if (TSBData.split("")[1] != '-') {
+                    dataTSB = '';
+                    dataTSB += TSBData.split("")[1];
+                    dataTSB += TSBData.split("")[2];
+                    dataTSB += TSBData.split("")[3];
+                    dataTSBList.push(dataTSB);
+                }
+                else {
+                    break;
+                }
+            }
+            var hexDataList = [];
+            for (var i = 0; i < dataTSBList.length; i++) {
+                //Get all the data and not the first 4 bits
+                hexDataList.push(_hardDrive.read(dataTSBList[i]).split("").slice(4));
+            }
+            console.log(hexDataList);
         };
         //Clear TSB
         DeviceDriverHDD.prototype.krnHDDClearTSB = function (TSB) {

@@ -627,7 +627,7 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Wrote data");
-                //Recreate data without quotations
+                //Recreate data without quotations and also include spaces
                 var data = '';
                 for (var i = 1; i < params.length; i++) {
                     data += params[i];
@@ -655,6 +655,7 @@ var TSOS;
                 _StdOut.putText("File does not exist");
             }
             else {
+                _krnHardDriveDriver.krnHDDReadFile(params[0].toString());
             }
         };
         return Shell;

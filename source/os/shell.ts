@@ -710,7 +710,7 @@ module TSOS {
                 _StdOut.putText("File does not exist");
             }else{
                 _StdOut.putText("Wrote data");
-                //Recreate data without quotations
+                //Recreate data without quotations and also include spaces
                 var data = ''
                 for(var i = 1; i < params.length; i++){
                     data += params[i];
@@ -735,7 +735,7 @@ module TSOS {
             }else if(_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false){//Check if file exists
                 _StdOut.putText("File does not exist");
             }else{//Read file contents
-
+                _krnHardDriveDriver.krnHDDReadFile(params[0].toString());
             }
         }
     }
