@@ -470,6 +470,7 @@ var TSOS;
                                     }
                                     newPCB.inHDD = true;
                                     _cpuScheduler.residentList.push(newPCB);
+                                    _StdOut.putText("Program loaded. PID " + (PID));
                                 }
                                 else {
                                     //Write operations to memory

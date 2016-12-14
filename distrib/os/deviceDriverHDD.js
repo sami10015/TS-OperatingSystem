@@ -311,6 +311,7 @@ var TSOS;
             }
             else {
                 _StdOut.putText(returnString);
+                console.log(returnString);
             }
         };
         //Clear TSB

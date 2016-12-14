@@ -569,6 +569,7 @@ module TSOS {
                                     }
                                     newPCB.inHDD = true;
                                     _cpuScheduler.residentList.push(newPCB);
+                                    _StdOut.putText("Program loaded. PID " + (PID));
                                 }else{ //Store in memory
                                     //Write operations to memory
                                     _MemoryManager.writeToMemory(index, operation); //Write to memory

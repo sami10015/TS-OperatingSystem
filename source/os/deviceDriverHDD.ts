@@ -314,6 +314,7 @@ module TSOS {
                 _StdOut.putText("File is empty");
             }else{
                 _StdOut.putText(returnString);
+                console.log(returnString);
             }
         }
 
