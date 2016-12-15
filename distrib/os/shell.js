@@ -535,6 +535,7 @@ var TSOS;
                     //Check if the PCB is in memory, or HDD
                     if (_PCB.inHDD) {
                         _Kernel.krnSwap();
+                        _CPU.isExecuting = true;
                     }
                     else {
                         _CPU.isExecuting = true; //Run CPU

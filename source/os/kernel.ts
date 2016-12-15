@@ -232,12 +232,12 @@ module TSOS {
                 }
                 _MemoryManager.writeToMemory(0, operation);
                 _MemoryManager.PID_Memory_Loc[0] = _MemoryManager.PIDList[_PCB.PID]; //Display purposes
-                _CPU.isExecuting = true;
+                _PCB.inHDD = false;
             }else{//Write to memory and execute
                 //Write operations to memory
                 _MemoryManager.writeToMemory(index, operation); //Write to memory
                 _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_PCB.PID]; //Display purposes
-                _CPU.isExecuting = true;
+                _PCB.inHDD = false;
             }
         }
 

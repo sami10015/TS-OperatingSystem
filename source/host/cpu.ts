@@ -107,6 +107,7 @@ module TSOS {
                 if(_PCB.State != "TERMINATED"){
                     _PCB.displayPCB();
                 }
+                //debugger;
                 _MemoryManager.updateBlock(_PCB.PID); //Update Memory Table
                 _PCB.setIR(operation[i]); //Change IR in PCB
                 this.updateCpuTable();

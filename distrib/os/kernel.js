@@ -213,13 +213,13 @@ var TSOS;
                 }
                 _MemoryManager.writeToMemory(0, operation);
                 _MemoryManager.PID_Memory_Loc[0] = _MemoryManager.PIDList[_PCB.PID]; //Display purposes
-                _CPU.isExecuting = true;
+                _PCB.inHDD = false;
             }
             else {
                 //Write operations to memory
                 _MemoryManager.writeToMemory(index, operation); //Write to memory
                 _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_PCB.PID]; //Display purposes
-                _CPU.isExecuting = true;
+                _PCB.inHDD = false;
             }
         };
         Kernel.prototype.krnTrapError = function (msg) {
