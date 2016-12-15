@@ -40,6 +40,10 @@ var TSOS;
                     }
                     _PCB = this.readyQueue.dequeue();
                     _PCB.State = "Running";
+                    //Perform swap if process is in HDD
+                    if (_PCB.inHDD) {
+                        _Kernel.krnSwap();
+                    }
                 }
             }
         };
@@ -66,6 +70,9 @@ var TSOS;
             }
             _PCB = this.readyQueue.dequeue(); //Set the current PCB to the first item in the ready queue
             _PCB.State = "Running";
+            if (_PCB.inHDD) {
+                _Kernel.krnSwap();
+            }
         };
         //Sort the ready queue based on priority if the scheduling technique is priority
         cpuScheduler.prototype.sortReadyQueue = function () {
