@@ -92,8 +92,8 @@ var TSOS;
                 priorityNums.push(PCB.priority);
             }
             var sortedPCBs = [];
-            //List the priority numbers from max to lowest
-            priorityNums = priorityNums.sort().reverse();
+            //List the priority numbers from lowest to max
+            priorityNums = priorityNums.sort();
             //Sort the PCBs array based on the priority
             for (var i = 0; i < fixedLength; i++) {
                 var priority = priorityNums[i];
