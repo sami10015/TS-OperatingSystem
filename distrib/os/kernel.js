@@ -209,6 +209,7 @@ var TSOS;
                 for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
                     if (_cpuScheduler.residentList[i].PID == _MemoryManager.PID_Memory_Loc[0]) {
                         _cpuScheduler.residentList[i].inHDD = true;
+                        _cpuScheduler.residentList[i].displayPCB();
                     }
                 }
                 _MemoryManager.writeToMemory(0, operation);

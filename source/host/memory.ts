@@ -78,7 +78,6 @@ module TSOS{
 					opCount++;
 				}
 			}
-			console.log(this.memory);
 		}
 
 		//Erase everything

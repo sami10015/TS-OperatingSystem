@@ -33,7 +33,6 @@ module TSOS{
 					_PCB.State = "Running";
 					//Perform swap if process is in HDD
 					if(_PCB.inHDD){
-						console.log("Here");
 						_Kernel.krnSwap();
 					}
 				}
@@ -125,8 +124,6 @@ module TSOS{
 		        var cell7 = row.insertCell(6);
 		        var cell8 = row.insertCell(7);
 		        var cell9 = row.insertCell(8);
-		        var cell10 = row.insertCell(9);
-		        var cell11 = row.insertCell(10);
 
 		        cell1.innerHTML = _PCB.PID + '';
 		        cell2.innerHTML = _PCB.State;
@@ -136,9 +133,14 @@ module TSOS{
 		        cell6.innerHTML = _PCB.X + '';
 		        cell7.innerHTML = _PCB.Y + '';
 		        cell8.innerHTML = _PCB.Z + '';
-		        cell9.innerHTML = _PCB.getBase(_PCB.PID) + '';
-		        cell9.innerHTML = _PCB.getLimit(_PCB.PID) + '';
-		        cell10.innerHTML = _PCB.getPart(_PCB.PID) + '';
+		        if(_PCB.inHDD){
+					cell9.innerHTML = 'Hard Drive'
+				}else{
+					cell9.innerHTML = 'Memory';
+				}
+		        _PCB.getBase(_PCB.PID);
+		        _PCB.getLimit(_PCB.PID);
+		        _PCB.getPart(_PCB.PID)
 
 				for(var i = 0; i < this.readyQueue.getSize(); i++){
 					var tempPCB = this.readyQueue.q[i]; //Get PCB from Ready Queue without dequeing
@@ -153,8 +155,6 @@ module TSOS{
 			        var cell7 = row.insertCell(6);
 			        var cell8 = row.insertCell(7);
 			        var cell9 = row.insertCell(8);
-			        var cell10 = row.insertCell(9);
-			        var cell11 = row.insertCell(10);
 
 			        cell1.innerHTML = tempPCB.PID + '';
 			        cell2.innerHTML = tempPCB.State;
@@ -164,10 +164,11 @@ module TSOS{
 			        cell6.innerHTML = tempPCB.X + '';
 			        cell7.innerHTML = tempPCB.Y + '';
 			        cell8.innerHTML = tempPCB.Z + '';
-			        cell9.innerHTML = tempPCB.getBase(tempPCB.PID) + '';
-			        cell9.innerHTML = tempPCB.getLimit(tempPCB.PID) + '';
-			        cell10.innerHTML = tempPCB.getPart(tempPCB.PID) + '';
-
+			        if(tempPCB.inHDD){
+						cell9.innerHTML = 'Hard Drive'
+					}else{
+						cell9.innerHTML = 'Memory';
+					}
 		    	}
 			}
 		}

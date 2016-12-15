@@ -53,9 +53,15 @@ var TSOS;
             row.getElementsByTagName("td")[5].innerHTML = this.X + '';
             row.getElementsByTagName("td")[6].innerHTML = this.Y + '';
             row.getElementsByTagName("td")[7].innerHTML = this.Z + '';
-            row.getElementsByTagName("td")[8].innerHTML = this.getBase(this.PID) + '';
-            row.getElementsByTagName("td")[9].innerHTML = this.getLimit(this.PID) + '';
-            row.getElementsByTagName("td")[10].innerHTML = this.getPart(this.PID) + '';
+            if (this.inHDD) {
+                row.getElementsByTagName("td")[8].innerHTML = 'Hard Drive';
+            }
+            else {
+                row.getElementsByTagName("td")[8].innerHTML = 'Memory';
+            }
+            this.getBase(_PCB.PID);
+            this.getLimit(_PCB.PID);
+            this.getPart(_PCB.PID);
         };
         PCB.prototype.insertSingleRunRow = function () {
             var table = document.getElementById("PCB_Table");
@@ -70,8 +76,6 @@ var TSOS;
             var cell7 = row.insertCell(6);
             var cell8 = row.insertCell(7);
             var cell9 = row.insertCell(8);
-            var cell10 = row.insertCell(9);
-            var cell11 = row.insertCell(10);
             cell1.innerHTML = _PCB.PID + '';
             cell2.innerHTML = _PCB.State;
             cell3.innerHTML = _PCB.PC + '';
@@ -80,9 +84,15 @@ var TSOS;
             cell6.innerHTML = _PCB.X + '';
             cell7.innerHTML = _PCB.Y + '';
             cell8.innerHTML = _PCB.Z + '';
-            cell9.innerHTML = _PCB.getBase(_PCB.PID) + '';
-            cell9.innerHTML = _PCB.getLimit(_PCB.PID) + '';
-            cell10.innerHTML = _PCB.getPart(_PCB.PID) + '';
+            if (this.inHDD) {
+                cell9.innerHTML = 'Hard Drive';
+            }
+            else {
+                cell9.innerHTML = 'Memory';
+            }
+            _PCB.getBase(_PCB.PID);
+            _PCB.getLimit(_PCB.PID);
+            _PCB.getPart(_PCB.PID);
         };
         PCB.prototype.clearPCB = function () {
             //Terminated PCB

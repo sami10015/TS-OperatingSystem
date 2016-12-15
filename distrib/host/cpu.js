@@ -156,7 +156,6 @@ var TSOS;
                 document.getElementById("btnStep").disabled = true;
                 _SingleStepMode = false;
             }
-            debugger;
         };
         //Loads a constant in the accumulator(OP Code A9)
         Cpu.prototype.loadAccumulator = function (constant) {
@@ -202,7 +201,6 @@ var TSOS;
         };
         //Adds contents of an address to the accumulator(OP Code 6D)
         Cpu.prototype.addCarry = function (location) {
-            debugger;
             _PCB.PC += 3; //Add to program counter
             _PCB.IR = '6D'; //Change IR
             var variable = _MemoryManager.getVariable(location);

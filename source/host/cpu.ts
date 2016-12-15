@@ -147,7 +147,6 @@ module TSOS {
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
                 _SingleStepMode = false;
             }
-            debugger;
         }
 
         //Loads a constant in the accumulator(OP Code A9)
@@ -201,7 +200,6 @@ module TSOS {
 
         //Adds contents of an address to the accumulator(OP Code 6D)
         public addCarry(location){
-            debugger;
             _PCB.PC += 3; //Add to program counter
             _PCB.IR = '6D' //Change IR
             var variable = _MemoryManager.getVariable(location);

@@ -83,7 +83,6 @@ var TSOS;
                     opCount++;
                 }
             }
-            console.log(this.memory);
         };
         //Erase everything
         Memory.prototype.eraseAll = function () {
