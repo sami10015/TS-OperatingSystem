@@ -28,7 +28,12 @@ module TSOS{
 
 		public displayPCB(){
 			var table = (<HTMLTableElement>document.getElementById("PCB_Table"));
-			var row = table.getElementsByTagName("tr")[this.rowNumber];
+			var row;
+			if(this.inHDD){
+				row = table.getElementsByTagName("tr")[1];
+			}else{
+				row = table.getElementsByTagName("tr")[this.rowNumber];
+			}
 			row.getElementsByTagName("td")[0].innerHTML = this.PID + '';
 			row.getElementsByTagName("td")[1].innerHTML = this.State;
 			row.getElementsByTagName("td")[2].innerHTML = (this.PC+this.Base) + '';
@@ -42,6 +47,7 @@ module TSOS{
 			}else{
 				row.getElementsByTagName("td")[8].innerHTML = 'Memory';
 			}
+
 			this.getBase(_PCB.PID)
 	        this.getLimit(_PCB.PID)
 	        this.getPart(_PCB.PID)

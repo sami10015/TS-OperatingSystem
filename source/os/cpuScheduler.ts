@@ -53,6 +53,8 @@ module TSOS{
 				if(this.residentList[i].State != "TERMINATED"){
 					if(!this.fcfs && !this.priority){
 						this.residentList[i].rowNumber = rowCounter;
+					}else{
+						this.residentList[i].rowNumber = 1;
 					}
 					this.readyQueue.enqueue(this.residentList[i]);
 					rowCounter++; //Increment row
@@ -63,10 +65,12 @@ module TSOS{
 			}
 			_PCB = this.readyQueue.dequeue(); //Set the current PCB to the first item in the ready queue
 			_PCB.State = "Running";
+			this.displayReadyQueue();
 			//This is needed if the highest priority process is in the HDD
 			if(_PCB.inHDD){
 				_Kernel.krnSwap();
 			}
+			this.displayReadyQueue();
 		}
 
 		//Sort the ready queue based on priority if the scheduling technique is priority

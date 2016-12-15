@@ -195,13 +195,6 @@ var TSOS;
             var index = _MemoryManager.displayBlock(operation); //If this displays -1, then there is no open memory(swapping needed)
             if (index == -1) {
                 var operationMemArray = _MemoryManager.getOperation(0); //Array of op codes in memory(Need to convert to string)
-                var operationMem = '';
-                for (var i = 0; i < operationMemArray.length; i++) {
-                    operationMem += operationMemArray[i];
-                    if (i != operationMemArray.length - 1) {
-                        operationMem += ' '; //Spaces needed later on when converting back to array
-                    }
-                }
                 //Create and write file for that process going into the HDD out of memory
                 _krnHardDriveDriver.krnHDDCreateFile('process' + _MemoryManager.PID_Memory_Loc[0].toString());
                 _krnHardDriveDriver.krnHDDWriteFile('process' + _MemoryManager.PID_Memory_Loc[0].toString(), operationMemArray.join(" "));
@@ -209,7 +202,9 @@ var TSOS;
                 for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
                     if (_cpuScheduler.residentList[i].PID == _MemoryManager.PID_Memory_Loc[0]) {
                         _cpuScheduler.residentList[i].inHDD = true;
-                        _cpuScheduler.residentList[i].displayPCB();
+                        var table = document.getElementById("PCB_Table");
+                        var row = table.getElementsByTagName("tr")[_cpuScheduler.residentList[i].rowNumber];
+                        row.getElementsByTagName("td")[8].innerHTML = 'Hard Drive';
                     }
                 }
                 _MemoryManager.writeToMemory(0, operation);

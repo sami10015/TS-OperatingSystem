@@ -469,6 +469,9 @@ var TSOS;
                                         newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
                                     }
                                     newPCB.inHDD = true;
+                                    if (!_cpuScheduler.RR) {
+                                        newPCB.rowNumber = 1;
+                                    }
                                     _cpuScheduler.residentList.push(newPCB);
                                     _StdOut.putText("Program loaded. PID " + (PID));
                                 }
@@ -613,7 +616,7 @@ var TSOS;
                 //Check if any of the programs can be executed
                 if (x) {
                     _cpuScheduler.loadReadyQueue(); //Load the ready queue
-                    _cpuScheduler.displayReadyQueue();
+                    //_cpuScheduler.displayReadyQueue();
                     _CPU.isExecuting = true; //Start the CPU
                 }
                 else {
