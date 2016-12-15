@@ -222,7 +222,7 @@ module TSOS {
                 }
                 //Create and write file for that process going into the HDD out of memory
                 _krnHardDriveDriver.krnHDDCreateFile('process' + _MemoryManager.PID_Memory_Loc[0].toString());
-                _krnHardDriveDriver.krnHDDWriteFile('process' + _MemoryManager.PID_Memory_Loc[0].toString(), operationMem);
+                _krnHardDriveDriver.krnHDDWriteFile('process' + _MemoryManager.PID_Memory_Loc[0].toString(), operationMemArray.join(" "));
 
                 //Change PCB of file going into HDD to notify that it is located there
                 for(var i = 0; i < _cpuScheduler.residentList.length; i++){
@@ -231,12 +231,12 @@ module TSOS {
                     }
                 }
                 _MemoryManager.writeToMemory(0, operation);
-                _MemoryManager.PID_Memory_Loc[0] = _MemoryManager.PIDList[_PCB.PID]; //Display purposes
+                _MemoryManager.PID_Memory_Loc[0] = _PCB.PID; //Display purposes
                 _PCB.inHDD = false;
             }else{//Write to memory and execute
                 //Write operations to memory
                 _MemoryManager.writeToMemory(index, operation); //Write to memory
-                _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_PCB.PID]; //Display purposes
+                _MemoryManager.PID_Memory_Loc[index] = _PCB.PID; //Display purposes
                 _PCB.inHDD = false;
             }
         }

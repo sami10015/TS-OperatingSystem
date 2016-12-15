@@ -886,7 +886,7 @@ module TSOS {
         //Get the scheduling technique of the CPU
         public getSchedule(){
             if(!_cpuScheduler.RR && !_cpuScheduler.fcfs && !_cpuScheduler.priority){
-                _StdOut.putText("No scheduling technique has been selected");
+                _StdOut.putText("Round Robin");
             }else if(_cpuScheduler.fcfs){
                 _StdOut.putText("First-Come First-Serve")
             }else if(_cpuScheduler.priority){

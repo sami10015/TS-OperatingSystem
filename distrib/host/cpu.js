@@ -202,9 +202,11 @@ var TSOS;
         };
         //Adds contents of an address to the accumulator(OP Code 6D)
         Cpu.prototype.addCarry = function (location) {
+            debugger;
             _PCB.PC += 3; //Add to program counter
             _PCB.IR = '6D'; //Change IR
-            _PCB.AC += _MemoryManager.getVariable(location);
+            var variable = _MemoryManager.getVariable(location);
+            _PCB.AC += parseInt(variable);
         };
         //Compare a byte in memory to the X reg(Op Code EC)
         Cpu.prototype.compareByte = function (location) {
