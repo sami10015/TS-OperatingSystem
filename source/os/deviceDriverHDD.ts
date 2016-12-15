@@ -128,7 +128,6 @@ module TSOS {
                     _hardDrive.write(emptyDataTSB, emptyData);
                     //Create data for file(For some reason I have to use different variable names for compiling to work)
                     var data2 = '1'+emptyDataTSB;
-                    console.log(data2);
                     for(var i = 0; i < hexFileNameList.length; i++){
                         data2 += hexFileNameList[i];
                     }
@@ -150,7 +149,6 @@ module TSOS {
             //Change data to hex
             var newData = data.split("");
             var hexData = [];
-            console.log(hexData);
             for(var i = 0; i < newData.length; i++){
                 hexData.push(newData[i].charCodeAt(0).toString(16));
             }
@@ -192,7 +190,6 @@ module TSOS {
                 }
             }
             if(clearTSBList.length != 0){
-                console.log(clearTSBList)
                 for(var i = 0; i < clearTSBList.length; i++){
                     this.krnHDDClearTSB(clearTSBList[i]);
                 }
