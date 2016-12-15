@@ -399,7 +399,6 @@ var TSOS;
             for (var i = 0; i < dataTSBList.length; i++) {
                 this.krnHDDClearTSB(dataTSBList[i]);
             }
-            _StdOut.putText("Deleted: " + fileName);
             this.updateHDDTable();
         };
         //List files

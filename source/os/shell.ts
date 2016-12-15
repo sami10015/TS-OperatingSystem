@@ -632,14 +632,36 @@ module TSOS {
                     _PCB.displayPCB();
                     //Check if the PCB is in memory, or HDD
                     if(_PCB.inHDD){
-                        var operation = _krnHardDriveDriver.krnHDDReadFile('process' + pID);
+                        var operation = _krnHardDriveDriver.krnHDDReadFile('process' + pID); //Get op codes from file
+                        _krnHardDriveDriver.krnHDDDeleteFile('process' + pID); //Delete the file
                         var index = _MemoryManager.displayBlock(operation); //If this displays -1, then there is no open memory(swapping needed)
-                        if(index == -1){//Swapping needed
+                        debugger;
+                        if(index == -1){//Swapping needed(Always swap to 0)
+                            var operationMemArray = _MemoryManager.getOperation(0); //Array of op codes in memory(Need to convert to string)
+                            var operationMem = '';
+                            for(var i = 0; i < operationMemArray.length; i++){
+                                operationMem += operationMemArray[i];
+                                if(i != operationMemArray.length-1){
+                                    operationMem += ' '; //Spaces needed later on when converting back to array
+                                }
+                            }
+                            //Create and write file for that process going into the HDD out of memory
+                            _krnHardDriveDriver.krnHDDCreateFile('process' + _MemoryManager.PID_Memory_Loc[0].toString());
+                            _krnHardDriveDriver.krnHDDWriteFile('process' + _MemoryManager.PID_Memory_Loc[0].toString(), operationMem);
 
+                            //Change PCB of file going into HDD to notify that it is located there
+                            for(var i = 0; i < _cpuScheduler.residentList.length; i++){
+                                if(_cpuScheduler.residentList[i].PID == _MemoryManager.PID_Memory_Loc[0]){
+                                    _cpuScheduler.residentList[i].inHDD = true;
+                                }
+                            }
+                            _MemoryManager.writeToMemory(0, operation);
+                            _MemoryManager.PID_Memory_Loc[0] = _MemoryManager.PIDList[parseInt(pID)]; //Display purposes
+                            _CPU.isExecuting = true;
                         }else{//Write to memory and execute
                             //Write operations to memory
                             _MemoryManager.writeToMemory(index, operation); //Write to memory
-                            _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length-1]; //Display purposes
+                            _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[parseInt(pID)]; //Display purposes
                             _CPU.isExecuting = true;
                         }
                     }else{ //In memory
@@ -846,6 +868,7 @@ module TSOS {
             }else if(_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false){//Check if file exists
                 _StdOut.putText("File does not exist");
             }else{//Read file contents
+                _StdOut.putText("Deleted file " + params[0].toString());
                 _krnHardDriveDriver.krnHDDDeleteFile(params[0].toString());
             }
         }
