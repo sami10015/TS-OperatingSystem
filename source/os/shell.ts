@@ -563,9 +563,15 @@ module TSOS {
                                     //Create new PCB object, initialize, and put in resident list
                                     var newPCB = new PCB();
                                     if(_cpuScheduler.priority){ //Init with priority
-                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1], parseInt(params[0]));
+                                        var priority;
+                                        if(params.length == 0){
+                                            priority = 32;
+                                        }else{
+                                            priority = parseInt(params[0]);
+                                        }
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1], priority);
                                     }else{ //Init without priority
-                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);   
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);;   
                                     }
                                     newPCB.inHDD = true;
                                     if(!_cpuScheduler.RR){
@@ -582,7 +588,13 @@ module TSOS {
                                     //Create new PCB object, initialize, and put in resident list
                                     var newPCB = new PCB();
                                     if(_cpuScheduler.priority){ //Init with priority
-                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1], parseInt(params[0]));
+                                        var priority;
+                                        if(params.length == 0){
+                                            priority = 32;
+                                        }else{
+                                            priority = parseInt(params[0]);
+                                        }
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1], priority);
                                     }else{ //Init without priority
                                         newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);   
                                     }
