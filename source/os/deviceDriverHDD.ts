@@ -310,12 +310,7 @@ module TSOS {
                 var str = String.fromCharCode(parseInt(hexString.substring(i, i+2),16));
                 returnString += str;
             }
-            if(returnString == ''){
-                _StdOut.putText("File is empty");
-            }else{
-                _StdOut.putText(returnString);
-                console.log(returnString);
-            }
+            return returnString;
         }
 
         //Clear TSB

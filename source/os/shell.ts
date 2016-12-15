@@ -630,7 +630,21 @@ module TSOS {
                     _PCB.State = "Ready";
                     _PCB.insertSingleRunRow(); //Insert a row into PCB Table
                     _PCB.displayPCB();
-                    _CPU.isExecuting = true; //Run CPU
+                    //Check if the PCB is in memory, or HDD
+                    if(_PCB.inHDD){
+                        var operation = _krnHardDriveDriver.krnHDDReadFile('process' + pID);
+                        var index = _MemoryManager.displayBlock(operation); //If this displays -1, then there is no open memory(swapping needed)
+                        if(index == -1){//Swapping needed
+
+                        }else{//Write to memory and execute
+                            //Write operations to memory
+                            _MemoryManager.writeToMemory(index, operation); //Write to memory
+                            _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length-1]; //Display purposes
+                            _CPU.isExecuting = true;
+                        }
+                    }else{ //In memory
+                        _CPU.isExecuting = true; //Run CPU
+                    }
                 }
             }
         }
@@ -811,7 +825,12 @@ module TSOS {
             }else if(_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false){//Check if file exists
                 _StdOut.putText("File does not exist");
             }else{//Read file contents
-                _krnHardDriveDriver.krnHDDReadFile(params[0].toString());
+                var fileContents = _krnHardDriveDriver.krnHDDReadFile(params[0].toString());
+                if(fileContents == ''){
+                    _StdOut.putText("File is empty");
+                }else{
+                    _StdOut.putText(fileContents);
+                }
             }
         }
 
