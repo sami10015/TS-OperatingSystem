@@ -151,6 +151,9 @@ module TSOS {
                                 _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
                                 _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                 _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
+                                if(_cpuScheduler.readyQueue.q[i].inHDD){
+                                    _krnHardDriveDriver.krnHDDDeleteFile('process' + _cpuScheduler.readyQueue.q[i].PID.toString());
+                                }
                                 _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
                                 _Console.advanceLine();
                                 break;
