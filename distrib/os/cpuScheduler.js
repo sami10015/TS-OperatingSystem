@@ -103,6 +103,10 @@ var TSOS;
                     }
                 }
             }
+            //Change row number for display purposes
+            for (var i = 0; i < sortedPCBs.length; i++) {
+                sortedPCBs[i][0].rowNumber = i + 1;
+            }
             //Splice turns into matrix for whatever reason
             for (var i = 0; i < sortedPCBs.length; i++) {
                 this.readyQueue.enqueue(sortedPCBs[i][0]);
