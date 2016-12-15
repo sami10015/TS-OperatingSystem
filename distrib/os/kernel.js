@@ -36,9 +36,11 @@ var TSOS;
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
-            //
-            // ... more?
-            //
+            //Load The HDD Device Driver
+            this.krnTrace("Loading the Hard Drive device driver");
+            _krnHardDriveDriver = new TSOS.DeviceDriverHDD();
+            _krnHardDriveDriver.driverEntry();
+            this.krnTrace(_krnHardDriveDriver.status);
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();
@@ -119,9 +121,6 @@ var TSOS;
                     break;
                 case STEP_TOGGLE_IRQ:
                     break;
-                case CONTEXT_SWITCH_IRQ:
-                    _cpuScheduler.contextSwitch();
-                    break;
                 case KILL_IRQ:
                     var PID = params;
                     //If nothing is running then print no active process
@@ -136,14 +135,17 @@ var TSOS;
                             if (_cpuScheduler.readyQueue.q[i].PID == PID) {
                                 _MemoryManager.clearBlock(PID); //Clear memory block
                                 _MemoryManager.executedPID.push(PID); //Increment that this PID has been executed
+                                _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                 _cpuScheduler.readyQueue.q[i].clearPCB(); //Clear the PCB
                                 _cpuScheduler.readyQueue.q.splice(i, 1); //Remove this PCB from the ready queue
-                                _StdOut.putText("PID: " + PID + " done. Turnaround Time = " + _cpuScheduler.turnaroundTime + ". Wait Time = " + (_cpuScheduler.turnaroundTime - _cpuScheduler.readyQueue.q[i].waitTime));
                                 _Console.advanceLine();
                                 break;
                             }
                         }
                     }
+                    break;
+                case CONTEXT_SWITCH_IRQ:
+                    _cpuScheduler.contextSwitch();
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -184,6 +186,40 @@ var TSOS;
                 else {
                     TSOS.Control.hostLog(msg, "OS");
                 }
+            }
+        };
+        //Perform a swap
+        Kernel.prototype.krnSwap = function () {
+            var operation = _krnHardDriveDriver.krnHDDReadFile('process' + _PCB.PID); //Get op codes from file
+            _krnHardDriveDriver.krnHDDDeleteFile('process' + _PCB.PID); //Delete the file
+            var index = _MemoryManager.displayBlock(operation); //If this displays -1, then there is no open memory(swapping needed)
+            if (index == -1) {
+                var operationMemArray = _MemoryManager.getOperation(0); //Array of op codes in memory(Need to convert to string)
+                var operationMem = '';
+                for (var i = 0; i < operationMemArray.length; i++) {
+                    operationMem += operationMemArray[i];
+                    if (i != operationMemArray.length - 1) {
+                        operationMem += ' '; //Spaces needed later on when converting back to array
+                    }
+                }
+                //Create and write file for that process going into the HDD out of memory
+                _krnHardDriveDriver.krnHDDCreateFile('process' + _MemoryManager.PID_Memory_Loc[0].toString());
+                _krnHardDriveDriver.krnHDDWriteFile('process' + _MemoryManager.PID_Memory_Loc[0].toString(), operationMemArray.join(" "));
+                //Change PCB of file going into HDD to notify that it is located there
+                for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                    if (_cpuScheduler.residentList[i].PID == _MemoryManager.PID_Memory_Loc[0]) {
+                        _cpuScheduler.residentList[i].inHDD = true;
+                    }
+                }
+                _MemoryManager.writeToMemory(0, operation);
+                _MemoryManager.PID_Memory_Loc[0] = _PCB.PID; //Display purposes
+                _PCB.inHDD = false;
+            }
+            else {
+                //Write operations to memory
+                _MemoryManager.writeToMemory(index, operation); //Write to memory
+                _MemoryManager.PID_Memory_Loc[index] = _PCB.PID; //Display purposes
+                _PCB.inHDD = false;
             }
         };
         Kernel.prototype.krnTrapError = function (msg) {

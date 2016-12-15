@@ -2,7 +2,7 @@
 var TSOS;
 (function (TSOS) {
     var PCB = (function () {
-        function PCB(PID, State, PC, AC, IR, X, Y, Z, Base, Limit, Part, waitTime, rowNumber) {
+        function PCB(PID, State, PC, AC, IR, X, Y, Z, Base, Limit, Part, waitTime, rowNumber, priority, inHDD) {
             if (PID === void 0) { PID = -1; }
             if (State === void 0) { State = ''; }
             if (PC === void 0) { PC = 0; }
@@ -16,6 +16,8 @@ var TSOS;
             if (Part === void 0) { Part = 0; }
             if (waitTime === void 0) { waitTime = 0; }
             if (rowNumber === void 0) { rowNumber = 1; }
+            if (priority === void 0) { priority = 0; }
+            if (inHDD === void 0) { inHDD = false; }
             this.PID = PID;
             this.State = State;
             this.PC = PC;
@@ -29,12 +31,16 @@ var TSOS;
             this.Part = Part;
             this.waitTime = waitTime;
             this.rowNumber = rowNumber;
+            this.priority = priority;
+            this.inHDD = inHDD;
         }
-        PCB.prototype.init = function (PID) {
+        PCB.prototype.init = function (PID, priority) {
+            if (priority === void 0) { priority = 32; }
             this.PID = PID;
             this.Base = this.getBase(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
             this.Limit = this.getLimit(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
             this.Part = this.getPart(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
+            this.priority = priority;
         };
         PCB.prototype.displayPCB = function () {
             var table = document.getElementById("PCB_Table");
@@ -82,10 +88,15 @@ var TSOS;
             //Terminated PCB
             this.State = 'TERMINATED';
             var table = document.getElementById("PCB_Table");
-            table.deleteRow(this.rowNumber);
-            //If multiple PCBs are in display
-            if (_cpuScheduler.RR) {
-                _cpuScheduler.deIncrementRowNum();
+            if (_cpuScheduler.fcfs) {
+                table.deleteRow(1);
+            }
+            else {
+                table.deleteRow(this.rowNumber);
+                //If multiple PCBs are in display
+                if (_cpuScheduler.RR) {
+                    _cpuScheduler.deIncrementRowNum();
+                }
             }
         };
         PCB.prototype.getPID = function () {

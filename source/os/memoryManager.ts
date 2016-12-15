@@ -91,7 +91,6 @@ module TSOS{
 	                fullCount += 1;
 	            }
 	        }
-
 	        return index;
 		}
 
@@ -203,6 +202,7 @@ module TSOS{
 			if((location > _PCB.Limit || location < _PCB.Base)){ //This runs after the PCB is cleared, this saves from error
 				_StdOut.putText("Memory Access Violation!");
 				//Finish this part to kill the process
+				_OsShell.kill(_PCB.PID);
 			}else{
 				return _Memory.memory[location];
 			}
@@ -218,6 +218,7 @@ module TSOS{
 			if(address > _PCB.Limit || address < _PCB.Base){
 				_StdOut.putText("Memory Access Violation!");
 				//Finish this part to kill the process
+				_OsShell.kill(_PCB.PID);
 			}else{
 				_Memory.memory[address] = constant;
 			}

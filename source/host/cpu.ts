@@ -107,7 +107,7 @@ module TSOS {
                 if(_PCB.State != "TERMINATED"){
                     _PCB.displayPCB();
                 }
-                //_cpuScheduler.displayReadyQueue();
+                //debugger;
                 _MemoryManager.updateBlock(_PCB.PID); //Update Memory Table
                 _PCB.setIR(operation[i]); //Change IR in PCB
                 this.updateCpuTable();
@@ -136,9 +136,9 @@ module TSOS {
             
             //End CPU Cycle here depending on type of command(single run, or runall)
             if(_cpuScheduler.count != _cpuScheduler.quantum){//If the count isn't at the quantum yet but there are programs still running
-                _cpuScheduler.contextSwitch();
+                _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, 'Scheduling Event')); //Call An Interrupt
             }
-            if(!_cpuScheduler.RR){//Single run
+            if(!_cpuScheduler.RR && !_cpuScheduler.fcfs){//Single run
                 this.isExecuting = false;
                 _cpuScheduler.turnaroundTime = 0; //Reset TT
                 _Console.putText(_OsShell.promptStr);
@@ -147,6 +147,7 @@ module TSOS {
                 (<HTMLButtonElement>document.getElementById("btnStep")).disabled = true;
                 _SingleStepMode = false;
             }
+            debugger;
         }
 
         //Loads a constant in the accumulator(OP Code A9)
@@ -200,9 +201,11 @@ module TSOS {
 
         //Adds contents of an address to the accumulator(OP Code 6D)
         public addCarry(location){
+            debugger;
             _PCB.PC += 3; //Add to program counter
             _PCB.IR = '6D' //Change IR
-            _PCB.AC += _MemoryManager.getVariable(location);
+            var variable = _MemoryManager.getVariable(location);
+            _PCB.AC += parseInt(variable);
         }
 
         //Compare a byte in memory to the X reg(Op Code EC)

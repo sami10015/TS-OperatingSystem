@@ -16,6 +16,7 @@
    <script type="text/javascript" src="distrib/host/devices.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
    <script type="text/javascript" src="distrib/host/memory.js"></script>
+   <script type="text/javascript" src="distrib/host/hardDrive.js"></script>   
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -31,12 +32,13 @@
    <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
    <script type="text/javascript" src="distrib/os/processControlBlock.js"></script>
    <script type="text/javascript" src="distrib/os/cpuScheduler.js"></script>
+   <script type="text/javascript" src="distrib/os/deviceDriverHDD.js"></script>
 
 
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment this line below to enable GLaDOS testing -->
-   <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip3.js"></script>
+   <!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip4.js"></script> -->
 </head>
 
 <body onload="onDocumentLoad()">
@@ -200,8 +202,6 @@
         
     }
 </script>
-  
-  
 
    <div id="divUserProgramInput" style="margin-left:520px;">
       <label style="color:black">
@@ -217,6 +217,22 @@
 </div>
 
 <br>
+
+<div id= "hardDrive">
+    <label id ="hardDriveLabel"> Hard Drive </label>
+    <table id = "hardDriveTable" cellpadding="15">
+      <tbody>
+        <th>TSB</th>
+        <th>Data</th><
+      </tbody>
+      <tbody id = "body">
+        <tr>
+        </tr>
+      </tbody>
+    </table>
+   </div>
+
+  <br><br><br><br><br><br><br>
 
 <div id="divPCB">
   <label id = "PCB_Label"> Processes </label>
@@ -239,7 +255,7 @@
     </table>
   </div>
 
-  <br><br><br>
+  <br><br><br><br><br><br><br><br>
 
 <p class="footerText" style="clear:both;">
    <br>
