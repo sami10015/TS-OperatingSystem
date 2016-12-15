@@ -91,7 +91,6 @@ module TSOS{
 	                fullCount += 1;
 	            }
 	        }
-
 	        return index;
 		}
 

@@ -86,8 +86,30 @@ var TSOS;
             // kill
             sc = new TSOS.ShellCommand(this.kill, "kill", " - Kill active process");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            // format
+            sc = new TSOS.ShellCommand(this.format, "format", " - Format the HDD");
+            this.commandList[this.commandList.length] = sc;
+            // create
+            sc = new TSOS.ShellCommand(this.createFile, "create", "<string> - Create a file");
+            this.commandList[this.commandList.length] = sc;
+            // write
+            sc = new TSOS.ShellCommand(this.writeFile, "write", "<string> <string> - Write to file");
+            this.commandList[this.commandList.length] = sc;
+            // read
+            sc = new TSOS.ShellCommand(this.readFile, "read", "<string> - Read a file");
+            this.commandList[this.commandList.length] = sc;
+            // delete
+            sc = new TSOS.ShellCommand(this.deleteFile, "delete", "<string> - Delete a file");
+            this.commandList[this.commandList.length] = sc;
+            // ls
+            sc = new TSOS.ShellCommand(this.listFiles, "ls", "List files stored on HDD");
+            this.commandList[this.commandList.length] = sc;
+            // setschedule
+            sc = new TSOS.ShellCommand(this.setSchedule, "setschedule", "<string> - Set the scheduling technique for the CPU");
+            this.commandList[this.commandList.length] = sc;
+            // getschedule
+            sc = new TSOS.ShellCommand(this.getSchedule, "getschedule", "Get the scheduling technique for the CPU");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -289,6 +311,30 @@ var TSOS;
                     case "kill":
                         _StdOut.putText("Kill Active Processes");
                         break;
+                    case "format":
+                        _StdOut.putText("Format the HDD");
+                        break;
+                    case "create":
+                        _StdOut.putText("<String> - Create a file");
+                        break;
+                    case "write":
+                        _StdOut.putText("<String> <String> - Write to file");
+                        break;
+                    case "read":
+                        _StdOut.putText("<String> - Read file");
+                        break;
+                    case "delete":
+                        _StdOut.putText("<String> - Delete file");
+                        break;
+                    case "ls":
+                        _StdOut.putText("List files stored on HDD");
+                        break;
+                    case "setschedule":
+                        _StdOut.putText("<String> - Set scheduling technique for cpu");
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Get the scheduling technique for the cpu");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -363,7 +409,7 @@ var TSOS;
             _StdOut.putText(quotes[random]);
         };
         //Validates the user program input
-        Shell.prototype.shellLoad = function () {
+        Shell.prototype.shellLoad = function (params) {
             //Cast as HTMLInputElement and then retrieve the value within the program input text area
             var input = document.getElementById("taProgramInput").value;
             var hexChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', ' '];
@@ -388,23 +434,61 @@ var TSOS;
                     var operation = document.getElementById("taProgramInput").value; //Op Codes
                     var index = _MemoryManager.displayBlock(operation);
                     //If all memory spaces are full then they must format 
-                    if (index == -1) {
-                        _StdOut.putText("Format!");
+                    if (index == -1 && !_krnHardDriveDriver.formatted) {
+                        _StdOut.putText("Format the HDD!");
                     }
                     else {
                         if (operation.split(" ").length > 256) {
                             _StdOut.putText("Program is too large");
                         }
                         else {
-                            //Write operations to memory
-                            _MemoryManager.writeToMemory(index, operation); //Write to memory
-                            _MemoryManager.pIDReturn(); //Increment PID
-                            _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
-                            //Create new PCB object, initialize, and put in resident list
-                            var newPCB = new TSOS.PCB();
-                            newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
-                            _cpuScheduler.residentList.push(newPCB);
-                            _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
+                            //Priority number has been inputed, check if priority scheduling technique was created
+                            if (params.length >= 1 && !_cpuScheduler.priority) {
+                                _StdOut.putText("Must set schedule to priority");
+                            }
+                            else if (params.length > 1) {
+                                _StdOut.putText("Enter a number for priority");
+                            }
+                            else {
+                                //Check if no memory is available, therefore you must store in HDD
+                                if (index == -1) {
+                                    //Create file
+                                    _MemoryManager.pIDReturn(); //Increment PID
+                                    var PID = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Naming purposes
+                                    var fileName = 'process' + PID.toString();
+                                    _krnHardDriveDriver.krnHDDCreateFile(fileName);
+                                    //Write to file
+                                    _krnHardDriveDriver.krnHDDWriteFile(fileName, operation);
+                                    //Push PCB to resident list, be sure to mark that it is in the HDD
+                                    //Create new PCB object, initialize, and put in resident list
+                                    var newPCB = new TSOS.PCB();
+                                    if (_cpuScheduler.priority) {
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1], parseInt(params[0]));
+                                    }
+                                    else {
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
+                                    }
+                                    newPCB.inHDD = true;
+                                    _cpuScheduler.residentList.push(newPCB);
+                                    _StdOut.putText("Program loaded. PID " + (PID));
+                                }
+                                else {
+                                    //Write operations to memory
+                                    _MemoryManager.writeToMemory(index, operation); //Write to memory
+                                    _MemoryManager.pIDReturn(); //Increment PID
+                                    _MemoryManager.PID_Memory_Loc[index] = _MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]; //Display purposes
+                                    //Create new PCB object, initialize, and put in resident list
+                                    var newPCB = new TSOS.PCB();
+                                    if (_cpuScheduler.priority) {
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1], parseInt(params[0]));
+                                    }
+                                    else {
+                                        newPCB.init(_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]);
+                                    }
+                                    _cpuScheduler.residentList.push(newPCB);
+                                    _StdOut.putText("Program loaded. PID " + (_MemoryManager.PIDList[_MemoryManager.PIDList.length - 1]));
+                                }
+                            }
                         }
                     }
                 }
@@ -448,7 +532,14 @@ var TSOS;
                     _PCB.State = "Ready";
                     _PCB.insertSingleRunRow(); //Insert a row into PCB Table
                     _PCB.displayPCB();
-                    _CPU.isExecuting = true; //Run CPU
+                    //Check if the PCB is in memory, or HDD
+                    if (_PCB.inHDD) {
+                        _Kernel.krnSwap();
+                        _CPU.isExecuting = true;
+                    }
+                    else {
+                        _CPU.isExecuting = true; //Run CPU
+                    }
                 }
             }
         };
@@ -493,6 +584,13 @@ var TSOS;
         };
         //Run all command
         Shell.prototype.runall = function () {
+            //Defualt to round robin if nothing was selected
+            if (!_cpuScheduler.RR && !_cpuScheduler.fcfs && !_cpuScheduler.priority) {
+                _cpuScheduler.RR = true;
+                _cpuScheduler.fcfs = false;
+                _cpuScheduler.priority = false;
+                _cpuScheduler.quantum = 6;
+            }
             //If it is one, just perform a single run
             var singleRunCounter = 0;
             var index = 0;
@@ -515,8 +613,6 @@ var TSOS;
                 //Check if any of the programs can be executed
                 if (x) {
                     _cpuScheduler.loadReadyQueue(); //Load the ready queue
-                    _cpuScheduler.RR = true; //Change cpu technique to round robin
-                    _PCB.State = "Ready";
                     _cpuScheduler.displayReadyQueue();
                     _CPU.isExecuting = true; //Start the CPU
                 }
@@ -550,6 +646,178 @@ var TSOS;
         Shell.prototype.kill = function (params) {
             var PID = parseInt(params); //Get PID as a integer
             _KernelInterruptQueue.enqueue(new TSOS.Interrupt(KILL_IRQ, PID)); //Call An Interrupt
+        };
+        //Format
+        Shell.prototype.format = function () {
+            _krnHardDriveDriver.krnHDDformat();
+            _StdOut.putText("Hard Drive has been formatted!");
+        };
+        //Create file name
+        Shell.prototype.createFile = function (params) {
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else if (params == '') {
+                _StdOut.putText("Give a filename!");
+            }
+            else if (params.length > 1) {
+                _StdOut.putText("Do not put space in file name!");
+            }
+            else if (params[0].length > 30) {
+                _StdOut.putText("File name too large!");
+            }
+            else {
+                var resultNum = _krnHardDriveDriver.krnHDDCreateFile(params.toString());
+                //Full on files if return false
+                if (resultNum == -1) {
+                    _StdOut.putText("No more file space");
+                }
+                else if (resultNum == 0) {
+                    _StdOut.putText("File has already been created");
+                }
+                else {
+                    _StdOut.putText("Created file " + params);
+                }
+            }
+        };
+        //Write to file
+        Shell.prototype.writeFile = function (params) {
+            console.log(params);
+            //Check if the HDD is formatted first
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else if (params == '') {
+                _StdOut.putText("Give a filename and data!");
+            }
+            else if (params.length < 2) {
+                _StdOut.putText("Must give filename and data params!");
+            }
+            else if (params[1].charAt(0) != "\"" || params[params.length - 1].charAt(params[params.length - 1].length - 1) != "\"") {
+                _StdOut.putText("Data must have quotations around it");
+            }
+            else if (_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false) {
+                _StdOut.putText("File does not exist");
+            }
+            else {
+                _StdOut.putText("Wrote data");
+                //Recreate data without quotations and also include spaces
+                var data = '';
+                for (var i = 1; i < params.length; i++) {
+                    data += params[i];
+                    if (params.length > 2 && i != params.length - 1) {
+                        data += ' ';
+                    }
+                }
+                data = data.substring(1, data.length - 1);
+                _krnHardDriveDriver.krnHDDWriteFile(params[0].toString(), data);
+            }
+        };
+        //Read file content
+        Shell.prototype.readFile = function (params) {
+            //Check if the HDD is formatted first
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else if (params == '') {
+                _StdOut.putText("Give a filename");
+            }
+            else if (params.length > 1) {
+                _StdOut.putText("Do not put a space in file name!");
+            }
+            else if (_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false) {
+                _StdOut.putText("File does not exist");
+            }
+            else {
+                var fileContents = _krnHardDriveDriver.krnHDDReadFile(params[0].toString());
+                if (fileContents == '') {
+                    _StdOut.putText("File is empty");
+                }
+                else {
+                    _StdOut.putText(fileContents);
+                }
+            }
+        };
+        //Delete file content
+        Shell.prototype.deleteFile = function (params) {
+            //Check if the HDD is formatted first
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else if (params == '') {
+                _StdOut.putText("Give a filename");
+            }
+            else if (params.length > 1) {
+                _StdOut.putText("Do not put a space in file name!");
+            }
+            else if (_krnHardDriveDriver.krnHDDCheckFileExists(params[0].toString()) == false) {
+                _StdOut.putText("File does not exist");
+            }
+            else {
+                _StdOut.putText("Deleted file " + params[0].toString());
+                _krnHardDriveDriver.krnHDDDeleteFile(params[0].toString());
+            }
+        };
+        //List files on HDD
+        Shell.prototype.listFiles = function () {
+            //Check if the HDD is formatted first
+            if (!_krnHardDriveDriver.formatted) {
+                _StdOut.putText("Format HDD first!");
+            }
+            else {
+                _krnHardDriveDriver.krnHDDListFiles();
+            }
+        };
+        //Set the schedule of the cpu scheduler
+        Shell.prototype.setSchedule = function (params) {
+            if (params == '') {
+                _StdOut.putText("Must give scheduling technique!");
+            }
+            else if (params.length > 1) {
+                _StdOut.putText("Must only give one scheduling technique!");
+            }
+            else if (_CPU.isExecuting) {
+                _StdOut.putText("Can't change scheduling technique while CPU is running!");
+            }
+            else if (params[0] == 'rr') {
+                _StdOut.putText("Set cpu scheduling to round robin");
+                _cpuScheduler.RR = true;
+                _cpuScheduler.quantum = 6;
+                _cpuScheduler.fcfs = false;
+                _cpuScheduler.priority = false;
+            }
+            else if (params[0] == 'fcfs') {
+                _StdOut.putText("Set cpu scheduling to fcfs");
+                _cpuScheduler.quantum = 99999999999999;
+                _cpuScheduler.RR = true;
+                _cpuScheduler.fcfs = true;
+                _cpuScheduler.priority = false;
+            }
+            else if (params[0] == 'priority') {
+                _StdOut.putText("Set cpu scheduling to priority");
+                _cpuScheduler.RR = true;
+                _cpuScheduler.fcfs = false;
+                _cpuScheduler.priority = true;
+                _cpuScheduler.quantum = 99999999999999;
+            }
+            else {
+                _StdOut.putText("That scheduling technique does not exist");
+            }
+        };
+        //Get the scheduling technique of the CPU
+        Shell.prototype.getSchedule = function () {
+            if (!_cpuScheduler.RR && !_cpuScheduler.fcfs && !_cpuScheduler.priority) {
+                _StdOut.putText("Round Robin");
+            }
+            else if (_cpuScheduler.fcfs) {
+                _StdOut.putText("First-Come First-Serve");
+            }
+            else if (_cpuScheduler.priority) {
+                _StdOut.putText("Priority");
+            }
+            else if (_cpuScheduler.RR) {
+                _StdOut.putText("Round Robin");
+            }
         };
         return Shell;
     }());

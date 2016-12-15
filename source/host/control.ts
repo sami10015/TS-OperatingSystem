@@ -118,6 +118,8 @@ module TSOS {
             _PCB = new PCB();
 
             _cpuScheduler = new cpuScheduler();
+
+            _hardDrive = new hardDrive();
         }
 
         public static hostBtnHaltOS_click(btn): void {

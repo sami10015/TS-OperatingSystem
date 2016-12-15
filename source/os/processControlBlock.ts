@@ -14,13 +14,16 @@ module TSOS{
 					public Limit = 0,
 					public Part = 0,
 					public waitTime = 0,
-					public rowNumber = 1){}
+					public rowNumber = 1,
+					public priority = 0,
+					public inHDD = false){}
 
-		public init(PID){
+		public init(PID, priority = 32){
 			this.PID = PID;
 			this.Base = this.getBase(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
 			this.Limit = this.getLimit(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
             this.Part = this.getPart(_MemoryManager.PIDList[_MemoryManager.PIDList.length-1]);
+            this.priority = priority;
 		}
 
 		public displayPCB(){
@@ -72,10 +75,14 @@ module TSOS{
 			//Terminated PCB
 			this.State = 'TERMINATED';
 			var table = (<HTMLTableElement>document.getElementById("PCB_Table"));
-			table.deleteRow(this.rowNumber);
-			//If multiple PCBs are in display
-			if(_cpuScheduler.RR){
-				_cpuScheduler.deIncrementRowNum();
+			if(_cpuScheduler.fcfs){
+				table.deleteRow(1);
+			}else{
+				table.deleteRow(this.rowNumber);
+				//If multiple PCBs are in display
+				if(_cpuScheduler.RR){
+					_cpuScheduler.deIncrementRowNum();
+				}
 			}
 		}
 

@@ -48,35 +48,37 @@ module TSOS{
 
 		//Writes op codes into specific memory slot
 		public write(memorySlotIndex, operation){
+			var operationArray = operation.split(" ");
 			var opCount = 0;
 			if(memorySlotIndex == 0){
 				for(var i = 0; i < 256; i++){
-					if(opCount+2 > operation.length){
-						this.memory[i] = -1; //End of OP Code
+					if(i == operationArray.length){
+						this.memory[i] = -1;
 						break;
 					}
-					this.memory[i] = operation.substring(opCount, opCount+2); //Set Memory
-					opCount+=3; //Incremement
+					this.memory[i] = operationArray[opCount];
+					opCount++;
 				}
 			}else if(memorySlotIndex == 1){
 				for(var i = 256; i < 512; i++){
-					if(opCount+2 > operation.length){
-						this.memory[i] = -1; //End of OP Code
+					if(opCount == operationArray.length){
+						this.memory[i] = -1;
 						break;
 					}
-					this.memory[i] = operation.substring(opCount, opCount+2); //Set Memory
-					opCount+=3; //Incremement
+					this.memory[i] = operationArray[opCount];
+					opCount++;
 				}
 			}else if(memorySlotIndex == 2){
 				for(var i = 512; i < 768; i++){
-					if(opCount+2 > operation.length){
-						this.memory[i] = -1; //End of OP Code
+					if(opCount == operationArray.length){
+						this.memory[i] = -1;
 						break;
 					}
-					this.memory[i] = operation.substring(opCount, opCount+2); //Set Memory
-					opCount+=3; //Incremement
+					this.memory[i] = operationArray[opCount];
+					opCount++;
 				}
 			}
+			console.log(this.memory);
 		}
 
 		//Erase everything

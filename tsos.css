@@ -62,6 +62,24 @@ table, th, td{
   border: 2px solid;
 }
 
+#hardDriveLabel{
+  background-color: black;
+  color : red;
+  padding: 2px;
+  border: 2px solid;
+}
+
+#hardDriveTable{
+  position: absolute;
+  color: red;
+  background-color: black;
+  height:100px;
+  overflow-y:scroll;
+  display: block;  
+}
+
+
+
 h2 {
   color: white;
   font-size: 20pt;

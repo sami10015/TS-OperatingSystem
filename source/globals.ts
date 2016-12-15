@@ -73,6 +73,7 @@ var _SarcasticMode: boolean = false;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
+var _krnHardDriveDriver;
 
 // Control
 var _Control: TSOS.Control;
@@ -84,6 +85,9 @@ var _SingleStepMode: boolean = false;
 
 // Cpu Scheduler
 var _cpuScheduler: TSOS.cpuScheduler;
+
+//Hard Drive
+var _hardDrive: TSOS.hardDrive;
 
 // For testing (and enrichment)...
 var Glados: any = null;  // This is the function Glados() in glados.js on Labouseur.com.
