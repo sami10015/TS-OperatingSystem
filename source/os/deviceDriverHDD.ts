@@ -466,7 +466,7 @@ module TSOS {
             }
         }
 
-        //Create the HTML table
+        //Create the HTML table initially
         public createHDDTable(): void{
             var table = (<HTMLTableElement>document.getElementById("hardDriveTable"));
             var j = 1;

@@ -458,7 +458,7 @@ var TSOS;
                 j++;
             }
         };
-        //Create the HTML table
+        //Create the HTML table initially
         DeviceDriverHDD.prototype.createHDDTable = function () {
             var table = document.getElementById("hardDriveTable");
             var j = 1;
