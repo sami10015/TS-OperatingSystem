@@ -57,6 +57,12 @@ var TSOS;
                 for (var i = 1; i < _hardDrive.TSBList.length; i++) {
                     _hardDrive.write(_hardDrive.TSBList[i], emptyData);
                 }
+                //Slice process of the ready queue if it is loaded into HDD and formatted
+                for (var i = 0; i < _cpuScheduler.residentList.length; i++) {
+                    if (_cpuScheduler.residentList[i].inHDD) {
+                        _cpuScheduler.residentList[i].State = "TERMINATED";
+                    }
+                }
             }
             else {
                 //Input empty data
