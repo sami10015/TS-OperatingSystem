@@ -51,37 +51,47 @@ var TSOS;
                     emptyData += '0';
                 }
             }
-            //Input empty data
-            for (var i = 0; i <= 999; i++) {
-                //You dont want to make an extra TSB
-                if (track == 3 && sector == 7 && block == 8) {
-                    break;
-                }
-                //If the TSB is the first, format it correctly
-                if (track == 0 && sector == 0 && block == 0) {
-                    _hardDrive.write(TSB, firstTSB);
-                    _hardDrive.TSBList.push(TSB);
-                    //Increment block
-                    block++;
-                }
-                else {
-                    //Change block, sector, and track numbers
-                    if (block == 8) {
-                        block = 0;
-                        sector++;
-                    }
-                    if (sector == 8) {
-                        block = 0;
-                        sector = 0;
-                        track++;
-                    }
-                    TSB = track.toString() + sector.toString() + block.toString();
-                    _hardDrive.TSBList.push(TSB);
-                    _hardDrive.write(TSB, emptyData);
-                    block++;
+            //Has been formatted once
+            if (this.formatted == true) {
+                _hardDrive.write("000", firstTSB);
+                for (var i = 1; i < _hardDrive.TSBList.length; i++) {
+                    _hardDrive.write(_hardDrive.TSBList[i], emptyData);
                 }
             }
-            this.formatted = true;
+            else {
+                //Input empty data
+                for (var i = 0; i <= 999; i++) {
+                    //You dont want to make an extra TSB
+                    if (track == 3 && sector == 7 && block == 8) {
+                        break;
+                    }
+                    //If the TSB is the first, format it correctly
+                    if (track == 0 && sector == 0 && block == 0) {
+                        _hardDrive.write(TSB, firstTSB);
+                        _hardDrive.TSBList.push(TSB);
+                        //Increment block
+                        block++;
+                    }
+                    else {
+                        //Change block, sector, and track numbers
+                        if (block == 8) {
+                            block = 0;
+                            sector++;
+                        }
+                        if (sector == 8) {
+                            block = 0;
+                            sector = 0;
+                            track++;
+                        }
+                        TSB = track.toString() + sector.toString() + block.toString();
+                        _hardDrive.TSBList.push(TSB);
+                        _hardDrive.write(TSB, emptyData);
+                        block++;
+                    }
+                }
+                this.createHDDTable();
+                this.formatted = true;
+            }
             this.updateHDDTable();
         };
         //Function to create a file
@@ -437,6 +447,19 @@ var TSOS;
         };
         //Update the HTML table, soon to be moved elsewhere
         DeviceDriverHDD.prototype.updateHDDTable = function () {
+            var table = document.getElementById("hardDriveTable");
+            var j = 1;
+            //Go through list of TSB
+            for (var i = 0; i < _hardDrive.TSBList.length; i++) {
+                var TSB = _hardDrive.TSBList[i];
+                var stringMem = _hardDrive.read(TSB);
+                var row = table.getElementsByTagName("tr")[j];
+                row.cells[1].innerHTML = stringMem;
+                j++;
+            }
+        };
+        //Create the HTML table
+        DeviceDriverHDD.prototype.createHDDTable = function () {
             var table = document.getElementById("hardDriveTable");
             var j = 1;
             //Form TSB Display
